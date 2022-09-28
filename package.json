@@ -1,0 +1,18 @@
+{
+  "name": "sreact",
+  "version": "0.0.1",
+  "description": "simple-reactive",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "simple-reactive"
+  ],
+  "author": "Destrokhen <armagiddon19@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "root-require": "^0.3.1",
+    "to-style": "^1.3.3"
+  }
+}
