@@ -56,7 +56,6 @@ const s = (app) => {
     mainNode["child"] = reqChild(props, child);
   }
   mainNode["type"] = Type.Component;
-  mainNode["reload"] = function() {};
   return mainNode;
 }
 

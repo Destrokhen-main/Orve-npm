@@ -7,7 +7,7 @@ const TypeProxy = require("../../type/proxy.js");
 
 const HTML_TAG = ["br","hr"];
 
-const recersiveCheckFunctionAnswer = (node) => {
+const recursiveCheckFunctionAnswer = (node) => {
   let haveDop = false;
   let functionObject = {};
 
@@ -32,14 +32,18 @@ const recersiveCheckFunctionAnswer = (node) => {
   }
 
   if (typeof completeFunction["tag"] === "function") {
-    return recersiveCheckFunctionAnswer(completeFunction);
+    return recursiveCheckFunctionAnswer(completeFunction);
   }
 
   return completeFunction;
 }
 
 const recursiveChild = (nodeProps = null, nodeChilds) => {
-  if (nodeChilds !== undefined && nodeChilds.length > 0) {
+  if (
+    nodeChilds !== undefined &&
+    typeOf(nodeChilds) === "array" &&
+    nodeChilds.length > 0
+  ) {
     nodeChilds = nodeChilds.flat();
     return nodeChilds.map((child, index) => {
       const typeChild = typeOf(child);
@@ -101,7 +105,7 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
           validatorTagNode(completeFunction);
           
           if (typeof completeFunction["tag"] === "function") {
-            completeFunction = recersiveCheckFunctionAnswer(completeFunction);
+            completeFunction = recursiveCheckFunctionAnswer(completeFunction);
           }
 
           if (completeFunction["child"] !== undefined)
@@ -109,7 +113,6 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
           return {
             type: Type.Component,
             value: completeFunction,
-            reload: function () {}
           }
         } else {
           if (child["child"] !== undefined)
@@ -119,7 +122,6 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
         return {
           type: Type.Component,
           value: child,
-          reload: function () {}
         }
       }
 
@@ -131,7 +133,7 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
           validatorTagNode(completeFunction);
 
           if (typeof completeFunction["tag"] === "function") {
-            completeFunction = recersiveCheckFunctionAnswer(completeFunction);
+            completeFunction = recursiveCheckFunctionAnswer(completeFunction);
           }
 
           if (completeFunction["child"] !== undefined)
@@ -141,7 +143,6 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
             type: Type.ComponentMutable,
             value:completeFunction,
             function: child,
-            reload: function () {}
           }
         }
 
@@ -150,7 +151,6 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
             type: Type.Mutable,
             value: completeFunction,
             function: child,
-            reload: function () {}
           }
         }
 
@@ -172,7 +172,7 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
           let result = builder(child.value);
 
           if (typeof result["tag"] === "function") {
-            result = recersiveCheckFunctionAnswer(result);
+            result = recursiveCheckFunctionAnswer(result);
           }
 
           return {
