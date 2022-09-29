@@ -1,9 +1,9 @@
 const { typeOf } = require("../helper/index.js");
 const { validatorTagNode, validateFunctionAnswer } = require("../linter/index.js");
 const Type = require("./type.js");
-const error = require("../error.js");
-const TYPE_MESSAGE = require("../errorMessage.js");
-const TypeProxy = require("../../type/proxy.js");
+const error = require("../error/error.js");
+const TYPE_MESSAGE = require("../error/errorMessage.js");
+const TypeProxy = require("../type/proxy.js");
 
 const HTML_TAG = ["br","hr"];
 
@@ -178,6 +178,14 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
           return {
             type: Type.ProxyComponent,
             value: result,
+            proxy: child
+          }
+        }
+
+        if (typeProxy === TypeProxy.proxyEffect) {
+          return {
+            type: Type.ProxyEffect,
+            value: child.value,
             proxy: child
           }
         }

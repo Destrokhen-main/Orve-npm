@@ -1,6 +1,8 @@
 const Type = require("../builder/type.js");
 
-const Child = (app, child, callback) => {
+const { typeOf } = require("../helper/index.js");
+ 
+module.exports.addChild = (app, child, callback) => {
   return child.map(ch => {
     if (ch.type === Type.NotMutable) {
       const el = document.createTextNode(ch.value);
@@ -28,7 +30,29 @@ const Child = (app, child, callback) => {
       ch.proxy.parent.push(el.node);
       return el;
     }
+
+    if (ch.type === Type.ProxyEffect) {
+      const type = typeOf(ch.value);
+      if (type === "string" || type === "number") {
+        const el = document.createTextNode(ch.value)
+        ch.node = el;
+        ch.proxy.parent.push({
+          type: "child",
+          value: el,
+        });
+        app.appendChild(el); 
+        return ch;
+      } else if (type === "object") {
+        // NOTE mb need valid
+        const el = callback(app, ch.value);
+        ch.proxy.parent.push({
+          type: "component",
+          value: el
+        });
+        return el;
+      } else if (type === "proxy") {
+        console.log("proxy");
+      }
+    }
   });
 }
-
-module.exports.addChild = Child;

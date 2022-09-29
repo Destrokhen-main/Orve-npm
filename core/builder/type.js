@@ -4,5 +4,6 @@ module.exports = {
   Component: "component",
   ComponentMutable: "component-mutable",
   Proxy: "proxy",
-  ProxyComponent: "proxy-component"
+  ProxyComponent: "proxy-component",
+  ProxyEffect: "proxy-effect"
 }

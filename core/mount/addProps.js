@@ -2,7 +2,7 @@ const { validSingleProps } = require("../linter/index.js");
 const toStyleString = require('to-style').string;
 const { typeOf } = require("../helper/index.js");
 
-const Props = (tag, props, node) => {
+module.exports.addProps = (tag, props, node) => {
   Object.keys(props).forEach((pr) => {
     if (pr === "src") {
       // check for function
@@ -41,5 +41,3 @@ const Props = (tag, props, node) => {
     }
   })
 }
-
-module.exports.addProps = Props;

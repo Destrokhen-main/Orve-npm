@@ -1,5 +1,5 @@
-const error = require("../core/error.js");
-const { typeOf } = require("../core/helper/index.js");
+const error = require("../error/error.js");
+const { typeOf } = require("../helper/index.js");
 
 const w = (callback, depends) => {
   if (depends === undefined) {

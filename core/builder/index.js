@@ -1,34 +1,35 @@
 const { typeOf } = require("../helper/index.js");
-const errorMessage = require("../errorMessage.js");
-const error = require("../error.js");
-const { validatorMainNode } = require("../linter/index.js");
+const errorMessage = require("../error/errorMessage.js");
+const error = require("../error/error.js");
+const { validatorMainNode, validatorTagNode } = require("../linter/index.js");
 const Type = require("./type.js");
 
 const reqChild = require("./children.js");
 
-const recursive = (funct) => {
+const recursive = (funcs) => {
   let haveDop = false;
   let functionObject = {};
 
-  if (funct["props"] !== undefined) {
+  if (funcs["props"] !== undefined) {
     functionObject = {
-      ...funct["props"]
+      ...funcs["props"]
     }
     haveDop = true;
   }
 
-  if (funct["child"] !== undefined) {
-    functionObject["children"] = funct['child'];
+  if (funcs["child"] !== undefined) {
+    functionObject["children"] = funcs['child'];
     haveDop = true;
   }
 
-  const completeFunction = haveDop ? funct["tag"]({
+  const completeFunction = haveDop ? funcs["tag"]({
     ...functionObject
-  }) : funct["tag"]();
+  }) : funcs["tag"]();
   const typeCompleteFunction = typeOf(completeFunction);
   if (typeCompleteFunction !== "object") {
     error(`index in array ${index} - ${TYPE_MESSAGE.functionInTagReturn}`);
   }
+  validatorTagNode(completeFunction);
 
   if (typeof completeFunction["tag"] === "function") {
     return recursive(completeFunction);
@@ -37,7 +38,7 @@ const recursive = (funct) => {
   return completeFunction;
 }
 
-const s = (app) => {
+module.exports = (app) => {
   if (typeOf(app) !== "function")
     error(`${app} - ${errorMessage.appNotAFunction}`);
   
@@ -58,5 +59,3 @@ const s = (app) => {
   mainNode["type"] = Type.Component;
   return mainNode;
 }
-
-module.exports = s;

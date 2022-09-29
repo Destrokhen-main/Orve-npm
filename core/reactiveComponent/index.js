@@ -1,10 +1,10 @@
 const Type = require("../type/proxy.js");
 
-const builder = require("../core/builder/index.js");
-const { createNodeRebuild } = require("../core/mount/rebiuld.js");
-const { typeOf } = require("../core/helper/index.js");
+const builder = require("../builder/index.js");
+const { createNodeRebuild } = require("../mount/rebiuld.js");
+const { typeOf } = require("../helper/index.js");
 
-const s = (component) => {
+module.exports.refC = (component) => {
   let comp = component;
   const type = typeOf(component);
   if (type !== "function") {
@@ -58,5 +58,3 @@ const s = (component) => {
     }
   })
 }
-
-module.exports.refC = s;

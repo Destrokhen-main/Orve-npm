@@ -1,6 +1,6 @@
 const Type = require("../type/proxy.js");
 
-const f = (object) => {
+module.exports.ref = (object) => {
   const p = {
     parent: [],
     value: object,
@@ -12,6 +12,8 @@ const f = (object) => {
       if (prop === "typeProxy") return Type.proxySimple;
       if (prop in target) {
         return target[prop];
+      } else {
+        return undefined;
       }
     },
     set(target, prop, value) {
@@ -29,9 +31,11 @@ const f = (object) => {
             if (el.type === "props") {
               el.value.setAttribute(el.key, value);
             }
-
             if (el.type === "watch") {
               el.function(value, before);
+            }
+            if (el.type === "effect") {
+              el.parent.refresh;
             }
           });
         }
@@ -42,5 +46,3 @@ const f = (object) => {
     }
   })
 }
-
-module.exports.ref = f;
