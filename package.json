@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "node test.js",
-    "lint": "eslint --fix ./core/*.js"
+    "lint": "eslint ./core/*.js",
+    "push": "git add .; git commit -m 'npm push'; git push -u origin ts"
   },
   "keywords": [
     "simple-reactive"
