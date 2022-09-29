@@ -15,4 +15,4 @@ const message = {
   functionReturnIncorrectData: "Функция вернула некоретный ответ"
 }
 
-module.exports = message;
+export default message;

@@ -1,8 +1,8 @@
-const isProxy = (obj) => {
+const isProxy = (obj: any) => {
   return obj.type === "proxy" ? true : false; 
 }
 
-const typeOf = (obj) => {
+const typeOf = (obj: any) => {
   const type = typeof obj;
   if (type === "object") {
     if (isProxy(obj)) {
@@ -15,7 +15,7 @@ const typeOf = (obj) => {
   return type;
 }
 
-module.exports = {
+export {
   isProxy,
   typeOf,
 }

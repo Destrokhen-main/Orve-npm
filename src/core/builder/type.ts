@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   NotMutable: "notMutable",
   Mutable: "mutable",
   Component: "component",

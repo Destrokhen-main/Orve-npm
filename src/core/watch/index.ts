@@ -1,7 +1,7 @@
-const error = require("../error/error.js");
-const { typeOf } = require("../helper/index.js");
+import error from "../error/error";
+import { typeOf } from "../helper/index";
 
-const w = (callback, depends) => {
+const w = (callback: () => void, depends: any) => {
   if (depends === undefined) {
     error("Нет зависимостей для ")
   }
@@ -16,4 +16,4 @@ const w = (callback, depends) => {
   });
 }
 
-module.exports.watch = w;
+export const watch = w;

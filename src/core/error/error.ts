@@ -5,8 +5,8 @@ class error extends Error {
   }
 }
 
-const createError = ( message ) => {
+const createError = ( message : string ) : void => {
   throw new error(message);
 }
 
-module.exports = createError;
+export default createError;

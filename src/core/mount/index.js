@@ -2,7 +2,7 @@ const error = require("../error/error.js");
 
 const { createNode } = require("./createNode.js");
 
-module.exports = (query) => {
+export default (query) => {
   const APP = document.querySelector(query);
   const node = window.sReactDOM;
 

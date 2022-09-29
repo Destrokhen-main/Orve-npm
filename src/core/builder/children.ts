@@ -197,4 +197,4 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
 
 }
 
-module.exports = recursiveChild;
+export default recursiveChild;
