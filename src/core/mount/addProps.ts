@@ -1,8 +1,8 @@
-const { validSingleProps } = require("../linter/index.js");
+import { validSingleProps } from "../linter/index.js";
 const toStyleString = require('to-style').string;
-const { typeOf } = require("../helper/index.js");
+import { typeOf } from "../helper/index.js";
 
-module.exports.addProps = (tag, props, node) => {
+export const addProps = (tag, props, node) => {
   Object.keys(props).forEach((pr) => {
     if (pr === "src") {
       // check for function

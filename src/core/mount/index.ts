@@ -1,6 +1,6 @@
-const error = require("../error/error.js");
+import error from "../error/error";
 
-const { createNode } = require("./createNode.js");
+import { createNode } from "./createNode";
 
 export default (query) => {
   const APP = document.querySelector(query);

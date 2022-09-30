@@ -1,10 +1,10 @@
-const Type = require("../type/proxy.js");
+import { ProxyType } from "../tsType/type";
 
-const builder = require("../builder/index.js");
-const { createNodeRebuild } = require("../mount/rebiuld.js");
-const { typeOf } = require("../helper/index.js");
+import builder from "../builder/index";
+import { createNodeRebuild } from "../mount/rebiuld";
+import { typeOf } from "../helper/index";
 
-module.exports.refC = (component) => {
+export const refC = (component) => {
   let comp = component;
   const type = typeOf(component);
   if (type !== "function") {
@@ -21,7 +21,7 @@ module.exports.refC = (component) => {
   return new Proxy(object, {
     get(target, prop) {
       if (prop === "type") return "proxy";
-      if (prop === "typeProxy") return Type.proxyComponent;
+      if (prop === "typeProxy") return ProxyType.proxyComponent;
       if (prop in target) {
         return target[prop];
       }

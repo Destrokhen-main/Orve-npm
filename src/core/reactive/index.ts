@@ -1,6 +1,6 @@
-const Type = require("../type/proxy.js");
+import { ProxyType } from "../tsType/type";
 
-module.exports.ref = (object) => {
+export const ref = (object) => {
   const p = {
     parent: [],
     value: object,
@@ -9,7 +9,7 @@ module.exports.ref = (object) => {
   return new Proxy(p, {
     get(target, prop) {
       if (prop === "type") return "proxy";
-      if (prop === "typeProxy") return Type.proxySimple;
+      if (prop === "typeProxy") return ProxyType.proxySimple;
       if (prop in target) {
         return target[prop];
       } else {

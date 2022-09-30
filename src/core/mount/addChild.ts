@@ -1,8 +1,8 @@
-const Type = require("../builder/type.js");
+import { Type } from "../tsType/type";
 
-const { typeOf } = require("../helper/index.js");
+import { typeOf } from "../helper/index";
  
-module.exports.addChild = (app, child, callback) => {
+export const addChild = (app, child, callback) => {
   return child.map(ch => {
     if (ch.type === Type.NotMutable) {
       const el = document.createTextNode(ch.value);

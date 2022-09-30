@@ -1,5 +1,5 @@
-const { addProps } = require("./addProps.js");
-const { addChild } = require("./addChild.js");
+import { addProps } from "./addProps";
+import { addChild } from "./addChild";
 
 const cNodes = (app, node) => {
   const { tag, props, child } = node;
@@ -18,4 +18,4 @@ const cNodes = (app, node) => {
   return node;
 }
 
-module.exports.createNodeRebuild = cNodes;
+export const createNodeRebuild = cNodes;
