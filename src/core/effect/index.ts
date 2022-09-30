@@ -1,8 +1,8 @@
-const error = require("../error/error.js");
-const { typeOf } = require("../helper/index.js");
-const Type = require("../type/proxy.js");
+import error from "../error/error.js";
+import { typeOf } from "../helper/index.js";
+import { ProxyType } from "../tsType/type";
 
-module.exports.effect = (callback, dependency = []) => {
+export function effect(callback, dependency = []) {
   if (typeof callback !== "function") {
     error(`Первым параметром должна идти функция`);
   }
@@ -16,10 +16,11 @@ module.exports.effect = (callback, dependency = []) => {
     value: callback(),
     function: callback
   };
+
   const proxy = new Proxy(object, {
     get(target, prop) {
       if (prop === "type") return "proxy";
-      if (prop === "typeProxy") return Type.proxyEffect;
+      if (prop === "typeProxy") return ProxyType.proxyEffect;
 
       if (prop === "refresh") {
         const newFunction = target["function"]();

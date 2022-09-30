@@ -1,6 +1,6 @@
-const { typeOf } = require("../helper/index.js");
-const error = require("../error/error.js");
-const errorMessage = require("../error/errorMessage.js");
+import { typeOf } from "../helper/index";
+import error from "../error/error";
+import errorMessage from "../error/errorMessage.js";
 
 const SUPPORTED_CHILD_RESULT = ["string", "object", "array"];
 
@@ -21,7 +21,7 @@ const validatorChild = (childs) => {
     });
 }
 
-module.exports = {
+export {
   validateChildFunction,
   validatorChild
 }

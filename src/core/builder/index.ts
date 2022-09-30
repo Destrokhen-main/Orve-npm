@@ -1,11 +1,11 @@
 import errorMessage from "../error/errorMessage";
 import error from "../error/error";
-import { validatorMainNode, validatorTagNode } from "../linter/index.js";
+import { validatorMainNode, validatorTagNode } from "../linter/index";
 
 
 import { typeOf } from "../helper/index";
 
-import Type from "./type";
+import { Type } from "../tsType/type";
 import { Node } from "../tsType";
 
 import reqChild from "./children";

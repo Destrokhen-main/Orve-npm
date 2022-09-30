@@ -1,9 +1,9 @@
-const { typeOf } = require("../helper/index.js");
-const { validatorTagNode, validateFunctionAnswer } = require("../linter/index.js");
-const Type = require("./type.js");
-const error = require("../error/error.js");
-const TYPE_MESSAGE = require("../error/errorMessage.js");
-const TypeProxy = require("../type/proxy.js");
+import { typeOf } from "../helper/index";
+import { validatorTagNode, validateFunctionAnswer } from "../linter/index";
+import { Type } from "../tsType/type";
+import error from "../error/error";
+import TYPE_MESSAGE from "../error/errorMessage";
+import { ProxyType } from "../tsType/type";
 
 const HTML_TAG = ["br","hr"];
 
@@ -28,7 +28,7 @@ const recursiveCheckFunctionAnswer = (node) => {
   }) : node["tag"]();
   const typeCompleteFunction = typeOf(completeFunction);
   if (typeCompleteFunction !== "object") {
-    error(`index in array ${index} - ${TYPE_MESSAGE.functionInTagReturn}`);
+    error(`error  ${TYPE_MESSAGE.functionInTagReturn}`);
   }
 
   if (typeof completeFunction["tag"] === "function") {
@@ -159,7 +159,7 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
       if (typeChild === "proxy") {
         const typeProxy = child.typeProxy;
 
-        if (typeProxy === TypeProxy.proxySimple) {
+        if (typeProxy === ProxyType.proxySimple) {
           return {
             type: Type.Proxy,
             value: child.value,
@@ -167,7 +167,7 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
           }
         }
 
-        if (typeProxy === TypeProxy.proxyComponent) {
+        if (typeProxy === ProxyType.proxyComponent) {
           const builder = require("../builder/index.js");
           let result = builder(child.value);
 
@@ -182,7 +182,7 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
           }
         }
 
-        if (typeProxy === TypeProxy.proxyEffect) {
+        if (typeProxy === ProxyType.proxyEffect) {
           return {
             type: Type.ProxyEffect,
             value: child.value,

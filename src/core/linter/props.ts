@@ -1,9 +1,9 @@
-const { typeOf } = require("../helper/index.js");
+import { typeOf } from "../helper/index.js";
 const SUPPORTED_TYPE_PROPS = ["function", "string", "proxy", "number", "object", "array"];
 const CORRECT_PROPS_FUNCTION = ["string", "proxy", "number"];
 
-const error = require("../error/error.js");
-const errorMessage = require("../error/errorMessage.js");
+import error from "../error/error";
+import errorMessage from "../error/errorMessage";
 
 const validatorProps = (props) => {
   if (typeOf(props) !== "object") error(errorMessage.propsNotAObject);
@@ -33,7 +33,7 @@ const validSingleProps = (prop, pr) => {
     error(`${pr} - ${errorMessage.incorrectPropsValue}`);
 }
 
-module.exports = {
+export {
   validatorProps,
   validSingleProps
 }

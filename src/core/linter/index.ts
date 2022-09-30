@@ -1,10 +1,10 @@
-const { typeOf } = require("../helper/index.js");
+import { typeOf } from "../helper/index";
 
-const error = require("../error/error.js");
-const errorMessage = require("../error/errorMessage.js");
+import error from "../error/error";
+import errorMessage from "../error/errorMessage";
 
-const { validatorProps , validSingleProps } = require ("./props.js");
-const { validateChildFunction, validatorChild } = require("./child.js");
+import { validatorProps, validSingleProps } from "./props";
+import { validateChildFunction, validatorChild } from "./child";
 
 
 
@@ -57,7 +57,7 @@ const validatorTagNode = (node) => {
   }
 }
 
-module.exports = {
+export {
   validatorMainNode,
   validateChildFunction,
   validatorTagNode,
