@@ -1,9 +1,11 @@
-var error = require("../error/error.js");
-var createNode = require("./createNode.js").createNode;
-module.exports = function (query) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var error_1 = require("../error/error");
+var createNode_1 = require("./createNode");
+exports.default = (function (query) {
     var APP = document.querySelector(query);
     var node = window.sReactDOM;
     if (APP === null)
-        error("Не смог найти tag " + query);
-    return createNode(APP, node);
-};
+        (0, error_1.default)("Не смог найти tag " + query);
+    return (0, createNode_1.createNode)(APP, node);
+});

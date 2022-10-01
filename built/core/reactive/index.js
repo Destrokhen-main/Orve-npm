@@ -1,5 +1,8 @@
-var Type = require("../type/proxy.js");
-module.exports.ref = function (object) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ref = void 0;
+var type_1 = require("../tsType/type");
+var ref = function (object) {
     var p = {
         parent: [],
         value: object,
@@ -9,7 +12,7 @@ module.exports.ref = function (object) {
             if (prop === "type")
                 return "proxy";
             if (prop === "typeProxy")
-                return Type.proxySimple;
+                return type_1.ProxyType.proxySimple;
             if (prop in target) {
                 return target[prop];
             }
@@ -48,3 +51,4 @@ module.exports.ref = function (object) {
         }
     });
 };
+exports.ref = ref;

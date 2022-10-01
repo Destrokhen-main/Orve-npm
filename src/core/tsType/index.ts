@@ -1,7 +1,8 @@
 import CreateApp from "./createApp";
-import Node from "./node";
+import { Node, VNode } from "./node";
 
 export {
   CreateApp,
-  Node
+  Node,
+  VNode
 }

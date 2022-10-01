@@ -1,7 +1,10 @@
-var validSingleProps = require("../linter/index.js").validSingleProps;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.addProps = void 0;
+var index_js_1 = require("../linter/index.js");
 var toStyleString = require('to-style').string;
-var typeOf = require("../helper/index.js").typeOf;
-module.exports.addProps = function (tag, props, node) {
+var index_js_2 = require("../helper/index.js");
+var addProps = function (tag, props, node) {
     Object.keys(props).forEach(function (pr) {
         if (pr === "src") {
             // check for function
@@ -16,7 +19,7 @@ module.exports.addProps = function (tag, props, node) {
         else if (pr === "style") {
             // check for function
             var sheet = void 0;
-            if (typeOf(props[pr]) === "string") {
+            if ((0, index_js_2.typeOf)(props[pr]) === "string") {
                 sheet = props[pr];
             }
             else {
@@ -25,7 +28,7 @@ module.exports.addProps = function (tag, props, node) {
             if (sheet.length !== 0)
                 tag.setAttribute("style", sheet);
         }
-        else if (typeOf(props[pr]) === "proxy") {
+        else if ((0, index_js_2.typeOf)(props[pr]) === "proxy") {
             tag.setAttribute(pr, props[pr].value);
             props[pr].parent.push({
                 type: "props",
@@ -34,10 +37,10 @@ module.exports.addProps = function (tag, props, node) {
             });
         }
         else {
-            if (typeOf(props[pr]) === "function") {
+            if ((0, index_js_2.typeOf)(props[pr]) === "function") {
                 var func = props[pr].bind(node);
                 var parsedProp = func();
-                validSingleProps(parsedProp, pr);
+                (0, index_js_1.validSingleProps)(parsedProp, pr);
                 tag.setAttribute(pr, parsedProp);
             }
             else {
@@ -46,3 +49,4 @@ module.exports.addProps = function (tag, props, node) {
         }
     });
 };
+exports.addProps = addProps;

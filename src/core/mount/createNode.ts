@@ -1,10 +1,14 @@
 import { addProps } from "./addProps";
 import { addChild } from "./addChild";
 
-const cNode = (app, node) => {
+const cNode = (app, node, type = null) => {
   const { tag, props, child } = node;
   const Tag = document.createElement(tag);
   node["node"] = Tag;
+
+  if (type !== null) {
+    node["type"] = type;
+  }
 
   if (props !== undefined && Object.keys(props).length > 0) {
     addProps(Tag, props, node);

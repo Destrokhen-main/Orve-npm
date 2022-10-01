@@ -1,16 +1,25 @@
-var Type = require("../builder/type.js");
-var typeOf = require("../helper/index.js").typeOf;
-module.exports.addChild = function (app, child, callback) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.addChild = void 0;
+var type_1 = require("../tsType/type");
+var ProxyEffect_1 = require("./partMount/ProxyEffect");
+var addChild = function (app, child, callback) {
     return child.map(function (ch) {
-        if (ch.type === Type.NotMutable) {
+        if (ch.type === type_1.Type.HTMLCode) {
+            app.innerHTML += ch.value;
+            return ch;
+        }
+        if (ch.type === type_1.Type.NotMutable) {
             var el = document.createTextNode(ch.value);
             app.appendChild(el);
             return ch;
         }
-        if (ch.type === Type.Component || ch.type === Type.ComponentMutable) {
-            return callback(app, ch.value);
+        if (ch.type === type_1.Type.Component ||
+            ch.type === type_1.Type.ComponentMutable ||
+            ch.type === type_1.Type.Layer) {
+            return callback(app, ch.value, ch.type);
         }
-        if (ch.type === Type.Proxy) {
+        if (ch.type === type_1.Type.Proxy) {
             var el = document.createTextNode(ch.value);
             ch.node = el;
             ch.proxy.parent.push({
@@ -20,35 +29,14 @@ module.exports.addChild = function (app, child, callback) {
             app.appendChild(el);
             return ch;
         }
-        if (ch.type === Type.ProxyComponent) {
+        if (ch.type === type_1.Type.ProxyComponent) {
             var el = callback(app, ch.value);
             ch.proxy.parent.push(el.node);
             return el;
         }
-        if (ch.type === Type.ProxyEffect) {
-            var type = typeOf(ch.value);
-            if (type === "string" || type === "number") {
-                var el = document.createTextNode(ch.value);
-                ch.node = el;
-                ch.proxy.parent.push({
-                    type: "child",
-                    value: el,
-                });
-                app.appendChild(el);
-                return ch;
-            }
-            else if (type === "object") {
-                // NOTE mb need valid
-                var el = callback(app, ch.value);
-                ch.proxy.parent.push({
-                    type: "component",
-                    value: el
-                });
-                return el;
-            }
-            else if (type === "proxy") {
-                console.log("proxy");
-            }
+        if (ch.type === type_1.Type.ProxyEffect) {
+            return (0, ProxyEffect_1.default)(app, ch, callback);
         }
     });
 };
+exports.addChild = addChild;

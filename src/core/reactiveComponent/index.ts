@@ -1,6 +1,6 @@
 import { ProxyType } from "../tsType/type";
 
-import builder from "../builder/index";
+import { builder } from "../builder/index";
 import { createNodeRebuild } from "../mount/rebiuld";
 import { typeOf } from "../helper/index";
 

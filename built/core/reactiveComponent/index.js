@@ -1,10 +1,13 @@
-var Type = require("../type/proxy.js");
-var builder = require("../builder/index.js");
-var createNodeRebuild = require("../mount/rebiuld.js").createNodeRebuild;
-var typeOf = require("../helper/index.js").typeOf;
-module.exports.refC = function (component) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.refC = void 0;
+var type_1 = require("../tsType/type");
+var index_1 = require("../builder/index");
+var rebiuld_1 = require("../mount/rebiuld");
+var index_2 = require("../helper/index");
+var refC = function (component) {
     var comp = component;
-    var type = typeOf(component);
+    var type = (0, index_2.typeOf)(component);
     if (type !== "function") {
         if (type === "object") {
             comp = function () { return component; };
@@ -19,7 +22,7 @@ module.exports.refC = function (component) {
             if (prop === "type")
                 return "proxy";
             if (prop === "typeProxy")
-                return Type.proxyComponent;
+                return type_1.ProxyType.proxyComponent;
             if (prop in target) {
                 return target[prop];
             }
@@ -28,9 +31,9 @@ module.exports.refC = function (component) {
             if (prop in target) {
                 var comp_1 = value;
                 if (prop === "value") {
-                    var type_1 = typeOf(component);
-                    if (type_1 !== "function") {
-                        if (type_1 === "object") {
+                    var type_2 = (0, index_2.typeOf)(component);
+                    if (type_2 !== "function") {
+                        if (type_2 === "object") {
                             comp_1 = function () { return value; };
                         }
                     }
@@ -38,8 +41,8 @@ module.exports.refC = function (component) {
                 target[prop] = value;
                 if (prop === "value") {
                     if (target.parent.length > 0) {
-                        var newObj = builder(comp_1);
-                        var object_1 = createNodeRebuild(null, newObj);
+                        var newObj = (0, index_1.builder)(comp_1);
+                        var object_1 = (0, rebiuld_1.createNodeRebuild)(null, newObj);
                         target.parent = target.parent.map(function (el) {
                             el.insertAdjacentElement('afterend', object_1);
                             el.remove();
@@ -53,3 +56,4 @@ module.exports.refC = function (component) {
         }
     });
 };
+exports.refC = refC;

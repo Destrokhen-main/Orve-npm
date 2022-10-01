@@ -6,28 +6,32 @@ import { validatorMainNode, validatorTagNode } from "../linter/index";
 import { typeOf } from "../helper/index";
 
 import { Type } from "../tsType/type";
-import { Node } from "../tsType";
+import { Node, VNode } from "../tsType";
 
 import reqChild from "./children";
 
+interface Props {
+  children?: Array<Node>
+}
+
 const recursive = (node: Node) => {
   let haveDop = false;
-  let functionObject : object = {};
+  let propsCh : Props = {};
 
-  const { tag, props, child } : Node = node;
+  const { tag, props, child }: Node = node;
 
   if (props !== undefined) {
-    functionObject = props;
+    propsCh = props;
     haveDop = true;
   }
 
   if (child !== undefined) {
-    functionObject["children"] = child.flat(1);
+    propsCh["children"] = child.flat(1);
     haveDop = true;
   }
 
-  const fTag : Node = haveDop 
-    ? tag(functionObject) 
+  const fTag : any = haveDop 
+    ? tag(propsCh) 
     : tag();
   
   if (typeOf(fTag) !== "object") {
@@ -43,10 +47,10 @@ const recursive = (node: Node) => {
   return fTag;
 }
 
-export default (app: () => Node) => {
+export const builder = (app: () => Node) : VNode => {
   if (typeOf(app) !== "function") error(`${app} - ${errorMessage.appNotAFunction}`);
   
-  let mainNode : Node = app();
+  let mainNode : VNode = app();
 
   if (typeOf(mainNode) !== "object") error(`${mainNode} - ${errorMessage.resultCallNotAObject}`);
   
@@ -57,12 +61,11 @@ export default (app: () => Node) => {
   if (typeof mainNode["tag"] === "function") {
     mainNode = recursive(mainNode);
   }
-
+  mainNode["type"] = Type.Component;
   let { props, child } = mainNode;
 
   if (child !== undefined) {
-    child = reqChild(props, child);
+    mainNode["child"] = reqChild(props, child);
   }
-  mainNode["type"] = Type.Component;
   return mainNode;
 }

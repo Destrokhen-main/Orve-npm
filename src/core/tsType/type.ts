@@ -8,6 +8,8 @@ enum Type {
   NotMutable,
   Mutable,
   Component,
+  Layer,
+  HTMLCode,
   ComponentMutable,
   Proxy,
   ProxyComponent,

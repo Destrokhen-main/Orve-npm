@@ -4,8 +4,12 @@ import { Type } from "../tsType/type";
 import error from "../error/error";
 import TYPE_MESSAGE from "../error/errorMessage";
 import { ProxyType } from "../tsType/type";
+import { builder } from "../builder/index.js";
+import { compileFunction } from "vm";
 
 const HTML_TAG = ["br","hr"];
+
+
 
 const recursiveCheckFunctionAnswer = (node) => {
   let haveDop = false;
@@ -44,29 +48,25 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
     typeOf(nodeChilds) === "array" &&
     nodeChilds.length > 0
   ) {
-    nodeChilds = nodeChilds.flat();
+    nodeChilds = nodeChilds.flat(1);
+
     return nodeChilds.map((child, index) => {
       const typeChild = typeOf(child);
 
+      // <hr /> <br />
       if (typeChild === "string") {
         if (child.startsWith("<") && child.endsWith(">")) {
-          const parsedTag = child.replace(/[<,>,\/]/gm, "").trim();
-          if (HTML_TAG.includes(parsedTag)) {
-            return {
-              type: Type.Component,
-              value: {
-                tag: parsedTag,
-              }
-            }
+          //const parsedTag = child.replace(/[<,>,\/]/gm, "").trim();
+          //if (HTML_TAG.includes(parsedTag)) {
+          return {
+            type: Type.HTMLCode,
+            value: child,
           }
-        } else if (
-          child.startsWith("<") && !child.endsWith(">") ||
-          !child.startsWith("<") && child.endsWith(">")
-        ) {
-          error(`${child} - не используйте "<",">" отдельно в название`);
+          //}
         }
       }
 
+      // string and number
       if (typeChild === "string" || typeChild === "number") {
         return {
           type: Type.NotMutable,
@@ -78,41 +78,15 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
         validatorTagNode(child);
 
         if(typeof child["tag"] === "function") {
-          let haveDop = false;
-          let functionObject = {};
+          const nodeTag = recursiveCheckFunctionAnswer(child);
 
-          if (child["props"] !== undefined) {
-            functionObject = {
-              ...child["props"]
-            }
-            haveDop = true;
-          }
+          if (nodeTag["child"] !== undefined)
+            nodeTag["child"] = recursiveChild(nodeTag["props"], nodeTag["child"]);
 
-          if (child["child"] !== undefined) {
-            functionObject["children"] = child['child'];
-            haveDop = true;
-          }
-
-          let completeFunction = haveDop ? child["tag"]({
-            ...functionObject
-          }) : child["tag"]();
-          const typeCompleteFunction = typeOf(completeFunction);
-
-          if (typeCompleteFunction !== "object") {
-            error(`index in array ${index} - ${TYPE_MESSAGE.functionInTagReturn}`);
-          }
-
-          validatorTagNode(completeFunction);
-          
-          if (typeof completeFunction["tag"] === "function") {
-            completeFunction = recursiveCheckFunctionAnswer(completeFunction);
-          }
-
-          if (completeFunction["child"] !== undefined)
-            completeFunction["child"] = recursiveChild(completeFunction["props"], completeFunction["child"]);
           return {
-            type: Type.Component,
-            value: completeFunction,
+            type: Type.Layer,
+            value: nodeTag,
+            parent: child,
           }
         } else {
           if (child["child"] !== undefined)
@@ -168,7 +142,6 @@ const recursiveChild = (nodeProps = null, nodeChilds) => {
         }
 
         if (typeProxy === ProxyType.proxyComponent) {
-          const builder = require("../builder/index.js");
           let result = builder(child.value);
 
           if (typeof result["tag"] === "function") {
