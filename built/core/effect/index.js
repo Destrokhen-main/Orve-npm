@@ -30,10 +30,8 @@ function effect(callback, dependency) {
                         // string | object | function
                         // string
                         if (p.type === "child") {
-                            if (p.type === "child") {
-                                if (p.value.nodeType === 3) {
-                                    p.value.nodeValue = newFunction_1;
-                                }
+                            if (p.value.nodeType === 3) {
+                                p.value.nodeValue = newFunction_1;
                             }
                         }
                         if (p.type === "props") {

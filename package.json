@@ -7,7 +7,8 @@
     "test": "node test.js",
     "lint": "eslint ./core/*.js",
     "push": "git add .; git commit -m 'npm push'; git push -u origin ts",
-    "ts": "tsc --watch"
+    "ts:w": "tsc --watch",
+    "ts:b": "tsc --build"
   },
   "keywords": [
     "simple-reactive"

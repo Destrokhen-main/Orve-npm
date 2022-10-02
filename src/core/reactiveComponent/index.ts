@@ -4,7 +4,7 @@ import { builder } from "../builder/index";
 import { createNodeRebuild } from "../mount/rebiuld";
 import { typeOf } from "../helper/index";
 
-export const refC = (component) => {
+export const refC = (component: any) => {
   let comp = component;
   const type = typeOf(component);
   if (type !== "function") {
@@ -48,7 +48,7 @@ export const refC = (component) => {
               el.insertAdjacentElement('afterend', object);
               el.remove();
               return object;
-            })
+            });
           }
         }
 

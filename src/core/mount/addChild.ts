@@ -4,7 +4,7 @@ import ProxyEffect from "./partMount/ProxyEffect";
 
 import { VNode } from "../tsType"
  
-export const addChild = (app : HTMLElement, child : Array<VNode>, callback) => {
+export const addChild = (app : HTMLElement, child : Array<VNode>, callback: any) => {
   return child.map(ch => {
     if (ch.type === Type.HTMLCode) {
       app.innerHTML += ch.value;
