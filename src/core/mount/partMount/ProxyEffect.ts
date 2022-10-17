@@ -1,6 +1,6 @@
 import { typeOf } from "../../helper/index";
 
-export default (app : HTMLElement, ch: any, callback: any) => {
+export default function(app : HTMLElement, ch: any, callback: any) {
   const type = typeOf(ch.value);
   if (type === "string" || type === "number") {
     const el = document.createTextNode(ch.value)

@@ -1,6 +1,6 @@
 import { ProxyType } from "../tsType/type";
 
-export const ref = (object : any) => {
+export const ref = function(object : any) {
   const p = {
     parent: [],
     value: object,

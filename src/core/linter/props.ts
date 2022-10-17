@@ -5,7 +5,7 @@ const CORRECT_PROPS_FUNCTION = ["string", "proxy", "number"];
 import error from "../error/error";
 import errorMessage from "../error/errorMessage";
 
-const validatorProps = (props) => {
+const validatorProps = function(props) {
   if (typeOf(props) !== "object") error(errorMessage.propsNotAObject);
 
   // check all variables in object props
@@ -28,7 +28,7 @@ const validatorProps = (props) => {
   });
 }
 
-const validSingleProps = (prop, pr) => {
+const validSingleProps = function(prop, pr) {
   if (!CORRECT_PROPS_FUNCTION.includes(typeOf(prop)))
     error(`${pr} - ${errorMessage.incorrectPropsValue}`);
 }

@@ -4,7 +4,7 @@ import { builder } from "../builder/index";
 import { createNodeRebuild } from "../mount/rebiuld";
 import { typeOf } from "../helper/index";
 
-export const refC = (component: any) => {
+export const refC = function(component: any) {
   let comp = component;
   const type = typeOf(component);
   if (type !== "function") {

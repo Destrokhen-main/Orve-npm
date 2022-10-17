@@ -4,8 +4,7 @@
   "description": "simple-reactive",
   "main": "built/index.js",
   "scripts": {
-    "test": "node test.js",
-    "lint": "eslint ./core/*.js",
+    "lint": "eslint ./src/*.ts",
     "push": "git add .; git commit -m 'npm push'; git push -u origin ts",
     "ts:w": "tsc --watch",
     "ts:b": "tsc --build"

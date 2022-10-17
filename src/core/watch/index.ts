@@ -1,7 +1,7 @@
 import error from "../error/error";
 import { typeOf } from "../helper/index";
 
-const w = (callback: () => void, depends: any) => {
+const w = function(callback: () => void, depends: any) {
   if (depends === undefined) {
     error("Нет зависимостей для ")
   }

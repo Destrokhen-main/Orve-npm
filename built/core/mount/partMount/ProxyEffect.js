@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("../../helper/index");
-exports.default = (function (app, ch, callback) {
+function default_1(app, ch, callback) {
     var type = (0, index_1.typeOf)(ch.value);
     if (type === "string" || type === "number") {
         var el = document.createTextNode(ch.value);
@@ -25,4 +25,5 @@ exports.default = (function (app, ch, callback) {
     else if (type === "proxy") {
         console.log("proxy");
     }
-});
+}
+exports.default = default_1;

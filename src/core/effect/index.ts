@@ -1,6 +1,9 @@
 import error from "../error/error.js";
 import { typeOf } from "../helper/index.js";
 import { ProxyType } from "../tsType/type";
+import recursiveChild from "../builder/children";
+import { createNodeRebuild } from "../mount/rebiuld";
+import { builder } from "../builder/index"
 
 export function effect(callback, dependency = []) {
   if (typeof callback !== "function") {
@@ -11,10 +14,12 @@ export function effect(callback, dependency = []) {
     error("Зависимости могут быть только в массиве");
   }
 
+  const cb = callback();
   const object = {
     parent: [],
-    value: callback(),
-    function: callback
+    value: cb,
+    function: callback,
+    lastCall: cb
   };
 
   const proxy = new Proxy(object, {
@@ -40,6 +45,50 @@ export function effect(callback, dependency = []) {
             if (p.type === "watch") {
               p.function(newFunction, target["value"]);
             }
+
+            // if (p.type === "array") {
+            //   const ar = recursiveChild(null, newFunction);
+            //   // target.lastCall.forEach((el: any) => {
+            //   //   el.node.remove();
+            //   // });
+            //   const newAr = ar.map((el : any, index: number) => {
+            //     const createEl = createNodeRebuild(null, el.value);
+            //     if (target.lastCall.length > index) {
+            //       target.lastCall[index].node.insertAdjacentElement('afterend', createEl);
+            //       target.lastCall[index].node.remove();
+            //     } else {
+            //       target.lastCall[target.lastCall.length - 1].node.insertAdjacentElement('afterend', createEl);
+            //     }
+            //     //target.lastCall[target.lastCall.length - 1].node.remove();
+            //     return {
+            //       ...el,
+            //       node: createEl,
+            //     };
+            //   });
+
+            //   if (target.lastCall.length > newAr.length) {
+            //     for(let i = newAr.length - 1 ;i !== target.lastCall.length; i++) {
+            //       target.lastCall[i].node.remove();
+            //     }
+            //   }
+
+            //   target.lastCall = newAr;
+            // }
+
+            // if (p.type === "object") {
+            //   let newObj = builder(() => newFunction);
+            //   const node  = createNodeRebuild(null, newObj);
+            //   console.log(node);
+            //   target.lastCall = node;
+            //   // p.value.node.appendChild(node);
+            //   //p.parentNode.remove();
+            //   //p.parentNode = node;
+            //   // p.parent = target.parent.map((el) => {
+            //   //   el.node.insertAdjacentElement('afterend', node);
+            //   //   el.node.remove();
+            //   //   return node;
+            //   // });
+            // }
           });
         }
 
@@ -73,6 +122,5 @@ export function effect(callback, dependency = []) {
       })
     }
   });
-
   return proxy;
 }

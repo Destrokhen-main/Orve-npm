@@ -9,7 +9,7 @@ import { validateChildFunction, validatorChild } from "./child";
 
 
 const SUPPORTED_VARIABLES = ["tag", "props", "child"];
-const validatorMainNode = (node) => {
+const validatorMainNode = function(node) {
   // check unsupported object variables
   Object.keys(node).forEach((key) => {
     if (!SUPPORTED_VARIABLES.includes(key)) error(`${key} - ${errorMessage.useUnsupportedVariables}`);
@@ -28,14 +28,14 @@ const validatorMainNode = (node) => {
 }
 
 const CORRECT_ANSWER = ["array", "string", "object", "number", "proxy"];
-const validateFunctionAnswer = (res, index) => {
+const validateFunctionAnswer = function(res, index) {
   if (res === undefined) error(`${res} | номер в массиве: ${index} - ${errorMessage.functionReturnUndefinedOrNull}`);
   const type = typeOf(res);
   if (!CORRECT_ANSWER.includes(type)) error(`${res} | номер в массиве: ${index} - ${errorMessage.functionReturnIncorrectData}`)
 }
 
 const TAG_TYPE_NODE = ["string", "function"];
-const validatorTagNode = (node) => {
+const validatorTagNode = function(node) {
   Object.keys(node).forEach((key) => {
     if (!SUPPORTED_VARIABLES.includes(key)) error(`${key} - ${errorMessage.useUnsupportedVariables}`);
   });

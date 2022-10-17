@@ -2,7 +2,7 @@ import error from "../error/error";
 
 import { createNode } from "./createNode";
 
-export default (query : string) => {
+export default function(query : string){
   const APP : HTMLElement = document.querySelector(query);
   const node = window.sReactDOM;
 

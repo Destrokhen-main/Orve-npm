@@ -11,7 +11,7 @@ const HTML_TAG = ["br","hr"];
 
 
 
-const recursiveCheckFunctionAnswer = (node) => {
+const recursiveCheckFunctionAnswer = function(node) {
   let haveDop = false;
   let functionObject = {};
 
@@ -42,7 +42,7 @@ const recursiveCheckFunctionAnswer = (node) => {
   return completeFunction;
 }
 
-const recursiveChild = (nodeProps = null, nodeChilds) => {
+const recursiveChild = function(nodeProps = null, nodeChilds) {
   if (
     nodeChilds !== undefined &&
     typeOf(nodeChilds) === "array" &&

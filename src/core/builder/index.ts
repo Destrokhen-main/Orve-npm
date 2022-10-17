@@ -14,7 +14,7 @@ interface Props {
   children?: Array<Node>
 }
 
-const recursive = (node: Node) => {
+const recursive = function(node: Node) {
   let haveDop = false;
   let propsCh : Props = {};
 
@@ -47,7 +47,7 @@ const recursive = (node: Node) => {
   return fTag;
 }
 
-export const builder = (app: () => Node) : VNode => {
+export const builder = function(app: () => Node) : VNode {
   if (typeOf(app) !== "function") error(`${app} - ${errorMessage.appNotAFunction}`);
   
   let mainNode : VNode = app();

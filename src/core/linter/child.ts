@@ -4,14 +4,14 @@ import errorMessage from "../error/errorMessage.js";
 
 const SUPPORTED_CHILD_RESULT = ["string", "object", "array"];
 
-const validateChildFunction = (res, index) => {
+const validateChildFunction = function(res, index) {
   const typeResult = typeOf(res);
   if (!SUPPORTED_CHILD_RESULT.includes(typeResult)) error(`${res} | номер в массиве: ${index} - ${errorMessage.unsupportedTagC}`);
   return typeResult;
 }
 
 const SUPPORTED_TYPE_CHILDREN = ["function", "string", "proxy", "object", "number"];
-const validatorChild = (childs) => {
+const validatorChild = function(childs) {
   childs = childs.flat(1);
   if (typeOf(childs) !== "array") error(`${childs} - ${errorMessage.childNotArray}`);
 
