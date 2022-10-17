@@ -23,7 +23,7 @@ function default_1(_a) {
     };
     return {
         mount: function (query) {
-            window.sReact.sReactDOM = (0, index_2.default)(query);
+            window.sReact.sReactDOM = (0, index_2.mount)(query);
         }
     };
 }

@@ -7,7 +7,7 @@ declare global {
 import { CreateApp } from "./tsType";
 
 import { builder } from "./builder/index";
-import mount from "./mount/index";
+import { mount } from "./mount/index";
 import { Node } from "./tsType";
 import { createObjectContext } from "./helper";
 
