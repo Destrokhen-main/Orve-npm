@@ -4,7 +4,7 @@ var error_1 = require("../error/error");
 var createNode_1 = require("./createNode");
 function default_1(query) {
     var APP = document.querySelector(query);
-    var node = window.sReactDOM;
+    var node = window.sReact.sReactDOM;
     if (APP === null)
         (0, error_1.default)("Не смог найти tag " + query);
     return (0, createNode_1.createNode)(APP, node);

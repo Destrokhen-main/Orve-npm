@@ -42,7 +42,7 @@ export const refC = function(component: any) {
 
         if (prop === "value") {
           if (target.parent.length > 0) {
-            let newObj = builder.bind(window.sReactContext)(comp);
+            let newObj = builder.bind(window.sReact.sReactContext)(comp);
             const object  = createNodeRebuild(null, newObj);
             target.parent = target.parent.map((el) => {
               el.insertAdjacentElement('afterend', object);

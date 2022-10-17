@@ -15,7 +15,21 @@ const typeOf = function(obj: any) {
   return type;
 }
 
+const createObjectContext = function(app) {
+  const Context = {};
+  Object.keys(app).forEach((e) => {
+    Object.keys(app[e]).forEach((l) => {
+      if (l.startsWith("$"))
+        Context[l] = app[e][l];
+      else
+        Context[`$${l}`] = app[e][l];
+    })
+  });
+  return Context;
+}
+
 export {
   isProxy,
   typeOf,
+  createObjectContext
 }

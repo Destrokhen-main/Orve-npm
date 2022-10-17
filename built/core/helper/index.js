@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.typeOf = exports.isProxy = void 0;
+exports.createObjectContext = exports.typeOf = exports.isProxy = void 0;
 var isProxy = function (obj) {
     return obj.type === "proxy" ? true : false;
 };
@@ -19,3 +19,16 @@ var typeOf = function (obj) {
     return type;
 };
 exports.typeOf = typeOf;
+var createObjectContext = function (app) {
+    var Context = {};
+    Object.keys(app).forEach(function (e) {
+        Object.keys(app[e]).forEach(function (l) {
+            if (l.startsWith("$"))
+                Context[l] = app[e][l];
+            else
+                Context["$".concat(l)] = app[e][l];
+        });
+    });
+    return Context;
+};
+exports.createObjectContext = createObjectContext;

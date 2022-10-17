@@ -4,7 +4,7 @@ import { createNode } from "./createNode";
 
 export default function(query : string){
   const APP : HTMLElement = document.querySelector(query);
-  const node = window.sReactDOM;
+  const node = window.sReact.sReactDOM;
 
   if (APP === null)
     error("Не смог найти tag " + query);

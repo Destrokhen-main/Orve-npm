@@ -41,7 +41,7 @@ var refC = function (component) {
                 target[prop] = value;
                 if (prop === "value") {
                     if (target.parent.length > 0) {
-                        var newObj = index_1.builder.bind(window.sReactContext)(comp_1);
+                        var newObj = index_1.builder.bind(window.sReact.sReactContext)(comp_1);
                         var object_1 = (0, rebiuld_1.createNodeRebuild)(null, newObj);
                         target.parent = target.parent.map(function (el) {
                             el.insertAdjacentElement('afterend', object_1);

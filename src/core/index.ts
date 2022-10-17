@@ -1,7 +1,6 @@
 declare global {
   interface Window {
-    sReactDOM : any;
-    sReactContext: any;
+    sReact: any
   }
 }
 
@@ -10,22 +9,17 @@ import { CreateApp } from "./tsType";
 import { builder } from "./builder/index";
 import mount from "./mount/index";
 import { Node } from "./tsType";
+import { createObjectContext } from "./helper";
 
-export default function ({App, ...app}: {App:() => Node}): CreateApp {
-  const Context = {};
-  Object.keys(app).forEach((e) => {
-    Object.keys(app[e]).forEach((l) => {
-      if (l.startsWith("$"))
-        Context[l] = app[e][l];
-      else
-        Context[`$${l}`] = app[e][l];
-    })
-  })
-  window.sReactContext = Context;
-  window.sReactDOM = builder.bind(Context)(App);
+export default function ({ App, ...all } : { App:() => Node }): CreateApp {
+  const Context = createObjectContext(all);
+  window.sReact = {
+    sReactContext: Context,
+    sReactDOM: builder.bind(Context)(App)
+  }
   return {
     mount: function(query: string){
-      window.sReactDOM = mount(query);
+      window.sReact.sReactDOM = mount(query);
     }
   };
 };
