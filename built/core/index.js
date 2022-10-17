@@ -18,9 +18,13 @@ function default_1(_a) {
     var Context = {};
     Object.keys(app).forEach(function (e) {
         Object.keys(app[e]).forEach(function (l) {
-            Context[l] = app[e][l];
+            if (l.startsWith("$"))
+                Context[l] = app[e][l];
+            else
+                Context["$".concat(l)] = app[e][l];
         });
     });
+    window.sReactContext = Context;
     window.sReactDOM = index_1.builder.bind(Context)(App);
     return {
         mount: function (query) {

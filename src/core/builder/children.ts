@@ -4,7 +4,7 @@ import { Type } from "../tsType/type";
 import error from "../error/error";
 import TYPE_MESSAGE from "../error/errorMessage";
 import { ProxyType } from "../tsType/type";
-import { builder } from "../builder/index.js";
+import { builder } from "../builder/index";
 
 const recursiveCheckFunctionAnswer = function(node) {
   let haveDop = false;
@@ -76,7 +76,7 @@ const recursiveChild = function(nodeProps = null, nodeChilds) {
           const nodeTag = recursiveCheckFunctionAnswer.bind(this)(child);
 
           if (nodeTag["child"] !== undefined)
-            nodeTag["child"] = recursiveChild(nodeTag["props"], nodeTag["child"]);
+            nodeTag["child"] = recursiveChild.bind(this)(nodeTag["props"], nodeTag["child"]);
 
           return {
             type: Type.Layer,
@@ -85,7 +85,7 @@ const recursiveChild = function(nodeProps = null, nodeChilds) {
           }
         } else {
           if (child["child"] !== undefined)
-            child["child"] = recursiveChild(child["props"], child["child"]);
+            child["child"] = recursiveChild.bind(this)(child["props"], child["child"]);
         }
 
         return {
@@ -102,11 +102,11 @@ const recursiveChild = function(nodeProps = null, nodeChilds) {
           validatorTagNode(completeFunction);
 
           if (typeof completeFunction["tag"] === "function") {
-            completeFunction = recursiveCheckFunctionAnswer(completeFunction);
+            completeFunction = recursiveCheckFunctionAnswer.bind(this)(completeFunction);
           }
 
           if (completeFunction["child"] !== undefined)
-            completeFunction["child"] = recursiveChild(completeFunction["props"], completeFunction["child"]);
+            completeFunction["child"] = recursiveChild.bind(this)(completeFunction["props"], completeFunction["child"]);
 
           return {
             type: Type.ComponentMutable,
@@ -137,10 +137,10 @@ const recursiveChild = function(nodeProps = null, nodeChilds) {
         }
 
         if (typeProxy === ProxyType.proxyComponent) {
-          let result = builder(child.value);
+          let result = builder.bind(this)(child.value);
 
           if (typeof result["tag"] === "function") {
-            result = recursiveCheckFunctionAnswer(result);
+            result = recursiveCheckFunctionAnswer.bind(this)(result);
           }
 
           return {

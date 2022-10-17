@@ -1,6 +1,7 @@
 declare global {
   interface Window {
     sReactDOM : any;
+    sReactContext: any;
   }
 }
 
@@ -14,10 +15,13 @@ export default function ({App, ...app}: {App:() => Node}): CreateApp {
   const Context = {};
   Object.keys(app).forEach((e) => {
     Object.keys(app[e]).forEach((l) => {
-      Context[l] = app[e][l];
+      if (l.startsWith("$"))
+        Context[l] = app[e][l];
+      else
+        Context[`$${l}`] = app[e][l];
     })
   })
-
+  window.sReactContext = Context;
   window.sReactDOM = builder.bind(Context)(App);
   return {
     mount: function(query: string){

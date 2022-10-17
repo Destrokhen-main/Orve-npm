@@ -17,7 +17,7 @@ var type_1 = require("../tsType/type");
 var error_1 = require("../error/error");
 var errorMessage_1 = require("../error/errorMessage");
 var type_2 = require("../tsType/type");
-var index_js_1 = require("../builder/index.js");
+var index_3 = require("../builder/index");
 var recursiveCheckFunctionAnswer = function (node) {
     var haveDop = false;
     var functionObject = {};
@@ -72,7 +72,7 @@ var recursiveChild = function (nodeProps, nodeChilds) {
                 if (typeof child["tag"] === "function") {
                     var nodeTag = recursiveCheckFunctionAnswer.bind(_this)(child);
                     if (nodeTag["child"] !== undefined)
-                        nodeTag["child"] = recursiveChild(nodeTag["props"], nodeTag["child"]);
+                        nodeTag["child"] = recursiveChild.bind(_this)(nodeTag["props"], nodeTag["child"]);
                     return {
                         type: type_1.Type.Layer,
                         value: nodeTag,
@@ -81,7 +81,7 @@ var recursiveChild = function (nodeProps, nodeChilds) {
                 }
                 else {
                     if (child["child"] !== undefined)
-                        child["child"] = recursiveChild(child["props"], child["child"]);
+                        child["child"] = recursiveChild.bind(_this)(child["props"], child["child"]);
                 }
                 return {
                     type: type_1.Type.Component,
@@ -95,10 +95,10 @@ var recursiveChild = function (nodeProps, nodeChilds) {
                 if (typeCompleteFunction === "object") {
                     (0, index_2.validatorTagNode)(completeFunction);
                     if (typeof completeFunction["tag"] === "function") {
-                        completeFunction = recursiveCheckFunctionAnswer(completeFunction);
+                        completeFunction = recursiveCheckFunctionAnswer.bind(_this)(completeFunction);
                     }
                     if (completeFunction["child"] !== undefined)
-                        completeFunction["child"] = recursiveChild(completeFunction["props"], completeFunction["child"]);
+                        completeFunction["child"] = recursiveChild.bind(_this)(completeFunction["props"], completeFunction["child"]);
                     return {
                         type: type_1.Type.ComponentMutable,
                         value: completeFunction,
@@ -123,9 +123,9 @@ var recursiveChild = function (nodeProps, nodeChilds) {
                     };
                 }
                 if (typeProxy === type_2.ProxyType.proxyComponent) {
-                    var result = (0, index_js_1.builder)(child.value);
+                    var result = index_3.builder.bind(_this)(child.value);
                     if (typeof result["tag"] === "function") {
-                        result = recursiveCheckFunctionAnswer(result);
+                        result = recursiveCheckFunctionAnswer.bind(_this)(result);
                     }
                     return {
                         type: type_1.Type.ProxyComponent,
