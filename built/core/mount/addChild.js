@@ -17,7 +17,7 @@ var addChild = function (app, child, callback) {
         if (ch.type === type_1.Type.Component ||
             ch.type === type_1.Type.ComponentMutable ||
             ch.type === type_1.Type.Layer) {
-            return callback(app, ch.value, ch.type);
+            return callback(app, ch.value);
         }
         if (ch.type === type_1.Type.Proxy) {
             var el = document.createTextNode(ch.value);

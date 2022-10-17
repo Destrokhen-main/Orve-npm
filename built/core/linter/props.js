@@ -7,20 +7,23 @@ var CORRECT_PROPS_FUNCTION = ["string", "proxy", "number"];
 var error_1 = require("../error/error");
 var errorMessage_1 = require("../error/errorMessage");
 var validatorProps = function (props) {
-    if ((0, index_js_1.typeOf)(props) !== "object")
+    if ((0, index_js_1.typeOf)(props) !== "object") {
         (0, error_1.default)(errorMessage_1.default.propsNotAObject);
+    }
     // check all variables in object props
     Object.keys(props).forEach(function (key) {
         var value = props[key];
         // this is event function
         if (key.startsWith("@")) {
-            if ((0, index_js_1.typeOf)(value) !== "function")
+            if ((0, index_js_1.typeOf)(value) !== "function") {
                 (0, error_1.default)("".concat(key, " - ").concat(errorMessage_1.default.eventNotAFunction));
+            }
         }
         if ((0, index_js_1.typeOf)(value) === "object") {
             if (key === "src") {
-                if (value["__esModule"] !== undefined && value["default"] === undefined)
+                if (value["__esModule"] !== undefined && value["default"] === undefined) {
                     (0, error_1.default)("".concat(key, " - ").concat(errorMessage_1.default.incorrectPropsValue));
+                }
             }
         }
         else if (!SUPPORTED_TYPE_PROPS.includes((0, index_js_1.typeOf)(value))) {

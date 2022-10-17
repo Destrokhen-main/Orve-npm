@@ -15,12 +15,15 @@ exports.validateChildFunction = validateChildFunction;
 var SUPPORTED_TYPE_CHILDREN = ["function", "string", "proxy", "object", "number"];
 var validatorChild = function (childs) {
     childs = childs.flat(1);
-    if ((0, index_1.typeOf)(childs) !== "array")
+    if ((0, index_1.typeOf)(childs) !== "array") {
         (0, error_1.default)("".concat(childs, " - ").concat(errorMessage_js_1.default.childNotArray));
-    if (childs.length > 0)
+    }
+    if (childs.length > 0) {
         childs.forEach(function (child) {
-            if (!SUPPORTED_TYPE_CHILDREN.includes((0, index_1.typeOf)(child)))
+            if (!SUPPORTED_TYPE_CHILDREN.includes((0, index_1.typeOf)(child))) {
                 (0, error_1.default)("".concat((0, index_1.typeOf)(child), " - ").concat(errorMessage_js_1.default.unsupportedTagC));
+            }
         });
+    }
 };
 exports.validatorChild = validatorChild;

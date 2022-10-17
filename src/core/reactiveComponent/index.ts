@@ -20,8 +20,12 @@ export const refC = function(component: any) {
 
   return new Proxy(object, {
     get(target, prop) {
-      if (prop === "type") return "proxy";
-      if (prop === "typeProxy") return ProxyType.proxyComponent;
+      if (prop === "type") {
+        return "proxy";
+      }
+      if (prop === "typeProxy") {
+        return ProxyType.proxyComponent;
+      }
       if (prop in target) {
         return target[prop];
       }

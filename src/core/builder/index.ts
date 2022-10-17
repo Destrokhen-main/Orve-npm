@@ -48,21 +48,28 @@ const recursive = function(node: Node) {
 }
 
 export const builder = function(app: () => Node) : VNode {
-  if (typeOf(app) !== "function") error(`${app} - ${errorMessage.appNotAFunction}`);
+  if (typeOf(app) !== "function") {
+    error(`${app} - ${errorMessage.appNotAFunction}`);
+  }
+
   let mainNode : any = app.bind(this)();
-  if (typeOf(mainNode) !== "object") error(`${mainNode} - ${errorMessage.resultCallNotAObject}`);
+
+  if (typeOf(mainNode) !== "object") {
+    error(`${mainNode} - ${errorMessage.resultCallNotAObject}`);
+  }
   
   if (typeOf(mainNode["child"]) !== "array") {
     mainNode["child"] = [mainNode["child"]];
   }
 
   // check mainNode
-  validatorMainNode.bind(this)(mainNode);
+  validatorMainNode(mainNode);
 
   // if tag have function
   if (typeof mainNode["tag"] === "function") {
     mainNode = recursive.bind(this)(mainNode);
   }
+  
   mainNode["type"] = Type.Component;
   let { props, child } = mainNode;
 

@@ -7,13 +7,12 @@ const cNodes = function(app: HTMLElement | null, node: any) {
   node["node"] = Tag;
 
   if (props !== undefined && Object.keys(props).length > 0) {
-    addProps(Tag, props, node);
+    addProps(Tag, props);
   }
   if (child !== undefined && child.length > 0) {
     node["child"] = addChild(Tag, child, cNodes);
   }
   if (app === null) return Tag;
-
   app.appendChild(Tag);
   return node;
 }

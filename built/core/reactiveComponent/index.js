@@ -19,10 +19,12 @@ var refC = function (component) {
     };
     return new Proxy(object, {
         get: function (target, prop) {
-            if (prop === "type")
+            if (prop === "type") {
                 return "proxy";
-            if (prop === "typeProxy")
+            }
+            if (prop === "typeProxy") {
                 return type_1.ProxyType.proxyComponent;
+            }
             if (prop in target) {
                 return target[prop];
             }

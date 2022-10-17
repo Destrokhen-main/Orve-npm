@@ -32,16 +32,18 @@ var recursive = function (node) {
     return fTag;
 };
 var builder = function (app) {
-    if ((0, index_2.typeOf)(app) !== "function")
+    if ((0, index_2.typeOf)(app) !== "function") {
         (0, error_1.default)("".concat(app, " - ").concat(errorMessage_1.default.appNotAFunction));
+    }
     var mainNode = app.bind(this)();
-    if ((0, index_2.typeOf)(mainNode) !== "object")
+    if ((0, index_2.typeOf)(mainNode) !== "object") {
         (0, error_1.default)("".concat(mainNode, " - ").concat(errorMessage_1.default.resultCallNotAObject));
+    }
     if ((0, index_2.typeOf)(mainNode["child"]) !== "array") {
         mainNode["child"] = [mainNode["child"]];
     }
     // check mainNode
-    index_1.validatorMainNode.bind(this)(mainNode);
+    (0, index_1.validatorMainNode)(mainNode);
     // if tag have function
     if (typeof mainNode["tag"] === "function") {
         mainNode = recursive.bind(this)(mainNode);

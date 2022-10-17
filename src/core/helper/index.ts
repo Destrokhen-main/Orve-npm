@@ -15,7 +15,7 @@ const typeOf = function(obj: any) {
   return type;
 }
 
-const createObjectContext = function(app) {
+const createObjectContext = function(app: object) : object {
   const Context = {};
   Object.keys(app).forEach((e) => {
     Object.keys(app[e]).forEach((l) => {

@@ -4,7 +4,7 @@ exports.addProps = void 0;
 var index_js_1 = require("../linter/index.js");
 var toStyleString = require('to-style').string;
 var index_js_2 = require("../helper/index.js");
-var addProps = function (tag, props, node) {
+var addProps = function (tag, props) {
     Object.keys(props).forEach(function (pr) {
         if (pr === "src") {
             // check for function
@@ -13,7 +13,7 @@ var addProps = function (tag, props, node) {
         }
         else if (pr.startsWith("@")) {
             var name_1 = pr.replace("@", "").trim();
-            var func = props[pr].bind(node);
+            var func = props[pr].bind(window.sReact.sReactContext);
             tag.addEventListener(name_1, func);
         }
         else if (pr === "style") {
@@ -38,8 +38,7 @@ var addProps = function (tag, props, node) {
         }
         else {
             if ((0, index_js_2.typeOf)(props[pr]) === "function") {
-                var func = props[pr].bind(node);
-                var parsedProp = func();
+                var parsedProp = props[pr].bind(window.sReact.sReactContext)();
                 (0, index_js_1.validSingleProps)(parsedProp, pr);
                 tag.setAttribute(pr, parsedProp);
             }

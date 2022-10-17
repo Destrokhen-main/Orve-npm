@@ -13,12 +13,14 @@ import { createObjectContext } from "./helper";
 
 export default function ({ App, ...all } : { App:() => Node }): CreateApp {
   const Context = createObjectContext(all);
+  
   window.sReact = {
     sReactContext: Context,
     sReactDOM: builder.bind(Context)(App)
   }
+  
   return {
-    mount: function(query: string){
+    mount: function(query: string) {
       window.sReact.sReactDOM = mount(query);
     }
   };

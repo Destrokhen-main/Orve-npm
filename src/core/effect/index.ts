@@ -1,9 +1,6 @@
 import error from "../error/error.js";
 import { typeOf } from "../helper/index.js";
 import { ProxyType } from "../tsType/type";
-import recursiveChild from "../builder/children";
-import { createNodeRebuild } from "../mount/rebiuld";
-import { builder } from "../builder/index"
 
 export function effect(callback, dependency = []) {
   if (typeof callback !== "function") {
@@ -24,8 +21,12 @@ export function effect(callback, dependency = []) {
 
   const proxy = new Proxy(object, {
     get(target, prop) {
-      if (prop === "type") return "proxy";
-      if (prop === "typeProxy") return ProxyType.proxyEffect;
+      if (prop === "type") { 
+        return "proxy"; 
+      }
+      if (prop === "typeProxy") { 
+        return ProxyType.proxyEffect;
+      }
 
       if (prop === "refresh") {
         const newFunction = target["function"]();

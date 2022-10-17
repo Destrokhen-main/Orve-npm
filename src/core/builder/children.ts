@@ -5,6 +5,7 @@ import error from "../error/error";
 import TYPE_MESSAGE from "../error/errorMessage";
 import { ProxyType } from "../tsType/type";
 import { builder } from "../builder/index";
+import { Node } from "../tsType/index";
 
 const recursiveCheckFunctionAnswer = function(node) {
   let haveDop = false;
@@ -22,12 +23,14 @@ const recursiveCheckFunctionAnswer = function(node) {
     haveDop = true;
   }
 
-  const completeFunction = haveDop ? node["tag"].bind(this)({
-    ...functionObject
-  }) : node["tag"].bind(this)();
+  const completeFunction = haveDop
+                            ? node["tag"].bind(this)({ ...functionObject })
+                            : node["tag"].bind(this)();
+
   const typeCompleteFunction = typeOf(completeFunction);
+  
   if (typeCompleteFunction !== "object") {
-    error(`error  ${TYPE_MESSAGE.functionInTagReturn}`);
+    error(`error ${TYPE_MESSAGE.functionInTagReturn}`);
   }
 
   if (typeof completeFunction["tag"] === "function") {
@@ -37,7 +40,7 @@ const recursiveCheckFunctionAnswer = function(node) {
   return completeFunction;
 }
 
-const recursiveChild = function(nodeProps = null, nodeChilds) {
+const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
   if (
     nodeChilds !== undefined &&
     typeOf(nodeChilds) === "array" &&
@@ -45,40 +48,33 @@ const recursiveChild = function(nodeProps = null, nodeChilds) {
   ) {
     nodeChilds = nodeChilds.flat(1);
 
-    return nodeChilds.map((child, index) => {
+    return nodeChilds.map((child: any, index: number) => {
       const typeChild = typeOf(child);
 
-      // <hr /> <br />
-      if (typeChild === "string") {
-        if (child.startsWith("<") && child.endsWith(">")) {
-          //const parsedTag = child.replace(/[<,>,\/]/gm, "").trim();
-          //if (HTML_TAG.includes(parsedTag)) {
-          return {
-            type: Type.HTMLCode,
-            value: child,
-          }
-          //}
-        }
-      }
-
-      // string and number
       if (typeChild === "string" || typeChild === "number") {
         return {
-          type: Type.NotMutable,
-          value: child
+          type: typeChild === "number" 
+                  ? Type.NotMutable
+                  : child.startsWith("<") && child.endsWith(">")
+                    ? Type.HTMLCode
+                    : Type.NotMutable,
+          value: child,
         }
       }
 
       if (typeChild === "object") {
-        if (typeOf(child["child"]) !== "array")
+        if (typeOf(child["child"]) !== "array") {
           child["child"] = [child["child"]];
+        }
+
         validatorTagNode(child);
 
         if(typeof child["tag"] === "function") {
           const nodeTag = recursiveCheckFunctionAnswer.bind(this)(child);
 
-          if (nodeTag["child"] !== undefined)
+          if (nodeTag["child"] !== undefined) {
             nodeTag["child"] = recursiveChild.bind(this)(nodeTag["props"], nodeTag["child"]);
+          }
 
           return {
             type: Type.Layer,
@@ -86,8 +82,9 @@ const recursiveChild = function(nodeProps = null, nodeChilds) {
             parent: child,
           }
         } else {
-          if (child["child"] !== undefined)
+          if (child["child"] !== undefined) {
             child["child"] = recursiveChild.bind(this)(child["props"], child["child"]);
+          }
         }
 
         return {
@@ -97,20 +94,27 @@ const recursiveChild = function(nodeProps = null, nodeChilds) {
       }
 
       if (typeChild === "function") {
-        let completeFunction = nodeProps !== undefined ? child.bind(this)(nodeProps) : child.bind(this)();
+        let completeFunction = nodeProps !== undefined
+                                ? child.bind(this)(nodeProps)
+                                : child.bind(this)();
+        
         const typeCompleteFunction = typeOf(completeFunction);
         validateFunctionAnswer(completeFunction, index);
+
         if (typeCompleteFunction === "object") {
-          if (typeOf(completeFunction["child"]) !== "array")
+          if (completeFunction["child"] !== undefined && typeOf(completeFunction["child"]) !== "array") {
             completeFunction["child"] = [completeFunction["child"]]
+          }
+
           validatorTagNode(completeFunction);
 
           if (typeof completeFunction["tag"] === "function") {
             completeFunction = recursiveCheckFunctionAnswer.bind(this)(completeFunction);
           }
 
-          if (completeFunction["child"] !== undefined)
+          if (completeFunction["child"] !== undefined) {
             completeFunction["child"] = recursiveChild.bind(this)(completeFunction["props"], completeFunction["child"]);
+          }
 
           return {
             type: Type.ComponentMutable,

@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("../../helper/index");
+var type_1 = require("../../tsType/type");
 function default_1(app, ch, callback) {
     var type = (0, index_1.typeOf)(ch.value);
     if (type === "string" || type === "number") {
@@ -17,7 +18,7 @@ function default_1(app, ch, callback) {
         // NOTE need valid
         var el = callback(app, ch.value);
         ch.proxy.parent.push({
-            type: "component",
+            type: type_1.Type.Component,
             value: el
         });
         return el;

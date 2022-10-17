@@ -2,7 +2,7 @@ import { validSingleProps } from "../linter/index.js";
 const toStyleString = require('to-style').string;
 import { typeOf } from "../helper/index.js";
 
-export const addProps = function(tag: HTMLElement, props : any, node :any) {
+export const addProps = function(tag: HTMLElement, props : object) {
   Object.keys(props).forEach((pr) => {
     if (pr === "src") {
       // check for function
@@ -10,11 +10,11 @@ export const addProps = function(tag: HTMLElement, props : any, node :any) {
       tag.setAttribute(pr, props[pr].default);
     } else if (pr.startsWith("@")) {
       const name = pr.replace("@", "").trim();
-      const func = props[pr].bind(node);
+      const func = props[pr].bind(window.sReact.sReactContext);
       tag.addEventListener(name, func);
     } else if (pr === "style") {
       // check for function
-      let sheet;
+      let sheet: string;
       if (typeOf(props[pr]) === "string") {
         sheet = props[pr];
       } else {
@@ -31,8 +31,7 @@ export const addProps = function(tag: HTMLElement, props : any, node :any) {
       })
     } else  {
       if (typeOf(props[pr]) === "function") {
-        const func = props[pr].bind(node);
-        const parsedProp = func();
+        const parsedProp = props[pr].bind(window.sReact.sReactContext)();
         validSingleProps(parsedProp, pr);
         tag.setAttribute(pr, parsedProp);
       } else {

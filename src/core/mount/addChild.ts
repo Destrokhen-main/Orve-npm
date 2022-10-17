@@ -22,7 +22,7 @@ export const addChild = function(app : HTMLElement, child : Array<VNode>, callba
       ch.type === Type.ComponentMutable ||
       ch.type === Type.Layer
     ) {
-      return callback(app, ch.value, ch.type);
+      return callback(app, ch.value);
     }
 
     if (ch.type === Type.Proxy) {

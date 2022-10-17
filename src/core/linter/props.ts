@@ -5,8 +5,10 @@ const CORRECT_PROPS_FUNCTION = ["string", "proxy", "number"];
 import error from "../error/error";
 import errorMessage from "../error/errorMessage";
 
-const validatorProps = function(props) {
-  if (typeOf(props) !== "object") error(errorMessage.propsNotAObject);
+const validatorProps = function(props: object) {
+  if (typeOf(props) !== "object") {
+    error(errorMessage.propsNotAObject);
+  }
 
   // check all variables in object props
   Object.keys(props).forEach((key) => {
@@ -15,12 +17,15 @@ const validatorProps = function(props) {
 
     // this is event function
     if (key.startsWith("@")) {
-      if (typeOf(value) !== "function") error(`${key} - ${errorMessage.eventNotAFunction}`);
+      if (typeOf(value) !== "function") {
+        error(`${key} - ${errorMessage.eventNotAFunction}`);
+      }
     }
     if (typeOf(value) === "object") {
       if (key === "src") {
-        if (value["__esModule"] !== undefined && value["default"] === undefined)
+        if (value["__esModule"] !== undefined && value["default"] === undefined) {
           error(`${key} - ${errorMessage.incorrectPropsValue}`)
+        }
       } 
     } else if (!SUPPORTED_TYPE_PROPS.includes(typeOf(value))) {
       error(`${key} выдал ${value} - ${errorMessage.incorrectPropsValue}`);
@@ -28,7 +33,7 @@ const validatorProps = function(props) {
   });
 }
 
-const validSingleProps = function(prop, pr) {
+const validSingleProps = function(prop: any, pr: string) {
   if (!CORRECT_PROPS_FUNCTION.includes(typeOf(prop)))
     error(`${pr} - ${errorMessage.incorrectPropsValue}`);
 }

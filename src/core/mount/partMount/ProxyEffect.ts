@@ -1,4 +1,5 @@
 import { typeOf } from "../../helper/index";
+import { Type } from "../../tsType/type"
 
 export default function(app : HTMLElement, ch: any, callback: any) {
   const type = typeOf(ch.value);
@@ -15,7 +16,7 @@ export default function(app : HTMLElement, ch: any, callback: any) {
     // NOTE need valid
     const el = callback(app, ch.value);
     ch.proxy.parent.push({
-      type: "component",
+      type: Type.Component,
       value: el
     });
     return el;
