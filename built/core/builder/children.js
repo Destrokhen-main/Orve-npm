@@ -18,7 +18,6 @@ var error_1 = require("../error/error");
 var errorMessage_1 = require("../error/errorMessage");
 var type_2 = require("../tsType/type");
 var index_js_1 = require("../builder/index.js");
-var HTML_TAG = ["br", "hr"];
 var recursiveCheckFunctionAnswer = function (node) {
     var haveDop = false;
     var functionObject = {};
@@ -30,17 +29,18 @@ var recursiveCheckFunctionAnswer = function (node) {
         functionObject["children"] = node['child'];
         haveDop = true;
     }
-    var completeFunction = haveDop ? node["tag"](__assign({}, functionObject)) : node["tag"]();
+    var completeFunction = haveDop ? node["tag"].bind(this)(__assign({}, functionObject)) : node["tag"].bind(this)();
     var typeCompleteFunction = (0, index_1.typeOf)(completeFunction);
     if (typeCompleteFunction !== "object") {
         (0, error_1.default)("error  ".concat(errorMessage_1.default.functionInTagReturn));
     }
     if (typeof completeFunction["tag"] === "function") {
-        return recursiveCheckFunctionAnswer(completeFunction);
+        return recursiveCheckFunctionAnswer.bind(this)(completeFunction);
     }
     return completeFunction;
 };
 var recursiveChild = function (nodeProps, nodeChilds) {
+    var _this = this;
     if (nodeProps === void 0) { nodeProps = null; }
     if (nodeChilds !== undefined &&
         (0, index_1.typeOf)(nodeChilds) === "array" &&
@@ -70,7 +70,7 @@ var recursiveChild = function (nodeProps, nodeChilds) {
             if (typeChild === "object") {
                 (0, index_2.validatorTagNode)(child);
                 if (typeof child["tag"] === "function") {
-                    var nodeTag = recursiveCheckFunctionAnswer(child);
+                    var nodeTag = recursiveCheckFunctionAnswer.bind(_this)(child);
                     if (nodeTag["child"] !== undefined)
                         nodeTag["child"] = recursiveChild(nodeTag["props"], nodeTag["child"]);
                     return {
@@ -89,7 +89,7 @@ var recursiveChild = function (nodeProps, nodeChilds) {
                 };
             }
             if (typeChild === "function") {
-                var completeFunction = nodeProps !== undefined ? child(nodeProps) : child();
+                var completeFunction = nodeProps !== undefined ? child.bind(_this)(nodeProps) : child.bind(_this)();
                 var typeCompleteFunction = (0, index_1.typeOf)(completeFunction);
                 (0, index_2.validateFunctionAnswer)(completeFunction, index);
                 if (typeCompleteFunction === "object") {

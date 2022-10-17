@@ -31,8 +31,8 @@ const recursive = function(node: Node) {
   }
 
   const fTag : any = haveDop 
-    ? tag(propsCh) 
-    : tag();
+    ? tag.bind(this)(propsCh) 
+    : tag.bind(this)();
   
   if (typeOf(fTag) !== "object") {
     error(`rec-func - ${errorMessage.functionInTagReturn}`);
@@ -41,7 +41,7 @@ const recursive = function(node: Node) {
   validatorTagNode(fTag);
 
   if (typeof fTag["tag"] === "function") {
-    return recursive(fTag);
+    return recursive.bind(this)(fTag);
   }
 
   return fTag;
@@ -49,23 +49,21 @@ const recursive = function(node: Node) {
 
 export const builder = function(app: () => Node) : VNode {
   if (typeOf(app) !== "function") error(`${app} - ${errorMessage.appNotAFunction}`);
-  
-  let mainNode : VNode = app();
-
+  let mainNode : any = app.bind(this)();
   if (typeOf(mainNode) !== "object") error(`${mainNode} - ${errorMessage.resultCallNotAObject}`);
   
   // check mainNode
-  validatorMainNode(mainNode);
+  validatorMainNode.bind(this)(mainNode);
 
   // if tag have function
   if (typeof mainNode["tag"] === "function") {
-    mainNode = recursive(mainNode);
+    mainNode = recursive.bind(this)(mainNode);
   }
   mainNode["type"] = Type.Component;
   let { props, child } = mainNode;
 
   if (child !== undefined) {
-    mainNode["child"] = reqChild(props, child);
+    mainNode["child"] = reqChild.bind(this)(props, child);
   }
   return mainNode;
 }

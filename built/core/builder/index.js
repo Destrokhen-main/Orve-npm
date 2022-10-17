@@ -20,33 +20,33 @@ var recursive = function (node) {
         haveDop = true;
     }
     var fTag = haveDop
-        ? tag(propsCh)
-        : tag();
+        ? tag.bind(this)(propsCh)
+        : tag.bind(this)();
     if ((0, index_2.typeOf)(fTag) !== "object") {
         (0, error_1.default)("rec-func - ".concat(errorMessage_1.default.functionInTagReturn));
     }
     (0, index_1.validatorTagNode)(fTag);
     if (typeof fTag["tag"] === "function") {
-        return recursive(fTag);
+        return recursive.bind(this)(fTag);
     }
     return fTag;
 };
 var builder = function (app) {
     if ((0, index_2.typeOf)(app) !== "function")
         (0, error_1.default)("".concat(app, " - ").concat(errorMessage_1.default.appNotAFunction));
-    var mainNode = app();
+    var mainNode = app.bind(this)();
     if ((0, index_2.typeOf)(mainNode) !== "object")
         (0, error_1.default)("".concat(mainNode, " - ").concat(errorMessage_1.default.resultCallNotAObject));
     // check mainNode
-    (0, index_1.validatorMainNode)(mainNode);
+    index_1.validatorMainNode.bind(this)(mainNode);
     // if tag have function
     if (typeof mainNode["tag"] === "function") {
-        mainNode = recursive(mainNode);
+        mainNode = recursive.bind(this)(mainNode);
     }
     mainNode["type"] = type_1.Type.Component;
     var props = mainNode.props, child = mainNode.child;
     if (child !== undefined) {
-        mainNode["child"] = (0, children_1.default)(props, child);
+        mainNode["child"] = children_1.default.bind(this)(props, child);
     }
     return mainNode;
 };

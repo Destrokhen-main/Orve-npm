@@ -5,11 +5,6 @@ import error from "../error/error";
 import TYPE_MESSAGE from "../error/errorMessage";
 import { ProxyType } from "../tsType/type";
 import { builder } from "../builder/index.js";
-import { compileFunction } from "vm";
-
-const HTML_TAG = ["br","hr"];
-
-
 
 const recursiveCheckFunctionAnswer = function(node) {
   let haveDop = false;
@@ -27,16 +22,16 @@ const recursiveCheckFunctionAnswer = function(node) {
     haveDop = true;
   }
 
-  const completeFunction = haveDop ? node["tag"]({
+  const completeFunction = haveDop ? node["tag"].bind(this)({
     ...functionObject
-  }) : node["tag"]();
+  }) : node["tag"].bind(this)();
   const typeCompleteFunction = typeOf(completeFunction);
   if (typeCompleteFunction !== "object") {
     error(`error  ${TYPE_MESSAGE.functionInTagReturn}`);
   }
 
   if (typeof completeFunction["tag"] === "function") {
-    return recursiveCheckFunctionAnswer(completeFunction);
+    return recursiveCheckFunctionAnswer.bind(this)(completeFunction);
   }
 
   return completeFunction;
@@ -78,7 +73,7 @@ const recursiveChild = function(nodeProps = null, nodeChilds) {
         validatorTagNode(child);
 
         if(typeof child["tag"] === "function") {
-          const nodeTag = recursiveCheckFunctionAnswer(child);
+          const nodeTag = recursiveCheckFunctionAnswer.bind(this)(child);
 
           if (nodeTag["child"] !== undefined)
             nodeTag["child"] = recursiveChild(nodeTag["props"], nodeTag["child"]);
@@ -100,7 +95,7 @@ const recursiveChild = function(nodeProps = null, nodeChilds) {
       }
 
       if (typeChild === "function") {
-        let completeFunction = nodeProps !== undefined ? child(nodeProps) : child();
+        let completeFunction = nodeProps !== undefined ? child.bind(this)(nodeProps) : child.bind(this)();
         const typeCompleteFunction = typeOf(completeFunction);
         validateFunctionAnswer(completeFunction, index);
         if (typeCompleteFunction === "object") {
