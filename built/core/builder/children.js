@@ -68,6 +68,8 @@ var recursiveChild = function (nodeProps, nodeChilds) {
                 };
             }
             if (typeChild === "object") {
+                if ((0, index_1.typeOf)(child["child"]) !== "array")
+                    child["child"] = [child["child"]];
                 (0, index_2.validatorTagNode)(child);
                 if (typeof child["tag"] === "function") {
                     var nodeTag = recursiveCheckFunctionAnswer.bind(_this)(child);
@@ -93,6 +95,8 @@ var recursiveChild = function (nodeProps, nodeChilds) {
                 var typeCompleteFunction = (0, index_1.typeOf)(completeFunction);
                 (0, index_2.validateFunctionAnswer)(completeFunction, index);
                 if (typeCompleteFunction === "object") {
+                    if ((0, index_1.typeOf)(completeFunction["child"]) !== "array")
+                        completeFunction["child"] = [completeFunction["child"]];
                     (0, index_2.validatorTagNode)(completeFunction);
                     if (typeof completeFunction["tag"] === "function") {
                         completeFunction = recursiveCheckFunctionAnswer.bind(_this)(completeFunction);

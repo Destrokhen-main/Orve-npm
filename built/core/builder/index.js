@@ -37,6 +37,9 @@ var builder = function (app) {
     var mainNode = app.bind(this)();
     if ((0, index_2.typeOf)(mainNode) !== "object")
         (0, error_1.default)("".concat(mainNode, " - ").concat(errorMessage_1.default.resultCallNotAObject));
+    if ((0, index_2.typeOf)(mainNode["child"]) !== "array") {
+        mainNode["child"] = [mainNode["child"]];
+    }
     // check mainNode
     index_1.validatorMainNode.bind(this)(mainNode);
     // if tag have function

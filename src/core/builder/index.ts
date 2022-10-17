@@ -52,6 +52,10 @@ export const builder = function(app: () => Node) : VNode {
   let mainNode : any = app.bind(this)();
   if (typeOf(mainNode) !== "object") error(`${mainNode} - ${errorMessage.resultCallNotAObject}`);
   
+  if (typeOf(mainNode["child"]) !== "array") {
+    mainNode["child"] = [mainNode["child"]];
+  }
+
   // check mainNode
   validatorMainNode.bind(this)(mainNode);
 

@@ -70,6 +70,8 @@ const recursiveChild = function(nodeProps = null, nodeChilds) {
       }
 
       if (typeChild === "object") {
+        if (typeOf(child["child"]) !== "array")
+          child["child"] = [child["child"]];
         validatorTagNode(child);
 
         if(typeof child["tag"] === "function") {
@@ -99,6 +101,8 @@ const recursiveChild = function(nodeProps = null, nodeChilds) {
         const typeCompleteFunction = typeOf(completeFunction);
         validateFunctionAnswer(completeFunction, index);
         if (typeCompleteFunction === "object") {
+          if (typeOf(completeFunction["child"]) !== "array")
+            completeFunction["child"] = [completeFunction["child"]]
           validatorTagNode(completeFunction);
 
           if (typeof completeFunction["tag"] === "function") {
