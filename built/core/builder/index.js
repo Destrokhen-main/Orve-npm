@@ -39,7 +39,7 @@ var builder = function (app) {
     if ((0, index_2.typeOf)(mainNode) !== "object") {
         (0, error_1.default)("".concat(mainNode, " - ").concat(errorMessage_1.default.resultCallNotAObject));
     }
-    if ((0, index_2.typeOf)(mainNode["child"]) !== "array") {
+    if (mainNode["child"] !== undefined && (0, index_2.typeOf)(mainNode["child"]) !== "array") {
         mainNode["child"] = [mainNode["child"]];
     }
     // check mainNode

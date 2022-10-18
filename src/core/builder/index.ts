@@ -58,7 +58,7 @@ export const builder = function(app: () => Node) : VNode {
     error(`${mainNode} - ${errorMessage.resultCallNotAObject}`);
   }
   
-  if (typeOf(mainNode["child"]) !== "array") {
+  if (mainNode["child"] !== undefined && typeOf(mainNode["child"]) !== "array") {
     mainNode["child"] = [mainNode["child"]];
   }
 
@@ -69,7 +69,7 @@ export const builder = function(app: () => Node) : VNode {
   if (typeof mainNode["tag"] === "function") {
     mainNode = recursive.bind(this)(mainNode);
   }
-  
+
   mainNode["type"] = Type.Component;
   let { props, child } = mainNode;
 
