@@ -63,7 +63,7 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
       }
 
       if (typeChild === "object") {
-        if (typeOf(child["child"]) !== "array") {
+        if (child["child"] !== undefined && typeOf(child["child"]) !== "array") {
           child["child"] = [child["child"]];
         }
 

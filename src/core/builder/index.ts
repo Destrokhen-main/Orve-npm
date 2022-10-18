@@ -59,7 +59,7 @@ export const builder = function(app: () => Node) : VNode {
   }
   
   if (mainNode["child"] !== undefined && typeOf(mainNode["child"]) !== "array") {
-    mainNode["child"] = [mainNode["child"]];
+    mainNode["child"] = [ mainNode["child"] ];
   }
 
   // check mainNode

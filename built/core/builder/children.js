@@ -61,7 +61,7 @@ var recursiveChild = function (nodeProps, nodeChilds) {
                 };
             }
             if (typeChild === "object") {
-                if ((0, index_1.typeOf)(child["child"]) !== "array") {
+                if (child["child"] !== undefined && (0, index_1.typeOf)(child["child"]) !== "array") {
                     child["child"] = [child["child"]];
                 }
                 (0, index_2.validatorTagNode)(child);
