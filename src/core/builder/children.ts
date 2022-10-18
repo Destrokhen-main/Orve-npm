@@ -51,14 +51,21 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
     return nodeChilds.map((child: any, index: number) => {
       const typeChild = typeOf(child);
 
+      if (typeChild === "string" && (child.startsWith("<") && child.endsWith(">"))) {
+        const parse = child.replace(/[<,> + \/]/gm, "");
+        console.log(parse);
+        return {
+          type: Type.Component,
+          value: {
+            tag: parse,
+          },
+        }
+      }
+
       if (typeChild === "string" || typeChild === "number") {
         return {
-          type: typeChild === "number" 
-                  ? Type.NotMutable
-                  : child.startsWith("<") && child.endsWith(">")
-                    ? Type.HTMLCode
-                    : Type.NotMutable,
-          value: child,
+          type: Type.NotMutable,
+          value: child
         }
       }
 

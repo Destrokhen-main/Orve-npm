@@ -50,14 +50,20 @@ var recursiveChild = function (nodeProps, nodeChilds) {
         nodeChilds = nodeChilds.flat(1);
         return nodeChilds.map(function (child, index) {
             var typeChild = (0, index_1.typeOf)(child);
+            if (typeChild === "string" && (child.startsWith("<") && child.endsWith(">"))) {
+                var parse = child.replace(/[<,> + \/]/gm, "");
+                console.log(parse);
+                return {
+                    type: type_1.Type.Component,
+                    value: {
+                        tag: parse,
+                    },
+                };
+            }
             if (typeChild === "string" || typeChild === "number") {
                 return {
-                    type: typeChild === "number"
-                        ? type_1.Type.NotMutable
-                        : child.startsWith("<") && child.endsWith(">")
-                            ? type_1.Type.HTMLCode
-                            : type_1.Type.NotMutable,
-                    value: child,
+                    type: type_1.Type.NotMutable,
+                    value: child
                 };
             }
             if (typeChild === "object") {
