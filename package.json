@@ -1,11 +1,13 @@
 {
   "name": "sreact",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "simple-reactive",
-  "main": "index.js",
+  "main": "built/index.js",
   "scripts": {
-    "test": "node test.js",
-    "lint": "eslint --fix ./core/*.js"
+    "lint": "eslint ./src/*.ts",
+    "push": "git add .; git commit -m 'npm push'; git push -u origin ts",
+    "ts:w": "tsc --watch",
+    "ts:b": "tsc --build"
   },
   "keywords": [
     "simple-reactive"
@@ -17,6 +19,8 @@
     "to-style": "^1.3.3"
   },
   "devDependencies": {
-    "eslint": "^8.24.0"
+    "@types/node": "^18.7.23",
+    "eslint": "^8.24.0",
+    "typescript": "^4.8.4"
   }
 }
