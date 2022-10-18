@@ -53,10 +53,8 @@ var recursiveChild = function (nodeProps, nodeChilds) {
             if (typeChild === "string" && (child.startsWith("<") && child.endsWith(">"))) {
                 var parse = child.replace(/[<,> + \/]/gm, "");
                 return {
-                    type: type_1.Type.Component,
-                    value: {
-                        tag: parse,
-                    },
+                    type: type_1.Type.HTMLCode,
+                    value: child,
                 };
             }
             if (typeChild === "string" || typeChild === "number") {

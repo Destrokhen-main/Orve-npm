@@ -7,7 +7,8 @@ import { VNode } from "../tsType"
 export const addChild = function(app : HTMLElement, child : Array<VNode>, callback: any) {
   return child.map(ch => {
     if (ch.type === Type.HTMLCode) {
-      app.innerHTML += ch.value;
+      const el = new DOMParser().parseFromString(ch.value, "text/html").getElementsByTagName("body")[0];
+      app.appendChild(el.firstChild);
       return ch;
     }
 

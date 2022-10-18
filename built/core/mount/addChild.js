@@ -6,7 +6,8 @@ var ProxyEffect_1 = require("./partMount/ProxyEffect");
 var addChild = function (app, child, callback) {
     return child.map(function (ch) {
         if (ch.type === type_1.Type.HTMLCode) {
-            app.innerHTML += ch.value;
+            var el = new DOMParser().parseFromString(ch.value, "text/html").getElementsByTagName("body")[0];
+            app.appendChild(el.firstChild);
             return ch;
         }
         if (ch.type === type_1.Type.NotMutable) {
