@@ -52,7 +52,6 @@ var recursiveChild = function (nodeProps, nodeChilds) {
             var typeChild = (0, index_1.typeOf)(child);
             if (typeChild === "string" && (child.startsWith("<") && child.endsWith(">"))) {
                 var parse = child.replace(/[<,> + \/]/gm, "");
-                console.log(parse);
                 return {
                     type: type_1.Type.Component,
                     value: {
