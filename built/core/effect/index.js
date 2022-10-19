@@ -39,7 +39,12 @@ function effect(callback, dependency) {
                             }
                         }
                         if (p.type === "props") {
-                            p.value.setAttribute(p.key, newFunction_1);
+                            if (newFunction_1 === "") {
+                                p.value.removeAttribute(p.key);
+                            }
+                            else {
+                                p.value.setAttribute(p.key, newFunction_1);
+                            }
                         }
                         if (p.type === "watch") {
                             p.function(newFunction_1, target["value"]);

@@ -23,7 +23,9 @@ export const addProps = function(tag: HTMLElement, props : object) {
       if (sheet.length !== 0)
         tag.setAttribute("style", sheet);
     } else if (typeOf(props[pr]) === "proxy") {
-      tag.setAttribute(pr, props[pr].value);
+      if (props[pr].value !== "") {
+        tag.setAttribute(pr, props[pr].value);
+      }
       props[pr].parent.push({
         type: "props",
         value: tag,

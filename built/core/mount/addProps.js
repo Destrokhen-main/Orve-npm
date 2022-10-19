@@ -29,7 +29,9 @@ var addProps = function (tag, props) {
                 tag.setAttribute("style", sheet);
         }
         else if ((0, index_js_2.typeOf)(props[pr]) === "proxy") {
-            tag.setAttribute(pr, props[pr].value);
+            if (props[pr].value !== "") {
+                tag.setAttribute(pr, props[pr].value);
+            }
             props[pr].parent.push({
                 type: "props",
                 value: tag,

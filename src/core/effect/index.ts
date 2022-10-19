@@ -41,7 +41,11 @@ export function effect(callback, dependency = []) {
               }
             }
             if (p.type === "props") {
-              p.value.setAttribute(p.key, newFunction);
+              if ( newFunction === "") {
+                p.value.removeAttribute(p.key);
+              } else {
+                p.value.setAttribute(p.key, newFunction);
+              }
             }
             if (p.type === "watch") {
               p.function(newFunction, target["value"]);
