@@ -1,4 +1,4 @@
-import createApp from "./core/index";
+import { createApp, context } from "./core/index";
 import { ref } from "./core/reactive/index.js";
 import { watch } from "./core/watch/index.js";
 import { refC } from "./core/reactiveComponent/index.js";
@@ -9,5 +9,6 @@ export {
   ref,
   refC,
   watch,
-  effect
+  effect,
+  context
 }

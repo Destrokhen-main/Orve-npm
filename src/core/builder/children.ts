@@ -52,7 +52,6 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
       const typeChild = typeOf(child);
 
       if (typeChild === "string" && (child.startsWith("<") && child.endsWith(">"))) {
-        const parse = child.replace(/[<,> + \/]/gm, "");
         return {
           type: Type.HTMLCode,
           value: child,

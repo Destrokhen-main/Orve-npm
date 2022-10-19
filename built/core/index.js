@@ -11,12 +11,14 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.context = exports.createApp = void 0;
 var index_1 = require("./builder/index");
 var index_2 = require("./mount/index");
 var helper_1 = require("./helper");
-function default_1(_a) {
+var Context = null;
+var createApp = function (_a) {
     var App = _a.App, all = __rest(_a, ["App"]);
-    var Context = (0, helper_1.createObjectContext)(all);
+    Context = (0, helper_1.createObjectContext)(all);
     window.sReact = {
         sReactContext: Context,
         sReactDOM: index_1.builder.bind(Context)(App)
@@ -26,6 +28,14 @@ function default_1(_a) {
             window.sReact.sReactDOM = (0, index_2.mount)(query);
         }
     };
-}
-exports.default = default_1;
-;
+};
+exports.createApp = createApp;
+var context = function () {
+    if (window.sReact !== undefined && window.sReact.sReactContext !== undefined) {
+        return window.sReact;
+    }
+    else {
+        return Context;
+    }
+};
+exports.context = context;

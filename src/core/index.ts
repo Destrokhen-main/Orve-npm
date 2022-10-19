@@ -11,8 +11,10 @@ import { mount } from "./mount/index";
 import { Node } from "./tsType";
 import { createObjectContext } from "./helper";
 
-export default function ({ App, ...all } : { App:() => Node }): CreateApp {
-  const Context = createObjectContext(all);
+let Context: object = null;
+
+export const createApp = function ({ App, ...all } : { App:() => Node }): CreateApp {
+  Context = createObjectContext(all);
   
   window.sReact = {
     sReactContext: Context,
@@ -24,4 +26,12 @@ export default function ({ App, ...all } : { App:() => Node }): CreateApp {
       window.sReact.sReactDOM = mount(query);
     }
   };
+};
+
+export const context = () => {
+  if (window.sReact !== undefined && window.sReact.sReactContext !== undefined) {
+    return window.sReact;
+  } else {
+    return Context
+  }
 };
