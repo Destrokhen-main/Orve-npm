@@ -49,9 +49,14 @@ export const refC = function(component: any) {
             let newObj = builder.bind(window.sReact.sReactContext)(comp);
             const object  = createNodeRebuild(null, newObj);
             target.parent = target.parent.map((el) => {
-              el.insertAdjacentElement('afterend', object);
-              el.remove();
-              return object;
+              if (el.type === undefined) {
+                el.insertAdjacentElement('afterend', object);
+                el.remove();
+                return object;
+              } else if (el.type === "effect") {
+                el.parent.refresh;
+                return el;
+              }
             });
           }
         }

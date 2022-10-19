@@ -46,9 +46,15 @@ var refC = function (component) {
                         var newObj = index_1.builder.bind(window.sReact.sReactContext)(comp_1);
                         var object_1 = (0, rebiuld_1.createNodeRebuild)(null, newObj);
                         target.parent = target.parent.map(function (el) {
-                            el.insertAdjacentElement('afterend', object_1);
-                            el.remove();
-                            return object_1;
+                            if (el.type === undefined) {
+                                el.insertAdjacentElement('afterend', object_1);
+                                el.remove();
+                                return object_1;
+                            }
+                            else if (el.type === "effect") {
+                                el.parent.refresh;
+                                return el;
+                            }
                         });
                     }
                 }
