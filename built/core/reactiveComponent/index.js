@@ -47,8 +47,7 @@ var refC = function (component) {
                         var object_1 = (0, rebiuld_1.createNodeRebuild)(null, newObj);
                         target.parent = target.parent.map(function (el) {
                             if (el.type === undefined) {
-                                el.insertAdjacentElement('afterend', object_1);
-                                el.remove();
+                                el.replaceWith(object_1);
                                 return object_1;
                             }
                             else if (el.type === "effect") {

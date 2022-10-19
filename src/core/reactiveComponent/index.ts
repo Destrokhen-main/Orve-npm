@@ -50,8 +50,7 @@ export const refC = function(component: any) {
             const object  = createNodeRebuild(null, newObj);
             target.parent = target.parent.map((el) => {
               if (el.type === undefined) {
-                el.insertAdjacentElement('afterend', object);
-                el.remove();
+                el.replaceWith(object);
                 return object;
               } else if (el.type === "effect") {
                 el.parent.refresh;
