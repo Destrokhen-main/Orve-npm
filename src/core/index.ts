@@ -30,7 +30,7 @@ export const createApp = function ({ App, ...all } : { App:() => Node }): Create
 
 export const context = () => {
   if (window.sReact !== undefined && window.sReact.sReactContext !== undefined) {
-    return window.sReact;
+    return window.sReact.sReactContext;
   } else {
     return Context
   }

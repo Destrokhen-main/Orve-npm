@@ -32,7 +32,7 @@ var createApp = function (_a) {
 exports.createApp = createApp;
 var context = function () {
     if (window.sReact !== undefined && window.sReact.sReactContext !== undefined) {
-        return window.sReact;
+        return window.sReact.sReactContext;
     }
     else {
         return Context;
