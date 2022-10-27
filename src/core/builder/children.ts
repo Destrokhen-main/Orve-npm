@@ -50,8 +50,7 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
 
     return nodeChilds.map((child: any, index: number) => {
       const typeChild = typeOf(child);
-
-      if (typeChild === "string" && (child.startsWith("<") && child.endsWith(">"))) {
+      if (typeChild === "string" && (child.includes("<") && child.includes(">") && (child.includes('</') || child.includes("/>")))) {
         return {
           type: Type.HTMLCode,
           value: child,
