@@ -33,7 +33,12 @@ var ref = function (object) {
                             }
                         }
                         if (el.type === "props") {
-                            el.value.setAttribute(el.key, value);
+                            if (value === "") {
+                                el.value.removeAttribute(el.key);
+                            }
+                            else {
+                                el.value.setAttribute(el.key, value);
+                            }
                         }
                         if (el.type === "watch") {
                             el.function(value, before_1);
