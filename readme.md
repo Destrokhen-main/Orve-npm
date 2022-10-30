@@ -1,8 +1,13 @@
-# orve (npm package) / Simple-reactive
-## Оbject reactive library. mix of react and vue
+<h1 align="center">orve (npm package) / Simple-reactive</h1>
 
-webpack project: https://github.com/Destrokhen-main/simple-reactive-cli
+Оbject reactive library. mix of react and vue
 
-documentation: https://github.com/Destrokhen-main/Simple-Reactive-doc
+```
+npm i orve
+```
+
+<a href="https://github.com/Destrokhen-main/simple-reactive-cli" target="_blank">Webpack project</a>
+
+<a href="https://github.com/Destrokhen-main/Simple-Reactive-doc" target="_blank">Documentation</a>
 
 If you contribute something to the project, I will be very grateful to you.))
