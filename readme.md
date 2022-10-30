@@ -1,4 +1,4 @@
-<p align="center">![orve](https://ibb.co/Jkx2v1q)</p>
+<p align="center"><img src="https://ibb.co/Jkx2v1q" alt="orve logo"></p>
 <h1 align="center">orve (npm package) / Simple-reactive</h1>
 
 Оbject reactive library. mix of react and vue
