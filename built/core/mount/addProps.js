@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addProps = void 0;
 var index_js_1 = require("../linter/index.js");
-var toStyleString = require('to-style').string;
+var reactToCSS = require('react-style-object-to-css');
 var index_js_2 = require("../helper/index.js");
 var addProps = function (tag, props) {
     Object.keys(props).forEach(function (pr) {
@@ -23,7 +23,7 @@ var addProps = function (tag, props) {
                 sheet = props[pr];
             }
             else {
-                sheet = toStyleString(props[pr]);
+                sheet = reactToCSS(props[pr]);
             }
             if (sheet.length !== 0)
                 tag.setAttribute("style", sheet);

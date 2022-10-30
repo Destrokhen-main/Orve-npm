@@ -1,5 +1,5 @@
 import { validSingleProps } from "../linter/index.js";
-const toStyleString = require('to-style').string;
+const reactToCSS = require('react-style-object-to-css')
 import { typeOf } from "../helper/index.js";
 
 export const addProps = function(tag: HTMLElement, props : object) {
@@ -18,7 +18,7 @@ export const addProps = function(tag: HTMLElement, props : object) {
       if (typeOf(props[pr]) === "string") {
         sheet = props[pr];
       } else {
-        sheet = toStyleString(props[pr]);
+        sheet = reactToCSS(props[pr]);
       }
       if (sheet.length !== 0)
         tag.setAttribute("style", sheet);
