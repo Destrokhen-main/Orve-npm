@@ -21,3 +21,4 @@ var Type;
     Type[Type["ProxyEffect"] = 8] = "ProxyEffect";
 })(Type || (Type = {}));
 exports.Type = Type;
+//# sourceMappingURL=type.js.map

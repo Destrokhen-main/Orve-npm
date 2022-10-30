@@ -12,3 +12,4 @@ var mount = function (query) {
     return (0, createNode_1.createNode)(APP, node);
 };
 exports.mount = mount;
+//# sourceMappingURL=index.js.map

@@ -56,3 +56,4 @@ var builder = function (app) {
     return mainNode;
 };
 exports.builder = builder;
+//# sourceMappingURL=index.js.map

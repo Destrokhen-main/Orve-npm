@@ -124,3 +124,4 @@ function effect(callback, dependency) {
     return proxy;
 }
 exports.effect = effect;
+//# sourceMappingURL=index.js.map

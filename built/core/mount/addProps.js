@@ -51,3 +51,4 @@ var addProps = function (tag, props) {
     });
 };
 exports.addProps = addProps;
+//# sourceMappingURL=addProps.js.map

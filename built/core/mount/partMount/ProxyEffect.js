@@ -28,3 +28,4 @@ function default_1(app, ch, callback) {
     }
 }
 exports.default = default_1;
+//# sourceMappingURL=ProxyEffect.js.map
