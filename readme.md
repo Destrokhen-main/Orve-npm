@@ -1,4 +1,4 @@
-# orve (npm package)
+# orve (npm package) / Simple-reactive
 ## Оbject reactive library. mix of react and vue
 
 webpack project: https://github.com/Destrokhen-main/simple-reactive-cli
