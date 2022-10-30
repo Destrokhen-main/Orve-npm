@@ -5,8 +5,8 @@
   "main": "built/index.js",
   "scripts": {
     "lint": "eslint ./src/*.ts",
-    "ts:w": "tsc --watch",
-    "ts:b": "tsc --build"
+    "watch": "tsc --watch",
+    "build": "tsc --build"
   },
   "keywords": [
     "vue",
