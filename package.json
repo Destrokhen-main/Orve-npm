@@ -14,7 +14,13 @@
     "object to html",
     "simple",
     "simple-reactive",
-    "library"
+    "library",
+    "front-end",
+    "reactive",
+    "object-to-html",
+    "tag",
+    "props",
+    "child"
   ],
   "repository": {
     "type": "git",
