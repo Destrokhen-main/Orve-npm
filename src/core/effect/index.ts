@@ -2,13 +2,15 @@ import error from "../error/error.js";
 import { typeOf } from "../helper/index.js";
 import { ProxyType } from "../tsType/type";
 
+import errMessage from "../error/effect";
+
 export function effect(callback, dependency = []) {
   if (typeof callback !== "function") {
-    error(`Первым параметром должна идти функция`);
+    error(errMessage.NEED_FINCTION);
   }
 
   if (Array.isArray(dependency) !== true) {
-    error("Зависимости могут быть только в массиве");
+    error(errMessage.DEP_NEED_ARRAY);
   }
 
   const cb = callback();
@@ -119,7 +121,7 @@ export function effect(callback, dependency = []) {
     const type = typeOf(i);
 
     if (type !== "proxy") {
-      error("Вы попытались засунуть в зависимости не proxy");
+      error(errMessage.ONLY_PROXY);
     } else {
       i.parent.push({
         type: "effect",
