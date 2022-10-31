@@ -32,3 +32,4 @@ var createObjectContext = function (app) {
     return Context;
 };
 exports.createObjectContext = createObjectContext;
+//# sourceMappingURL=index.js.map

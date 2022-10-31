@@ -12,3 +12,4 @@ var index_js_3 = require("./core/reactiveComponent/index.js");
 Object.defineProperty(exports, "refC", { enumerable: true, get: function () { return index_js_3.refC; } });
 var index_js_4 = require("./core/effect/index.js");
 Object.defineProperty(exports, "effect", { enumerable: true, get: function () { return index_js_4.effect; } });
+//# sourceMappingURL=index.js.map

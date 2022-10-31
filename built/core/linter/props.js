@@ -37,3 +37,4 @@ var validSingleProps = function (prop, pr) {
         (0, error_1.default)("".concat(pr, " - ").concat(errorMessage_1.default.incorrectPropsValue));
 };
 exports.validSingleProps = validSingleProps;
+//# sourceMappingURL=props.js.map

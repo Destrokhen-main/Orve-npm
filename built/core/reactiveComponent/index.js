@@ -64,3 +64,4 @@ var refC = function (component) {
     });
 };
 exports.refC = refC;
+//# sourceMappingURL=index.js.map

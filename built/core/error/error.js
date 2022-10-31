@@ -28,3 +28,4 @@ var createError = function (message) {
     throw new error(message);
 };
 exports.default = createError;
+//# sourceMappingURL=error.js.map

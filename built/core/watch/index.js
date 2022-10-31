@@ -16,3 +16,4 @@ var w = function (callback, depends) {
     });
 };
 exports.watch = w;
+//# sourceMappingURL=index.js.map

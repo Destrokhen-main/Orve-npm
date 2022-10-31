@@ -41,3 +41,4 @@ var addChild = function (app, child, callback) {
     });
 };
 exports.addChild = addChild;
+//# sourceMappingURL=addChild.js.map

@@ -17,3 +17,4 @@ var message = {
     functionReturnIncorrectData: "Функция вернула некоретный ответ"
 };
 exports.default = message;
+//# sourceMappingURL=errorMessage.js.map

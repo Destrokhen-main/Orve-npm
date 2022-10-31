@@ -154,3 +154,4 @@ var recursiveChild = function (nodeProps, nodeChilds) {
     }
 };
 exports.default = recursiveChild;
+//# sourceMappingURL=children.js.map
