@@ -4,13 +4,14 @@ exports.effect = void 0;
 var error_js_1 = require("../error/error.js");
 var index_js_1 = require("../helper/index.js");
 var type_1 = require("../tsType/type");
+var effect_1 = require("../error/effect");
 function effect(callback, dependency) {
     if (dependency === void 0) { dependency = []; }
     if (typeof callback !== "function") {
-        (0, error_js_1.default)("\u041F\u0435\u0440\u0432\u044B\u043C \u043F\u0430\u0440\u0430\u043C\u0435\u0442\u0440\u043E\u043C \u0434\u043E\u043B\u0436\u043D\u0430 \u0438\u0434\u0442\u0438 \u0444\u0443\u043D\u043A\u0446\u0438\u044F");
+        (0, error_js_1.default)(effect_1.default.NEED_FINCTION);
     }
     if (Array.isArray(dependency) !== true) {
-        (0, error_js_1.default)("Зависимости могут быть только в массиве");
+        (0, error_js_1.default)(effect_1.default.DEP_NEED_ARRAY);
     }
     var cb = callback();
     var object = {
@@ -112,7 +113,7 @@ function effect(callback, dependency) {
     dependency.forEach(function (i) {
         var type = (0, index_js_1.typeOf)(i);
         if (type !== "proxy") {
-            (0, error_js_1.default)("Вы попытались засунуть в зависимости не proxy");
+            (0, error_js_1.default)(effect_1.default.ONLY_PROXY);
         }
         else {
             i.parent.push({
