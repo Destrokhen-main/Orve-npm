@@ -1,6 +1,6 @@
 declare global {
   interface Window {
-    sReact: any
+    sReact: any 
   }
 }
 
