@@ -7,38 +7,7 @@ import { ProxyType } from "../tsType/type";
 import { builder } from "../builder/index";
 import { Node } from "../tsType/index";
 
-const recursiveCheckFunctionAnswer = function(node) {
-  let haveDop = false;
-  let functionObject = {};
-
-  if (node["props"] !== undefined) {
-    functionObject = {
-      ...node["props"]
-    }
-    haveDop = true;
-  }
-
-  if (node["child"] !== undefined) {
-    functionObject["children"] = node['child'];
-    haveDop = true;
-  }
-
-  const completeFunction = haveDop
-                            ? node["tag"].bind(this)({ ...functionObject })
-                            : node["tag"].bind(this)();
-
-  const typeCompleteFunction = typeOf(completeFunction);
-  
-  if (typeCompleteFunction !== "object") {
-    error(`error ${TYPE_MESSAGE.functionInTagReturn}`);
-  }
-
-  if (typeof completeFunction["tag"] === "function") {
-    return recursiveCheckFunctionAnswer.bind(this)(completeFunction);
-  }
-
-  return completeFunction;
-}
+import recursiveCheckFunctionAnswer from "./recuriveFunction"
 
 const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
   if (
@@ -47,7 +16,6 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
     nodeChilds.length > 0
   ) {
     nodeChilds = nodeChilds.flat(1);
-
     return nodeChilds.map((child: any, index: number) => {
       const typeChild = typeOf(child);
       if (typeChild === "string" && (child.includes("<") && child.includes(">") && (child.includes('</') || child.includes("/>")))) {
@@ -112,6 +80,7 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
 
           if (typeof completeFunction["tag"] === "function") {
             completeFunction = recursiveCheckFunctionAnswer.bind(this)(completeFunction);
+            console.log(completeFunction);
           }
 
           if (completeFunction["child"] !== undefined) {
