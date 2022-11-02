@@ -26,9 +26,8 @@ var builder = function (app) {
         mainNode = recuriveFunction_1.default.bind(this)(mainNode);
     }
     mainNode["type"] = type_1.Type.Component;
-    var props = mainNode.props, child = mainNode.child;
-    if (child !== undefined) {
-        mainNode["child"] = children_1.default.bind(this)(props, child);
+    if (mainNode["child"] !== undefined) {
+        mainNode["child"] = children_1.default.bind(this)(mainNode["props"], mainNode["child"]);
     }
     return mainNode;
 };

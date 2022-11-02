@@ -35,10 +35,9 @@ export const builder = function(app: () => Node) : VNode {
   }
 
   mainNode["type"] = Type.Component;
-  let { props, child } = mainNode;
 
-  if (child !== undefined) {
-    mainNode["child"] = reqChild.bind(this)(props, child);
+  if (mainNode["child"] !== undefined) {
+    mainNode["child"] = reqChild.bind(this)(mainNode["props"], mainNode["child"]);
   }
   return mainNode;
 }
