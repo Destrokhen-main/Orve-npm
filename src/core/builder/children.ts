@@ -105,7 +105,6 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
 
       if (typeChild === "proxy") {
         const typeProxy = child.typeProxy;
-        console.log(typeProxy);
 
         if (typeProxy === ProxyType.proxySimple) {
           return {
