@@ -48,6 +48,7 @@ const refO = function(object: Generator<string, any>) {
           value: proxy
         });
         target[props] = r;
+        proxy["changed"] = true;
         return true;
       } else {
         if(Array.isArray(value)) {
@@ -57,6 +58,7 @@ const refO = function(object: Generator<string, any>) {
             value: proxy
           });
           target[props] = r;
+          proxy["changed"] = true;
           return true;
         } else if (value.type === "proxy") {
           if (valid(value.typeProxy)) {
@@ -65,6 +67,7 @@ const refO = function(object: Generator<string, any>) {
               value: proxy
             });
             target[props] = value;
+            proxy["changed"] = true;
             return true;
           } else {
             error("Вы пытаетесь прокинуть proxy не orve");

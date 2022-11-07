@@ -48,6 +48,7 @@ var refO = function (object) {
                     value: proxy
                 });
                 target[props] = r;
+                proxy["changed"] = true;
                 return true;
             }
             else {
@@ -58,6 +59,7 @@ var refO = function (object) {
                         value: proxy
                     });
                     target[props] = r;
+                    proxy["changed"] = true;
                     return true;
                 }
                 else if (value.type === "proxy") {
@@ -67,6 +69,7 @@ var refO = function (object) {
                             value: proxy
                         });
                         target[props] = value;
+                        proxy["changed"] = true;
                         return true;
                     }
                     else {
