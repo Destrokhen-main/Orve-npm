@@ -82,7 +82,6 @@ var refO = function (object) {
     Object.keys(object).forEach(function (e) {
         proxy[e] = object[e];
     });
-    console.log(proxy);
     return proxy;
 };
 exports.refO = refO;

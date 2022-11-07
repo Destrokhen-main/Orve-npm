@@ -80,7 +80,6 @@ const refO = function(object: Generator<string, any>) {
   Object.keys(object).forEach((e) => {
     proxy[e] = object[e];
   });
-  console.log(proxy);
   return proxy;
 }
 
