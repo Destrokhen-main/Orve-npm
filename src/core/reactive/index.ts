@@ -41,6 +41,9 @@ export const ref = function(object : any) {
             if (el.type === "effect") {
               el.parent.refresh;
             }
+            if (el.type === "refO") {
+              el.value.changed = true;
+            }
           });
         }
         return true;
