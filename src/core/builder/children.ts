@@ -1,7 +1,6 @@
 import { typeOf } from "../helper/index";
 import { validatorTagNode, validateFunctionAnswer } from "../linter/index";
 import { Type } from "../tsType/type";
-import error from "../error/error";
 import TYPE_MESSAGE from "../error/errorMessage";
 import { ProxyType } from "../tsType/type";
 import { builder } from "../builder/index";
@@ -106,6 +105,7 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
 
       if (typeChild === "proxy") {
         const typeProxy = child.typeProxy;
+        console.log(typeProxy);
 
         if (typeProxy === ProxyType.proxySimple) {
           return {
@@ -134,6 +134,14 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
             type: Type.ProxyEffect,
             value: child.value,
             proxy: child
+          }
+        }
+
+        if (typeProxy === ProxyType.proxyObject) {
+          console.warn(TYPE_MESSAGE.incorrectUsedRefO)
+          return {
+            type: Type.NotMutable,
+            value: ""
           }
         }
       }

@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var index_1 = require("../helper/index");
 var index_2 = require("../linter/index");
 var type_1 = require("../tsType/type");
+var errorMessage_1 = require("../error/errorMessage");
 var type_2 = require("../tsType/type");
 var index_3 = require("../builder/index");
 var recuriveFunction_1 = require("./recuriveFunction");
@@ -87,6 +88,7 @@ var recursiveChild = function (nodeProps, nodeChilds) {
             }
             if (typeChild === "proxy") {
                 var typeProxy = child.typeProxy;
+                console.log(typeProxy);
                 if (typeProxy === type_2.ProxyType.proxySimple) {
                     return {
                         type: type_1.Type.Proxy,
@@ -110,6 +112,13 @@ var recursiveChild = function (nodeProps, nodeChilds) {
                         type: type_1.Type.ProxyEffect,
                         value: child.value,
                         proxy: child
+                    };
+                }
+                if (typeProxy === type_2.ProxyType.proxyObject) {
+                    console.warn(errorMessage_1.default.incorrectUsedRefO);
+                    return {
+                        type: type_1.Type.NotMutable,
+                        value: ""
                     };
                 }
             }
