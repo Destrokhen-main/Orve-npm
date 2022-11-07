@@ -63,6 +63,9 @@ export const refC = function(component: any) {
         return true;
       }
       return false;
+    },
+    deleteProperty() {
+      return false;
     }
   })
 }

@@ -15,6 +15,19 @@ function valid(str) {
         return type_1.ProxyType[e] === str;
     });
 }
+var changes = function (target, value) {
+    if (target["parent"].length > 0) {
+        target["parent"].forEach(function (e) {
+            if (e.type === "watch") {
+                e.function(value, null);
+            }
+            if (e.type === "effect") {
+                e.parent.refresh;
+            }
+        });
+    }
+    return true;
+};
 var refO = function (object) {
     var pr = {
         parent: [],
@@ -29,17 +42,7 @@ var refO = function (object) {
         },
         set: function (target, props, value) {
             if (props === "changed") {
-                if (target["parent"].length > 0) {
-                    target["parent"].forEach(function (e) {
-                        if (e.type === "watch") {
-                            e.function(value, null);
-                        }
-                        if (e.type === "effect") {
-                            e.parent.refresh;
-                        }
-                    });
-                }
-                return true;
+                return changes(target, props);
             }
             if (typeof value !== "object") {
                 var r = (0, reactive_1.ref)(value);
@@ -48,7 +51,7 @@ var refO = function (object) {
                     value: proxy
                 });
                 target[props] = r;
-                proxy["changed"] = true;
+                changes(target, props);
                 return true;
             }
             else {
@@ -59,7 +62,7 @@ var refO = function (object) {
                         value: proxy
                     });
                     target[props] = r;
-                    proxy["changed"] = true;
+                    changes(target, props);
                     return true;
                 }
                 else if (value.type === "proxy") {
@@ -69,7 +72,7 @@ var refO = function (object) {
                             value: proxy
                         });
                         target[props] = value;
-                        proxy["changed"] = true;
+                        changes(target, props);
                         return true;
                     }
                     else {
@@ -80,6 +83,15 @@ var refO = function (object) {
             }
             target[props] = value;
             return true;
+        },
+        deleteProperty: function (target, props) {
+            if (props !== "parent") {
+                if (props in target) {
+                    delete target[props];
+                    return changes(target, props);
+                }
+            }
+            return false;
         }
     });
     Object.keys(object).forEach(function (e) {

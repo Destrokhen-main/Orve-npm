@@ -15,6 +15,20 @@ function valid(str: string) {
   })
 }
 
+const changes = function(target, value) {
+  if (target["parent"].length > 0) {
+    target["parent"].forEach((e) => {
+      if (e.type === "watch") {
+        e.function(value, null);
+      }
+      if (e.type === "effect") {
+        e.parent.refresh;
+      }
+    });
+  }
+  return true;
+}
+
 const refO = function(object: Generator<string, any>) {
   const pr = {
     parent: [],
@@ -29,17 +43,7 @@ const refO = function(object: Generator<string, any>) {
     },
     set(target, props, value) {
       if (props === "changed") {
-        if (target["parent"].length > 0) {
-          target["parent"].forEach((e) => {
-            if (e.type === "watch") {
-              e.function(value, null);
-            }
-            if (e.type === "effect") {
-              e.parent.refresh;
-            }
-          });
-        }
-        return true;
+        return changes(target, props);
       }
       if (typeof value !== "object") {
         const r = ref(value);
@@ -48,7 +52,7 @@ const refO = function(object: Generator<string, any>) {
           value: proxy
         });
         target[props] = r;
-        proxy["changed"] = true;
+        changes(target, props)
         return true;
       } else {
         if(Array.isArray(value)) {
@@ -58,7 +62,7 @@ const refO = function(object: Generator<string, any>) {
             value: proxy
           });
           target[props] = r;
-          proxy["changed"] = true;
+          changes(target, props)
           return true;
         } else if (value.type === "proxy") {
           if (valid(value.typeProxy)) {
@@ -67,7 +71,7 @@ const refO = function(object: Generator<string, any>) {
               value: proxy
             });
             target[props] = value;
-            proxy["changed"] = true;
+            changes(target, props)
             return true;
           } else {
             error("Вы пытаетесь прокинуть proxy не orve");
@@ -77,6 +81,15 @@ const refO = function(object: Generator<string, any>) {
       }
       target[props] = value;
       return true;
+    },
+    deleteProperty(target, props) {
+      if (props !== "parent") {
+        if (props in target) {
+          delete target[props];
+          return changes(target, props);
+        }
+      }
+      return false;
     }
   });
 

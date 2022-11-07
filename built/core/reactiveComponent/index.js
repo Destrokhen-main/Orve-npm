@@ -60,6 +60,9 @@ var refC = function (component) {
                 return true;
             }
             return false;
+        },
+        deleteProperty: function () {
+            return false;
         }
     });
 };

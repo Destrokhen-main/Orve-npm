@@ -50,6 +50,9 @@ export const ref = function(object : any) {
       } else {
         return false;
       }
+    },
+    deleteProperty(target,props) {
+      return false;
     }
   })
 }

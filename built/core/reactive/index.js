@@ -56,6 +56,9 @@ var ref = function (object) {
             else {
                 return false;
             }
+        },
+        deleteProperty: function (target, props) {
+            return false;
         }
     });
 };
