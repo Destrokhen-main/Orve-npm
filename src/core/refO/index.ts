@@ -8,6 +8,7 @@
 import { ProxyType } from "../tsType/type";
 import { ref } from "../reactive";
 import error from "../error/error";
+import { typeOf } from "../helper/index";
 
 function valid(str: string) {
   return Object.keys(ProxyType).some(e => {
@@ -24,9 +25,57 @@ const changes = function(target, value) {
       if (e.type === "effect") {
         e.parent.refresh;
       }
+      if (e.type === "refO") {
+        e.parent.changed = true;
+      }
     });
   }
   return true;
+}
+
+const created = function(target, props, value, proxy) {
+  if (typeof value !== "object") {
+    const r = ref(value);
+    r.parent.push({
+      type: "refO",
+      value: proxy
+    });
+    target[props] = r;
+    changes(target, props)
+    return true;
+  } else {
+    if(Array.isArray(value)) {
+      const r = ref(value);
+      r.parent.push({
+        type: "refO",
+        value: proxy
+      });
+      target[props] = r;
+      return changes(target, props);
+    } else if (value.type === "proxy") {
+      if (valid(value.typeProxy)) {
+        value.parent.push({
+          type: "refO",
+          value: proxy
+        });
+        target[props] = value;
+        changes(target, props)
+        return true;
+      } else {
+        error("Вы пытаетесь прокинуть не reactive orve");
+        return false;
+      }
+    } else {
+      const r = refO(value);
+      r.parent.push({
+        type: "refO",
+        value: proxy
+      });
+      target[props] = r;
+      changes(target, props);
+      return true;
+    }
+  }
 }
 
 const refO = function(object: Record<string, any>) {
@@ -45,6 +94,14 @@ const refO = function(object: Record<string, any>) {
       if (props === "changed") {
         return changes(target, props);
       }
+      if (props in target) {
+        if (typeOf(target[props]) !== typeOf(value)) {
+          created(target, props, value, proxy);
+        } else {
+          target[props].value = value;
+        }
+        return changes(target, props);
+      }
       if (typeof value !== "object") {
         const r = ref(value);
         r.parent.push({
@@ -52,35 +109,10 @@ const refO = function(object: Record<string, any>) {
           value: proxy
         });
         target[props] = r;
-        changes(target, props)
-        return true;
+        return changes(target, props)
       } else {
-        if(Array.isArray(value)) {
-          const r = ref(value);
-          r.parent.push({
-            type: "refO",
-            value: proxy
-          });
-          target[props] = r;
-          changes(target, props)
-          return true;
-        } else if (value.type === "proxy") {
-          if (valid(value.typeProxy)) {
-            value.parent.push({
-              type: "refO",
-              value: proxy
-            });
-            target[props] = value;
-            changes(target, props)
-            return true;
-          } else {
-            error("Вы пытаетесь прокинуть proxy не orve");
-            return false;
-          }
-        }
+        return created(target, props, value, proxy);
       }
-      target[props] = value;
-      return true;
     },
     deleteProperty(target, props) {
       if (props !== "parent") {

@@ -10,6 +10,7 @@ exports.refO = void 0;
 var type_1 = require("../tsType/type");
 var reactive_1 = require("../reactive");
 var error_1 = require("../error/error");
+var index_1 = require("../helper/index");
 function valid(str) {
     return Object.keys(type_1.ProxyType).some(function (e) {
         return type_1.ProxyType[e] === str;
@@ -24,9 +25,60 @@ var changes = function (target, value) {
             if (e.type === "effect") {
                 e.parent.refresh;
             }
+            if (e.type === "refO") {
+                e.parent.changed = true;
+            }
         });
     }
     return true;
+};
+var created = function (target, props, value, proxy) {
+    if (typeof value !== "object") {
+        var r = (0, reactive_1.ref)(value);
+        r.parent.push({
+            type: "refO",
+            value: proxy
+        });
+        target[props] = r;
+        changes(target, props);
+        return true;
+    }
+    else {
+        if (Array.isArray(value)) {
+            var r = (0, reactive_1.ref)(value);
+            r.parent.push({
+                type: "refO",
+                value: proxy
+            });
+            target[props] = r;
+            return changes(target, props);
+        }
+        else if (value.type === "proxy") {
+            if (valid(value.typeProxy)) {
+                value.parent.push({
+                    type: "refO",
+                    value: proxy
+                });
+                target[props] = value;
+                changes(target, props);
+                return true;
+            }
+            else {
+                (0, error_1.default)("Вы пытаетесь прокинуть не reactive orve");
+                return false;
+            }
+        }
+        else {
+            var r = refO(value);
+            r.parent.push({
+                type: "refO",
+                value: proxy
+            });
+            target[props] = r;
+            changes(target, props);
+            return true;
+        }
+    }
 };
 var refO = function (object) {
     var pr = {
@@ -44,6 +96,15 @@ var refO = function (object) {
             if (props === "changed") {
                 return changes(target, props);
             }
+            if (props in target) {
+                if ((0, index_1.typeOf)(target[props]) !== (0, index_1.typeOf)(value)) {
+                    created(target, props, value, proxy);
+                }
+                else {
+                    target[props].value = value;
+                }
+                return changes(target, props);
+            }
             if (typeof value !== "object") {
                 var r = (0, reactive_1.ref)(value);
                 r.parent.push({
@@ -51,38 +112,11 @@ var refO = function (object) {
                     value: proxy
                 });
                 target[props] = r;
-                changes(target, props);
-                return true;
+                return changes(target, props);
             }
             else {
-                if (Array.isArray(value)) {
-                    var r = (0, reactive_1.ref)(value);
-                    r.parent.push({
-                        type: "refO",
-                        value: proxy
-                    });
-                    target[props] = r;
-                    changes(target, props);
-                    return true;
-                }
-                else if (value.type === "proxy") {
-                    if (valid(value.typeProxy)) {
-                        value.parent.push({
-                            type: "refO",
-                            value: proxy
-                        });
-                        target[props] = value;
-                        changes(target, props);
-                        return true;
-                    }
-                    else {
-                        (0, error_1.default)("Вы пытаетесь прокинуть proxy не orve");
-                        return false;
-                    }
-                }
+                return created(target, props, value, proxy);
             }
-            target[props] = value;
-            return true;
         },
         deleteProperty: function (target, props) {
             if (props !== "parent") {
