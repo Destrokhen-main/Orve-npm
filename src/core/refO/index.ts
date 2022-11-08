@@ -29,7 +29,7 @@ const changes = function(target, value) {
   return true;
 }
 
-const refO = function(object: Generator<string, any>) {
+const refO = function(object: Record<string, any>) {
   const pr = {
     parent: [],
   };
