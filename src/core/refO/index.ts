@@ -26,7 +26,7 @@ const changes = function(target, value) {
         e.parent.refresh;
       }
       if (e.type === "refO") {
-        e.parent.changed = true;
+        e.value.changed = true;
       }
     });
   }
@@ -34,47 +34,37 @@ const changes = function(target, value) {
 }
 
 const created = function(target, props, value, proxy) {
-  if (typeof value !== "object") {
+  const type = typeOf(value);
+  if (type === "array") {
     const r = ref(value);
     r.parent.push({
       type: "refO",
       value: proxy
     });
     target[props] = r;
-    changes(target, props)
-    return true;
-  } else {
-    if(Array.isArray(value)) {
-      const r = ref(value);
-      r.parent.push({
+    return changes(target, props);
+  } else if (type === "proxy") {
+    if (valid(value.typeProxy)) {
+      value.parent.push({
         type: "refO",
         value: proxy
       });
-      target[props] = r;
-      return changes(target, props);
-    } else if (value.type === "proxy") {
-      if (valid(value.typeProxy)) {
-        value.parent.push({
-          type: "refO",
-          value: proxy
-        });
-        target[props] = value;
-        changes(target, props)
-        return true;
-      } else {
-        error("Вы пытаетесь прокинуть не reactive orve");
-        return false;
-      }
-    } else {
-      const r = refO(value);
-      r.parent.push({
-        type: "refO",
-        value: proxy
-      });
-      target[props] = r;
-      changes(target, props);
+      target[props] = value;
+      changes(target, props)
       return true;
+    } else {
+      error("Вы пытаетесь прокинуть не reactive orve");
+      return false;
     }
+  } else {
+    const r = refO(value);
+    r.parent.push({
+      type: "refO",
+      value: proxy
+    });
+    target[props] = r;
+    changes(target, props);
+    return true;
   }
 }
 
@@ -98,7 +88,12 @@ const refO = function(object: Record<string, any>) {
         if (typeOf(target[props].value) !== typeOf(value)) {
           created(target, props, value, proxy);
         } else {
-          target[props].value = value;
+          if(typeOf(target[props]) === "proxy") {
+            if (target[props].typeProxy === ProxyType.proxyObject) {
+            } else {
+              target[props].value = value;
+            }
+          }
         }
         return changes(target, props);
       }
@@ -125,6 +120,7 @@ const refO = function(object: Record<string, any>) {
     }
   });
 
+  
   Object.keys(object).forEach((e) => {
     proxy[e] = object[e];
   });

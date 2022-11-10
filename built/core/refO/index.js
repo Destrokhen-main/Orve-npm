@@ -26,15 +26,40 @@ var changes = function (target, value) {
                 e.parent.refresh;
             }
             if (e.type === "refO") {
-                e.parent.changed = true;
+                e.value.changed = true;
             }
         });
     }
     return true;
 };
 var created = function (target, props, value, proxy) {
-    if (typeof value !== "object") {
+    var type = (0, index_1.typeOf)(value);
+    if (type === "array") {
         var r = (0, reactive_1.ref)(value);
+        r.parent.push({
+            type: "refO",
+            value: proxy
+        });
+        target[props] = r;
+        return changes(target, props);
+    }
+    else if (type === "proxy") {
+        if (valid(value.typeProxy)) {
+            value.parent.push({
+                type: "refO",
+                value: proxy
+            });
+            target[props] = value;
+            changes(target, props);
+            return true;
+        }
+        else {
+            (0, error_1.default)("Вы пытаетесь прокинуть не reactive orve");
+            return false;
+        }
+    }
+    else {
+        var r = refO(value);
         r.parent.push({
             type: "refO",
             value: proxy
@@ -42,42 +67,6 @@ var created = function (target, props, value, proxy) {
         target[props] = r;
         changes(target, props);
         return true;
-    }
-    else {
-        if (Array.isArray(value)) {
-            var r = (0, reactive_1.ref)(value);
-            r.parent.push({
-                type: "refO",
-                value: proxy
-            });
-            target[props] = r;
-            return changes(target, props);
-        }
-        else if (value.type === "proxy") {
-            if (valid(value.typeProxy)) {
-                value.parent.push({
-                    type: "refO",
-                    value: proxy
-                });
-                target[props] = value;
-                changes(target, props);
-                return true;
-            }
-            else {
-                (0, error_1.default)("Вы пытаетесь прокинуть не reactive orve");
-                return false;
-            }
-        }
-        else {
-            var r = refO(value);
-            r.parent.push({
-                type: "refO",
-                value: proxy
-            });
-            target[props] = r;
-            changes(target, props);
-            return true;
-        }
     }
 };
 var refO = function (object) {
@@ -101,7 +90,13 @@ var refO = function (object) {
                     created(target, props, value, proxy);
                 }
                 else {
-                    target[props].value = value;
+                    if ((0, index_1.typeOf)(target[props]) === "proxy") {
+                        if (target[props].typeProxy === type_1.ProxyType.proxyObject) {
+                        }
+                        else {
+                            target[props].value = value;
+                        }
+                    }
                 }
                 return changes(target, props);
             }
