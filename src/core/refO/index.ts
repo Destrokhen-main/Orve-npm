@@ -90,6 +90,7 @@ const refO = function(object: Record<string, any>) {
         } else {
           if(typeOf(target[props]) === "proxy") {
             if (target[props].typeProxy === ProxyType.proxyObject) {
+              target[props] = value;
             } else {
               target[props].value = value;
             }

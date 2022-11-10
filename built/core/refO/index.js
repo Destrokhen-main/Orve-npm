@@ -92,6 +92,7 @@ var refO = function (object) {
                 else {
                     if ((0, index_1.typeOf)(target[props]) === "proxy") {
                         if (target[props].typeProxy === type_1.ProxyType.proxyObject) {
+                            target[props] = value;
                         }
                         else {
                             target[props].value = value;
