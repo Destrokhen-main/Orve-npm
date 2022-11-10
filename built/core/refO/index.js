@@ -97,7 +97,7 @@ var refO = function (object) {
                 return changes(target, props);
             }
             if (props in target) {
-                if ((0, index_1.typeOf)(target[props]) !== (0, index_1.typeOf)(value)) {
+                if ((0, index_1.typeOf)(target[props].value) !== (0, index_1.typeOf)(value)) {
                     created(target, props, value, proxy);
                 }
                 else {

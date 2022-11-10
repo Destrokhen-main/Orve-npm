@@ -95,7 +95,7 @@ const refO = function(object: Record<string, any>) {
         return changes(target, props);
       }
       if (props in target) {
-        if (typeOf(target[props]) !== typeOf(value)) {
+        if (typeOf(target[props].value) !== typeOf(value)) {
           created(target, props, value, proxy);
         } else {
           target[props].value = value;
