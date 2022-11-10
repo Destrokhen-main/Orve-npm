@@ -89,11 +89,12 @@ const refO = function(object: Record<string, any>) {
           created(target, props, value, proxy);
         } else {
           if(typeOf(target[props]) === "proxy") {
-            if (target[props].typeProxy === ProxyType.proxyObject) {
-              target[props] = value;
-            } else {
-              target[props].value = value;
-            }
+            // TODO проверка на тип прокси
+            // if (target[props].typeProxy === ProxyType.proxyObject) {
+            //   target[props] = value;
+            // } else {
+            //   target[props].value = value;
+            // }
           }
         }
         return changes(target, props);

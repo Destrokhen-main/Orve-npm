@@ -1,9 +1,32 @@
 import { ProxyType } from "../tsType/type";
+import { typeOf } from "../helper/index";
 
-export const ref = function(object : any) {
+export const ref = function(object : any, array : boolean = false) {
   const p = {
     parent: [],
     value: object,
+  }
+
+  if (typeOf(object) === "object" && !array) {
+    console.warn(`в ref object.\n Для таких случаев, лучше использовать refO`);
+    return;
+  }
+
+  if (typeOf(object) === "array") {
+    return object.map((e: number | string | object) => {
+      const type = typeOf(e);
+      if (type !== "object" && type !== "proxy" && type !== "array")
+        return ref(e, true);
+      else if (type === "proxy") {
+        // TODO проверка на тип прокси
+        // if (e.typeProxy)
+      } else if (type === "array") {
+        // array
+      } else {
+        // object
+        return "not value";
+      }
+    })
   }
 
   return new Proxy(p, {

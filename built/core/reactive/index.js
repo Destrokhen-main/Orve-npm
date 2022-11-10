@@ -2,11 +2,35 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ref = void 0;
 var type_1 = require("../tsType/type");
-var ref = function (object) {
+var index_1 = require("../helper/index");
+var ref = function (object, array) {
+    if (array === void 0) { array = false; }
     var p = {
         parent: [],
         value: object,
     };
+    if ((0, index_1.typeOf)(object) === "object" && !array) {
+        console.warn("\u0432 ref object.\n \u0414\u043B\u044F \u0442\u0430\u043A\u0438\u0445 \u0441\u043B\u0443\u0447\u0430\u0435\u0432, \u043B\u0443\u0447\u0448\u0435 \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C refO");
+        return;
+    }
+    if ((0, index_1.typeOf)(object) === "array") {
+        return object.map(function (e) {
+            var type = (0, index_1.typeOf)(e);
+            if (type !== "object" && type !== "proxy" && type !== "array")
+                return (0, exports.ref)(e, true);
+            else if (type === "proxy") {
+                // TODO проверка на тип прокси
+                // if (e.typeProxy)
+            }
+            else if (type === "array") {
+                // array
+            }
+            else {
+                // object
+                return "not value";
+            }
+        });
+    }
     return new Proxy(p, {
         get: function (target, prop) {
             if (prop === "type")
