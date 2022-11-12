@@ -7,6 +7,7 @@ var ProxyType;
     ProxyType[ProxyType["proxyComponent"] = 1] = "proxyComponent";
     ProxyType[ProxyType["proxyEffect"] = 2] = "proxyEffect";
     ProxyType[ProxyType["proxyObject"] = 3] = "proxyObject";
+    ProxyType[ProxyType["proxyArray"] = 4] = "proxyArray";
 })(ProxyType || (ProxyType = {}));
 exports.ProxyType = ProxyType;
 var Type;

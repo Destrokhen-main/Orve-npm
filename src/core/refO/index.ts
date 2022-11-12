@@ -69,6 +69,9 @@ const created = function(target, props, value, proxy) {
 }
 
 const refO = function(object: Record<string, any>) {
+  if (typeOf(object) !== "object") {
+    error(`Вы попытались отправить в refO что-то кроме object`);
+  }
   const pr = {
     parent: [],
   };

@@ -2,7 +2,8 @@ enum ProxyType {
   proxySimple,
   proxyComponent,
   proxyEffect,
-  proxyObject
+  proxyObject,
+  proxyArray,
 }
 
 enum Type {

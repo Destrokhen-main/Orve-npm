@@ -34,6 +34,7 @@ function effect(callback, dependency) {
                     target.parent.forEach(function (p) {
                         // string | object | function
                         // string
+                        console.log(p);
                         if (p.type === "child") {
                             if (p.value.nodeType === 3) {
                                 p.value.nodeValue = newFunction_1;

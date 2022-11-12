@@ -70,6 +70,9 @@ var created = function (target, props, value, proxy) {
     }
 };
 var refO = function (object) {
+    if ((0, index_1.typeOf)(object) !== "object") {
+        (0, error_1.default)("\u0412\u044B \u043F\u043E\u043F\u044B\u0442\u0430\u043B\u0438\u0441\u044C \u043E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0432 refO \u0447\u0442\u043E-\u0442\u043E \u043A\u0440\u043E\u043C\u0435 object");
+    }
     var pr = {
         parent: [],
     };

@@ -1,32 +1,23 @@
 import { ProxyType } from "../tsType/type";
 import { typeOf } from "../helper/index";
+import { refO } from "../refO";
+import { refA } from "../refA";
 
-export const ref = function(object : any, array : boolean = false) {
+export const ref = function(object : any) {
+  const type = typeOf(object);
+  if (type === "object") {
+    console.warn(`Вы пытались записать в ref объект.\nОбъект был перенаправлен в refO`);
+    return refO(object);
+  }
+
+  if (type === "array") {
+    console.warn(`Вы пытались записать в ref массив.\nОбъект был перенаправлен в refA`);
+    return refA(object);
+  }
+
   const p = {
     parent: [],
     value: object,
-  }
-
-  if (typeOf(object) === "object" && !array) {
-    console.warn(`в ref object.\n Для таких случаев, лучше использовать refO`);
-    return;
-  }
-
-  if (typeOf(object) === "array") {
-    return object.map((e: number | string | object) => {
-      const type = typeOf(e);
-      if (type !== "object" && type !== "proxy" && type !== "array")
-        return ref(e, true);
-      else if (type === "proxy") {
-        // TODO проверка на тип прокси
-        // if (e.typeProxy)
-      } else if (type === "array") {
-        // array
-      } else {
-        // object
-        return "not value";
-      }
-    })
   }
 
   return new Proxy(p, {

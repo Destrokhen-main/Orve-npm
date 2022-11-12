@@ -37,6 +37,7 @@ export function effect(callback, dependency = []) {
           target.parent.forEach(p => {
             // string | object | function
             // string
+            console.log(p);
             if (p.type === "child") {
               if (p.value.nodeType === 3) {
                 p.value.nodeValue = newFunction;
@@ -119,7 +120,6 @@ export function effect(callback, dependency = []) {
 
   dependency.forEach(i => {
     const type = typeOf(i);
-
     if (type !== "proxy") {
       error(errMessage.ONLY_PROXY);
     } else {
