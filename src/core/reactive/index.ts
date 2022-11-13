@@ -11,7 +11,6 @@ export const ref = function(object : any) {
   }
 
   if (type === "array") {
-    console.warn(`Вы пытались записать в ref массив.\nОбъект был перенаправлен в refA`);
     return refA(object);
   }
 

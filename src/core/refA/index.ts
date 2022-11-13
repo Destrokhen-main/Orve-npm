@@ -6,10 +6,6 @@
 //     return e;
 //   }
 // })
-
-import { typeOf } from "../helper/index";
-import { refO } from "../refO";
-import { ref } from "../reactive";
 import { ProxyType } from "../tsType/type";
 
 const cOrr = ['push', 'pop', 'shift', 'unshift', 'splice'];
