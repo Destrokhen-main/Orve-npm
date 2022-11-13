@@ -13,13 +13,23 @@ export default function(app : HTMLElement, ch: any, callback: any) {
     app.appendChild(el); 
     return ch;
   } else if (type === "object") {
-    // NOTE need valid
-    const el = callback(app, ch.value);
-    ch.proxy.parent.push({
-      type: Type.Component,
-      value: el
-    });
-    return el;
+    if (ch.value["tag"] !== undefined) {
+      // NOTE need valid
+      const el = callback(app, ch.value);
+      ch.proxy.parent.push({
+        type: Type.Component,
+        value: el
+      });
+      return el;
+    } else {
+      const el = document.createTextNode(JSON.stringify(ch.value));
+      app.appendChild(el);
+      ch.proxy.parent.push({
+        type: "object-notComponent",
+        value: el
+      })
+      return el;
+    }
   } else if (type === "proxy") {
     console.log("proxy");
   }

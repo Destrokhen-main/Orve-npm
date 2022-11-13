@@ -1,6 +1,7 @@
 import error from "../error/error.js";
 import { typeOf } from "../helper/index.js";
 import { ProxyType } from "../tsType/type";
+import { Type } from "../tsType/type";
 
 import errMessage from "../error/effect";
 
@@ -37,6 +38,7 @@ export function effect(callback, dependency = []) {
           target.parent.forEach(p => {
             // string | object | function
             // string
+            // TODO с типами проблема, надо как-то подправить
             console.log(p);
             if (p.type === "child") {
               if (p.value.nodeType === 3) {
@@ -53,7 +55,9 @@ export function effect(callback, dependency = []) {
             if (p.type === "watch") {
               p.function(newFunction, target["value"]);
             }
+            if (p.type === "object-notComponent") {
 
+            }
             // if (p.type === "array") {
             //   const ar = recursiveChild(null, newFunction);
             //   // target.lastCall.forEach((el: any) => {
