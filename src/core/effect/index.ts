@@ -89,8 +89,27 @@ export function effect(callback, dependency = []) {
               });
 
               if (target.lastCall.length === parsed.length) {
+                target.lastCall = target.lastCall.map((e) => {
+                  const obj = parsed.find(l => l.key === e.key);
+                  if (obj) {
+                    e.node.replaceWith(obj.node);
+                    e = obj;
+                  }
+                })
               } else if (target.lastCall.length > parsed.length) {
+                target.lastCall = target.lastCall.map((e) => {  
+                  const obj = parsed.find(l => l.key === e.key);
+                  if (obj) {
+                    e.node.replaceWith(obj.node);
+                    e = obj;
+                  }
+                  return e;   
+                });
                 
+                for(let i = parsed.length;i !== target.lastCall.length; i++) {
+                  target.lastCall[i].node.remove()
+                }
+                target.lastCall.splice(parsed.length, target.lastCall.length);
               } else if (target.lastCall.length < parsed.length) {
                 parsed.forEach((e) => {
                   const obj = target.lastCall.find(l => l.key === e.key);
@@ -104,7 +123,7 @@ export function effect(callback, dependency = []) {
                   }
                 });
               }
-              console.log(target.lastCall);
+              //console.log(target.lastCall);
               //target.lastCall = parsed;
             }
           });

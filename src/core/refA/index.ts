@@ -39,13 +39,6 @@ const valueCreator = function(obj) {
       }
 
       return target[props];
-    }, 
-    set(target, props, value) {
-      // TODO сделать array[index] -> чтобы работало тоже
-      if (Number.isInteger(value)) {
-      }
-      target[props] = value;
-      return true;
     }
   })
 }
