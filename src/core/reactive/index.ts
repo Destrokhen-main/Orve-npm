@@ -42,10 +42,12 @@ export const ref = function(object : any) {
               }
             }
             if (el.type === "props") {
-              if (value === "") {
+              if (el.key === "value") {
+                el.value.value = value;
+              } else if (value === "") {
                 el.value.removeAttribute(el.key);
               } else {
-                el.value.setAttribute(el.key, value);
+                el.value.el.setAttribute(el.key, value);
               }
             }
             if (el.type === "watch") {
