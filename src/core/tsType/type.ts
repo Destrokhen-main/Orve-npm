@@ -16,6 +16,7 @@ enum Type {
   Proxy,
   ProxyComponent,
   ProxyEffect,
+  ArrayComponent
 }
 
 export {
