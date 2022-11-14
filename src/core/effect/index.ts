@@ -3,6 +3,10 @@ import { typeOf } from "../helper/index.js";
 import { ProxyType } from "../tsType/type";
 import { Type } from "../tsType/type";
 
+import { builder } from "../builder/index";
+import { createNodeRebuild } from "../mount/rebiuld";
+import { validatorTagNode } from "../linter/index";
+
 import errMessage from "../error/effect";
 
 export function effect(callback, dependency = []) {
@@ -39,7 +43,6 @@ export function effect(callback, dependency = []) {
             // string | object | function
             // string
             // TODO с типами проблема, надо как-то подправить
-            console.log(p);
             if (p.type === "child") {
               if (p.value.nodeType === 3) {
                 p.value.nodeValue = newFunction;
@@ -55,8 +58,18 @@ export function effect(callback, dependency = []) {
             if (p.type === "watch") {
               p.function(newFunction, target["value"]);
             }
-            if (p.type === "object-notComponent") {
-
+            if (p.type === "object-notComponent" || p.type === "array-notComponent") {
+              p.value.textContent = JSON.stringify(newFunction);
+            }
+            if (p.type === Type.Component) {
+              if (newFunction["child"] !== undefined && !Array.isArray(newFunction["child"])) {
+                newFunction["child"] = [newFunction["child"]];
+              }
+              validatorTagNode(newFunction);
+              const newComp = builder.bind(window.sReact.sReactContext)(() => newFunction);
+              const mounted = createNodeRebuild(null, newComp);
+              p.value.node.replaceWith(mounted);
+              p.value.node = mounted;
             }
             // if (p.type === "array") {
             //   const ar = recursiveChild(null, newFunction);

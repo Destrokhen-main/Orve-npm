@@ -1,5 +1,7 @@
 import { typeOf } from "../../helper/index";
-import { Type } from "../../tsType/type"
+import { Type } from "../../tsType/type";
+import { validatorTagNode } from "../../linter/index";
+import { builder } from "../../builder/index";
 
 export default function(app : HTMLElement, ch: any, callback: any) {
   const type = typeOf(ch.value);
@@ -14,8 +16,12 @@ export default function(app : HTMLElement, ch: any, callback: any) {
     return ch;
   } else if (type === "object") {
     if (ch.value["tag"] !== undefined) {
-      // NOTE need valid
-      const el = callback(app, ch.value);
+      if (ch.value["child"] !== undefined && !Array.isArray(ch.value["child"])) {
+        ch.value["child"] = [ch.value["child"]];
+      }
+      validatorTagNode(ch.value);
+      const c = builder(() => ch.value);
+      const el = callback(app, c);
       ch.proxy.parent.push({
         type: Type.Component,
         value: el
@@ -30,6 +36,14 @@ export default function(app : HTMLElement, ch: any, callback: any) {
       })
       return el;
     }
+  } else if (type === "array") {
+    const el = document.createTextNode(JSON.stringify(ch.value));
+      app.appendChild(el);
+      ch.proxy.parent.push({
+        type: "array-notComponent",
+        value: el
+      })
+      return el;
   } else if (type === "proxy") {
     console.log("proxy");
   }
