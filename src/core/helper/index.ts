@@ -28,8 +28,16 @@ const createObjectContext = function(app: object) : object {
   return Context;
 }
 
+const objectToArray = function(child: any) : Array<any> {
+  if(!Array.isArray(child)) {
+    return [child]
+  }
+  return child;
+}
+
 export {
   isProxy,
   typeOf,
-  createObjectContext
+  createObjectContext,
+  objectToArray
 }

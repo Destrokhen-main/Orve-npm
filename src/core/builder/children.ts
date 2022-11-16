@@ -5,6 +5,7 @@ import TYPE_MESSAGE from "../error/errorMessage";
 import { ProxyType } from "../tsType/type";
 import { builder } from "../builder/index";
 import { Node } from "../tsType/index";
+import { objectToArray } from "../helper"
 
 import recursiveCheckFunctionAnswer from "./recuriveFunction"
 
@@ -32,8 +33,8 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
       }
 
       if (typeChild === "object") {
-        if (child["child"] !== undefined && typeOf(child["child"]) !== "array") {
-          child["child"] = [child["child"]];
+        if (child["child"] !== undefined) {
+          child["child"] = objectToArray(child["child"]);
         }
 
         validatorTagNode(child);
@@ -71,15 +72,14 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
         validateFunctionAnswer(completeFunction, index);
 
         if (typeCompleteFunction === "object") {
-          if (completeFunction["child"] !== undefined && typeOf(completeFunction["child"]) !== "array") {
-            completeFunction["child"] = [completeFunction["child"]]
+          if (completeFunction["child"] !== undefined) {
+            completeFunction["child"] = objectToArray(completeFunction["child"])
           }
 
           validatorTagNode(completeFunction);
 
           if (typeof completeFunction["tag"] === "function") {
             completeFunction = recursiveCheckFunctionAnswer.bind(this)(completeFunction);
-            console.log(completeFunction);
           }
 
           if (completeFunction["child"] !== undefined) {

@@ -6,6 +6,7 @@ import { Type } from "../tsType/type";
 import { builder } from "../builder/index";
 import { createNodeRebuild } from "../mount/rebiuld";
 import { validatorTagNode } from "../linter/index";
+import { objectToArray } from "../helper";
 
 import errMessage from "../error/effect";
 
@@ -63,8 +64,8 @@ export function effect(callback, dependency = []) {
               p.value.textContent = JSON.stringify(newFunction);
             }
             if (p.type === Type.Component) {
-              if (newFunction["child"] !== undefined && !Array.isArray(newFunction["child"])) {
-                newFunction["child"] = [newFunction["child"]];
+              if (newFunction["child"] !== undefined) {
+                newFunction["child"] = objectToArray(newFunction["child"]);
               }
               validatorTagNode(newFunction);
               const newComp = builder.bind(window.sReact.sReactContext)(() => newFunction);
@@ -74,8 +75,8 @@ export function effect(callback, dependency = []) {
             }
             if (p.type === Type.ArrayComponent) {
               const parsed = newFunction.map((e, i) => {
-                if (e["child"] !== undefined && !Array.isArray(e)) {
-                  e["child"] = [e["child"]];
+                if (e["child"] !== undefined) {
+                  e["child"] = objectToArray(e["child"]);
                 }
                 validatorTagNode(e);
                 const c = builder.bind(window.sReact.sReactContext)(() => e);

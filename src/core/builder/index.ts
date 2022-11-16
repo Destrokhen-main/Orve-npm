@@ -7,6 +7,7 @@ import { typeOf } from "../helper/index";
 
 import { Type } from "../tsType/type";
 import { Node, VNode } from "../tsType";
+import { objectToArray } from "../helper";
 
 import reqChild from "./children";
 import recursive from "./recuriveFunction";
@@ -21,10 +22,9 @@ export const builder = function(app: () => Node) : VNode {
   if (typeOf(mainNode) !== "object") {
     error(`${mainNode} - ${errorMessage.resultCallNotAObject}`);
   }
-  
-  if (mainNode["child"] !== undefined && typeOf(mainNode["child"]) !== "array") {
-    mainNode["child"] = [ mainNode["child"] ];
-  }
+
+  if(mainNode["child"] !== undefined)
+    mainNode["child"] = objectToArray(mainNode["child"]);
 
   // check mainNode
   validatorMainNode(mainNode);

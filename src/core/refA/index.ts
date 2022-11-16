@@ -18,7 +18,7 @@ function createArrayProxy(ar) {
         args.push(arguments[i]);
       }
       Array.prototype[key].apply(this, args);
-      ar.forEach(e => {
+      ar.forEach((e) => {
         e.parent.refresh;
       })
     }
