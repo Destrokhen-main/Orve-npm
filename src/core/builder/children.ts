@@ -67,8 +67,6 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[], callback: 
         const object = nodeProps !== undefined
                         ? callback.bind(this)(child, nodeProps)
                         : callback.bind(this)(child);
-        
-        console.log(object);
         return {
           type: Type.Component,
           value: object,
