@@ -1,6 +1,6 @@
 import errorMessage from "../error/errorMessage";
 import error from "../error/error";
-import { validatorMainNode, validatorTagNode } from "../linter/index";
+import { validatorMainNode } from "../linter/index";
 
 
 import { typeOf } from "../helper/index";
