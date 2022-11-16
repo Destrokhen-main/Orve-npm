@@ -9,7 +9,7 @@ import { objectToArray } from "../helper"
 
 import recursiveCheckFunctionAnswer from "./recuriveFunction"
 
-const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
+const recursiveChild = function(nodeProps = null, nodeChilds: Node[], callback: () => {}) {
   if (
     nodeChilds !== undefined &&
     typeOf(nodeChilds) === "array" &&
@@ -64,42 +64,49 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
       }
 
       if (typeChild === "function") {
-        let completeFunction = nodeProps !== undefined
-                                ? child.bind(this)(nodeProps)
-                                : child.bind(this)();
+        const object = nodeProps !== undefined
+                        ? callback.bind(this)(child, nodeProps)
+                        : callback.bind(this)(child);
         
-        const typeCompleteFunction = typeOf(completeFunction);
-        validateFunctionAnswer(completeFunction, index);
+        console.log(object);
+        return {
+          type: Type.Component,
+          value: object,
+          function: child
+        };
+        
+        // const typeCompleteFunction = typeOf(completeFunction);
+        // validateFunctionAnswer(completeFunction, index);
 
-        if (typeCompleteFunction === "object") {
-          if (completeFunction["child"] !== undefined) {
-            completeFunction["child"] = objectToArray(completeFunction["child"])
-          }
+        // if (typeCompleteFunction === "object") {
+        //   if (completeFunction["child"] !== undefined) {
+        //     completeFunction["child"] = objectToArray(completeFunction["child"])
+        //   }
 
-          validatorTagNode(completeFunction);
+        //   validatorTagNode(completeFunction);
 
-          if (typeof completeFunction["tag"] === "function") {
-            completeFunction = recursiveCheckFunctionAnswer.bind(this)(completeFunction);
-          }
+        //   if (typeof completeFunction["tag"] === "function") {
+        //     completeFunction = recursiveCheckFunctionAnswer.bind(this)(completeFunction);
+        //   }
 
-          if (completeFunction["child"] !== undefined) {
-            completeFunction["child"] = recursiveChild.bind(this)(completeFunction["props"], completeFunction["child"]);
-          }
+        //   if (completeFunction["child"] !== undefined) {
+        //     completeFunction["child"] = recursiveChild.bind(this)(completeFunction["props"], completeFunction["child"]);
+        //   }
 
-          return {
-            type: Type.ComponentMutable,
-            value:completeFunction,
-            function: child,
-          }
-        }
+        //   return {
+        //     type: Type.ComponentMutable,
+        //     value:completeFunction,
+        //     function: child,
+        //   }
+        // }
 
-        if (typeCompleteFunction === "string" || typeCompleteFunction === "number") {
-          return {
-            type: Type.Mutable,
-            value: completeFunction,
-            function: child,
-          }
-        }
+        // if (typeCompleteFunction === "string" || typeCompleteFunction === "number") {
+        //   return {
+        //     type: Type.Mutable,
+        //     value: completeFunction,
+        //     function: child,
+        //   }
+        // }
 
       }
 
