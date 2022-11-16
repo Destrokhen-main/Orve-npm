@@ -2,6 +2,7 @@ import { typeOf } from "../../helper/index";
 import { Type } from "../../tsType/type";
 import { validatorTagNode } from "../../linter/index";
 import { builder } from "../../builder/index";
+import { objectToArray } from "../../helper/index";
 
 const hasComponentInArray = (e) => {
   for(let i = 0; i !== e.length; i++) {
@@ -25,8 +26,8 @@ export default function(app : HTMLElement, ch: any, callback: any) {
     return ch;
   } else if (type === "object") {
     if (ch.value["tag"] !== undefined) {
-      if (ch.value["child"] !== undefined && !Array.isArray(ch.value["child"])) {
-        ch.value["child"] = [ch.value["child"]];
+      if (ch.value["child"] !== undefined) {
+        ch.value["child"] = objectToArray(ch.value["child"]);
       }
       validatorTagNode(ch.value);
       const c = builder(() => ch.value);
@@ -56,8 +57,8 @@ export default function(app : HTMLElement, ch: any, callback: any) {
       return el;
     } else {
       ch.value = ch.value.map((e, i) => {
-        if (e["child"] !== undefined && !Array.isArray(e)) {
-          e["child"] = [e["child"]];
+        if (e["child"] !== undefined) {
+          e["child"] = objectToArray(e["child"]);
           validatorTagNode(e);
 
           const c = builder(() => e);

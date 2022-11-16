@@ -83,12 +83,11 @@ export function effect(callback, dependency = []) {
                 const el = createNodeRebuild(null, c);
                 // console.log(el);
                 return {
-                  key: i,
                   ...c,
+                  key: c.key !== undefined ? c.key : i,
                   node: el,
                 }
               });
-
               if (target.lastCall.length === parsed.length) {
                 target.lastCall = target.lastCall.map((e) => {
                   const obj = parsed.find(l => l.key === e.key);
@@ -98,26 +97,23 @@ export function effect(callback, dependency = []) {
                   }
                 })
               } else if (target.lastCall.length > parsed.length) {
-                target.lastCall = target.lastCall.map((e) => {  
-                  const obj = parsed.find(l => l.key === e.key);
-                  if (obj) {
-                    e.node.replaceWith(obj.node);
-                    e = obj;
+                //console.log(parsed, target.lastCall);
+                for(let i = 0; i !== target.lastCall.length; i++) {
+                  const obj = parsed.find((e) => e.key === target.lastCall[i].key);
+                  if (!obj) {
+                    target.lastCall[i].node.remove();
+                    delete target.lastCall[i];
                   }
-                  return e;   
-                });
-                
-                for(let i = parsed.length;i !== target.lastCall.length; i++) {
-                  target.lastCall[i].node.remove()
                 }
-                target.lastCall.splice(parsed.length, target.lastCall.length);
+                target.lastCall = target.lastCall.filter((e) => typeof(e) !== undefined);
               } else if (target.lastCall.length < parsed.length) {
                 parsed.forEach((e) => {
-                  const obj = target.lastCall.find(l => l.key === e.key);
-                  if (obj) {
+                  const obj = target.lastCall.findIndex(l => l.key === e.key);
+                  //console.log(e, target.lastCall[obj]);
+                  if (target.lastCall[obj] !== undefined) {
                     // TODO проверять равны ли элементы
-                    obj.node.replaceWith(e.node);
-                    obj.node = e.node;
+                    target.lastCall[obj].node.replaceWith(e.node);
+                    target.lastCall[obj] = e;
                   } else {
                     target.lastCall[target.lastCall.length - 1].node.insertAdjacentElement('afterend', e.node);
                     target.lastCall.push(e);
