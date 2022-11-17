@@ -7,7 +7,10 @@ const component = function () {
     tag: "div",
     props: {
       id: "key",
-      class: "class"
+      class: "class",
+      style: {
+        display: "flex"
+      }
     },
     child: "hello"
   }
@@ -24,7 +27,7 @@ describe("CreateApp function and mounted", () => {
   test("Mounted step", () => {
     body.innerHTML = `<div id = "app"></div>`;
     app.mount("#app");
-    expect(body.childNodes.length).not.toBe(0);
+    expect(body.querySelector("div")?.childNodes.length).not.toBe(0);
   })
   test("Find created element", () => {
     const createdDiv = body.querySelector("#app")?.querySelector("div");
