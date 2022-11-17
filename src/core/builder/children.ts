@@ -20,13 +20,13 @@ const recursiveChild = function (
     nodeChilds.length > 0
   ) {
     nodeChilds = nodeChilds.flat(1);
-    return nodeChilds.map((child: any) => {
+    return nodeChilds.map((child: string | number | any) => {
       const typeChild = typeOf(child);
       if (
-        typeChild === "string" &&
-        child.includes("<") &&
-        child.includes(">") &&
-        (child.includes("</") || child.includes("/>"))
+        typeof child === "string"
+        && child.includes("<")
+        && child.includes(">")
+        && (child.includes("</") || child.includes("/>"))
       ) {
         return {
           type: Type.HTMLCode,
