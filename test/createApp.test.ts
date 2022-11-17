@@ -18,6 +18,7 @@ const component = function () {
 
 let app : any = null;
 const body = document.body;
+let workDiv: any = null;
 
 describe("CreateApp function and mounted", () => {
   test("CreateApp step", () => {
@@ -30,10 +31,10 @@ describe("CreateApp function and mounted", () => {
     expect(body.querySelector("div")?.childNodes.length).not.toBe(0);
   })
   test("Find created element", () => {
-    const createdDiv = body.querySelector("#app")?.querySelector("div");
+    workDiv = body.querySelector("#app")?.querySelector("div");
 
-    expect(createdDiv?.getAttribute("id")).toBe("key");
-    expect(createdDiv?.getAttribute("class")).toBe("class");
-    expect(createdDiv?.innerHTML).toBe("hello");
+    expect(workDiv?.getAttribute("id")).toBe("key");
+    expect(workDiv?.getAttribute("class")).toBe("class");
+    expect(workDiv?.innerHTML).toBe("hello");
   })
 })
