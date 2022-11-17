@@ -6,9 +6,10 @@ import errorMessage from "../error/errorMessage";
 import { validatorProps, validSingleProps } from "./props";
 import { validateChildFunction, validatorChild } from "./child";
 import { Node } from "../tsType/index";
+import { ProxyType } from "../tsType/type";
 
 
-const SUPPORTED_VARIABLES = ["tag", "props", "child", "key"];
+const SUPPORTED_VARIABLES = ["tag", "props", "child", "key", "ref"];
 const validatorMainNode = function(node: Node) {
   // check unsupported object variables
   Object.keys(node).forEach((key) => {
@@ -16,7 +17,7 @@ const validatorMainNode = function(node: Node) {
       error(`${key} - ${errorMessage.useUnsupportedVariables}`);
     }
   });
-  const { tag, props, child} = node;
+  const { tag, props, child, ref} = node;
 
   // check exist tag
   if(tag === undefined) {
@@ -30,6 +31,16 @@ const validatorMainNode = function(node: Node) {
       validatorChild(child);
     } else {
       error(`Child может быть только типа array`);
+    }
+  }
+  if (ref !== undefined) {
+    if (typeOf(ref) === "proxy") {
+      const typeProxy = ref.typeProxy;
+      if (typeProxy !== ProxyType.proxyElement) {
+        error("ref может хранить в себе только refL")
+      }
+    } else {
+      error("ref может хранить только proxy orve")
     }
   }
 }
