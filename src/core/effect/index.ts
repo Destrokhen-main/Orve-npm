@@ -103,6 +103,9 @@ export function effect(callback, dependency = []) {
                   if (!obj) {
                     target.lastCall[i].node.remove();
                     delete target.lastCall[i];
+                  } else {
+                    target.lastCall[i].node.replaceWith(obj.node);
+                    target.lastCall[i] = obj;
                   }
                 }
                 target.lastCall = target.lastCall.filter((e) => typeof(e) !== undefined);

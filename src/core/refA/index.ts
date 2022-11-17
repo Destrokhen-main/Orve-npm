@@ -8,6 +8,14 @@
 // })
 import { ProxyType } from "../tsType/type";
 
+function isNumber(number: any) {
+  return typeof number === "string" &&
+  number !== 'NaN' &&
+  number[0] !== '-' &&
+  '' + parseInt(number) === number
+}
+
+
 const cOrr = ['push', 'pop', 'shift', 'unshift', 'splice'];
 function createArrayProxy(ar) {
   const handler = {};
@@ -27,8 +35,8 @@ function createArrayProxy(ar) {
 }
 
 const valueCreator = function(obj) {
+  const arPr = createArrayProxy(this.parent);
   const parent = this.parent;
-  const arPr = createArrayProxy(parent);
   return new Proxy(obj, {
     get(target, props, receive) {
       if (arPr[props] !== undefined) {
