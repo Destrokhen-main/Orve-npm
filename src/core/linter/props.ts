@@ -1,4 +1,4 @@
-import { typeOf } from "../helper/index.js";
+import { typeOf } from "../helper";
 const SUPPORTED_TYPE_PROPS = ["function", "string", "proxy", "number", "object", "array"];
 const CORRECT_PROPS_FUNCTION = ["string", "proxy", "number"];
 
