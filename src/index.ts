@@ -1,14 +1,9 @@
 import { createApp, context } from "./core/index";
-import { ref } from "./core/reactive/index.js";
-import { watch } from "./core/watch/index.js";
-import { refC } from "./core/reactiveComponent/index.js";
-import { effect } from "./core/effect/index.js";
+import { ref } from "./core/reactive/index";
+import { watch } from "./core/watch/index";
+import { refC } from "./core/reactiveComponent/index";
+import { effect } from "./core/effect/index";
+import { refO } from "./core/refO/index";
+import { refL } from "./core/ref-link/index";
 
-export {
-  createApp,
-  ref,
-  refC,
-  watch,
-  effect,
-  context
-}
+export { createApp, ref, refC, watch, effect, context, refO, refL };

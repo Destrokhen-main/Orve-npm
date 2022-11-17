@@ -4,7 +4,7 @@ import { builder } from "../builder/index";
 import { createNodeRebuild } from "../mount/rebiuld";
 import { typeOf } from "../helper/index";
 
-export const refC = function(component: any) {
+export const refC = function (component: any) {
   let comp = component;
   const type = typeOf(component);
   if (type !== "function") {
@@ -16,7 +16,7 @@ export const refC = function(component: any) {
   const object = {
     parent: [],
     value: comp,
-  }
+  };
 
   return new Proxy(object, {
     get(target, prop) {
@@ -46,8 +46,8 @@ export const refC = function(component: any) {
 
         if (prop === "value") {
           if (target.parent.length > 0) {
-            let newObj = builder.bind(window.sReact.sReactContext)(comp);
-            const object  = createNodeRebuild(null, newObj);
+            const newObj = builder.bind(window.sReact.sReactContext)(comp);
+            const object = createNodeRebuild(null, newObj);
             target.parent = target.parent.map((el) => {
               if (el.type === undefined) {
                 el.replaceWith(object);
@@ -63,6 +63,9 @@ export const refC = function(component: any) {
         return true;
       }
       return false;
-    }
-  })
-}
+    },
+    deleteProperty() {
+      return false;
+    },
+  });
+};

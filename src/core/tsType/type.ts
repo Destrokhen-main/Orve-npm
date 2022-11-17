@@ -2,6 +2,9 @@ enum ProxyType {
   proxySimple,
   proxyComponent,
   proxyEffect,
+  proxyObject,
+  proxyArray,
+  proxyElement,
 }
 
 enum Type {
@@ -13,10 +16,8 @@ enum Type {
   ComponentMutable,
   Proxy,
   ProxyComponent,
-  ProxyEffect
+  ProxyEffect,
+  ArrayComponent,
 }
 
-export {
-  ProxyType,
-  Type
-}
+export { ProxyType, Type };

@@ -5,8 +5,8 @@ class error extends Error {
   }
 }
 
-const createError = function( message : string ) : void {
+const createError = function (message: string): void {
   throw new error(message);
-}
+};
 
 export default createError;

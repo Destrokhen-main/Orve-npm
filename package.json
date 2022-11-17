@@ -1,12 +1,14 @@
 {
   "name": "orve",
-  "version": "0.6.4",
+  "version": "0.9.0",
   "description": "Оbject reactive library. mix of react and vue",
   "main": "built/index.js",
   "scripts": {
-    "lint": "eslint ./src/*.ts",
+    "lint": "eslint ./src",
+    "prettier": "prettier  --write ./src",
     "watch": "tsc --watch",
-    "build": "tsc --build"
+    "build": "tsc --build",
+    "test": "jest"
   },
   "keywords": [
     "vue",
@@ -36,8 +38,15 @@
     "root-require": "^0.3.1"
   },
   "devDependencies": {
+    "@jest/globals": "^29.3.1",
     "@types/node": "^18.7.23",
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/parser": "^5.43.0",
     "eslint": "^8.24.0",
+    "eslint-config-prettier": "^8.5.0",
+    "jest-environment-jsdom": "^29.3.1",
+    "prettier": "^2.7.1",
+    "ts-jest": "^29.0.3",
     "typescript": "^4.8.4"
   }
 }

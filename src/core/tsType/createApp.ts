@@ -1,3 +1,3 @@
 export default interface CreateApp {
-  mount: (_: string) => void
+  mount: (_: string) => void;
 }

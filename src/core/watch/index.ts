@@ -1,21 +1,21 @@
 import error from "../error/error";
 import { typeOf } from "../helper/index";
 
-import errorMessage from "../error/watch"
+import errorMessage from "../error/watch";
 
-const w = function(callback: () => void, depends: any) {
+const w = function (callback: () => void, depends: any) {
   if (depends === undefined) {
-    error(errorMessage.NEED_DEP)
+    error(errorMessage.NEED_DEP);
   }
 
-  if (typeOf(depends) !== 'proxy') {
+  if (typeOf(depends) !== "proxy") {
     error(errorMessage.NEED_PROXY);
   }
 
   depends.parent.push({
     type: "watch",
-    function: callback
+    function: callback,
   });
-}
+};
 
 export const watch = w;

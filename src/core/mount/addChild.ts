@@ -2,12 +2,18 @@ import { Type } from "../tsType/type";
 
 import ProxyEffect from "./partMount/ProxyEffect";
 
-import { VNode } from "../tsType"
- 
-export const addChild = function(app : HTMLElement, child : Array<VNode>, callback: any) {
-  return child.map(ch => {
+import { VNode } from "../tsType";
+
+export const addChild = function (
+  app: HTMLElement,
+  child: Array<VNode>,
+  callback: any,
+) {
+  return child.map((ch) => {
     if (ch.type === Type.HTMLCode) {
-      const el = new DOMParser().parseFromString(ch.value, "text/html").getElementsByTagName("body")[0];
+      const el = new DOMParser()
+        .parseFromString(ch.value, "text/html")
+        .getElementsByTagName("body")[0];
       app.appendChild(el.firstChild);
       return ch;
     }
@@ -27,13 +33,13 @@ export const addChild = function(app : HTMLElement, child : Array<VNode>, callba
     }
 
     if (ch.type === Type.Proxy) {
-      const el = document.createTextNode(ch.value)
+      const el = document.createTextNode(ch.value);
       ch.node = el;
       ch.proxy.parent.push({
         type: "child",
         value: el,
       });
-      app.appendChild(el); 
+      app.appendChild(el);
       return ch;
     }
 
@@ -47,4 +53,4 @@ export const addChild = function(app : HTMLElement, child : Array<VNode>, callba
       return ProxyEffect(app, ch, callback);
     }
   });
-}
+};
