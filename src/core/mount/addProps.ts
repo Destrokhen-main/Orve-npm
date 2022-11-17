@@ -1,6 +1,6 @@
-import { validSingleProps } from "../linter/index.js";
+import { validSingleProps } from "../linter/index";
 const reactToCSS = require('react-style-object-to-css')
-import { typeOf } from "../helper/index.js";
+import { typeOf } from "../helper/index";
 
 export const addProps = function(tag: HTMLElement, props : object) {
   Object.keys(props).forEach((pr) => {

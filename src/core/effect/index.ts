@@ -1,5 +1,5 @@
-import error from "../error/error.js";
-import { typeOf } from "../helper/index.js";
+import error from "../error/error";
+import { typeOf } from "../helper/index";
 import { ProxyType } from "../tsType/type";
 import { Type } from "../tsType/type";
 
