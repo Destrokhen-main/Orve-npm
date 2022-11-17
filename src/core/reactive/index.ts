@@ -3,10 +3,12 @@ import { typeOf } from "../helper/index";
 import { refO } from "../refO";
 import { refA } from "../refA";
 
-export const ref = function(object : any) {
+export const ref = function (object: any) {
   const type = typeOf(object);
   if (type === "object") {
-    console.warn(`Вы пытались записать в ref объект.\nОбъект был перенаправлен в refO`);
+    console.warn(
+      `Вы пытались записать в ref объект.\nОбъект был перенаправлен в refO`,
+    );
     return refO(object);
   }
 
@@ -17,7 +19,7 @@ export const ref = function(object : any) {
   const p = {
     parent: [],
     value: object,
-  }
+  };
 
   return new Proxy(p, {
     get(target, prop) {
@@ -66,8 +68,8 @@ export const ref = function(object : any) {
         return false;
       }
     },
-    deleteProperty(target,props) {
+    deleteProperty(target, props) {
       return false;
-    }
-  })
-}
+    },
+  });
+};

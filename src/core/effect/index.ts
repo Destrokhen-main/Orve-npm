@@ -30,10 +30,10 @@ export function effect(callback, dependency = []) {
 
   const proxy = new Proxy(object, {
     get(target, prop) {
-      if (prop === "type") { 
-        return "proxy"; 
+      if (prop === "type") {
+        return "proxy";
       }
-      if (prop === "typeProxy") { 
+      if (prop === "typeProxy") {
         return ProxyType.proxyEffect;
       }
 
@@ -41,7 +41,7 @@ export function effect(callback, dependency = []) {
         const newFunction = target["function"]();
 
         if (target.parent.length > 0) {
-          target.parent.forEach(p => {
+          target.parent.forEach((p) => {
             // string | object | function
             // string
             // TODO с типами проблема, надо как-то подправить
@@ -51,7 +51,7 @@ export function effect(callback, dependency = []) {
               }
             }
             if (p.type === "props") {
-              if ( newFunction === "") {
+              if (newFunction === "") {
                 p.value.removeAttribute(p.key);
               } else {
                 p.value.setAttribute(p.key, newFunction);
@@ -60,7 +60,10 @@ export function effect(callback, dependency = []) {
             if (p.type === "watch") {
               p.function(newFunction, target["value"]);
             }
-            if (p.type === "object-notComponent" || p.type === "array-notComponent") {
+            if (
+              p.type === "object-notComponent" ||
+              p.type === "array-notComponent"
+            ) {
               p.value.textContent = JSON.stringify(newFunction);
             }
             if (p.type === Type.Component) {
@@ -68,7 +71,9 @@ export function effect(callback, dependency = []) {
                 newFunction["child"] = objectToArray(newFunction["child"]);
               }
               validatorTagNode(newFunction);
-              const newComp = builder.bind(window.sReact.sReactContext)(() => newFunction);
+              const newComp = builder.bind(window.sReact.sReactContext)(
+                () => newFunction,
+              );
               const mounted = createNodeRebuild(null, newComp);
               p.value.node.replaceWith(mounted);
               p.value.node = mounted;
@@ -86,20 +91,22 @@ export function effect(callback, dependency = []) {
                   ...c,
                   key: c.key !== undefined ? c.key : i,
                   node: el,
-                }
+                };
               });
               if (target.lastCall.length === parsed.length) {
                 target.lastCall = target.lastCall.map((e) => {
-                  const obj = parsed.find(l => l.key === e.key);
+                  const obj = parsed.find((l) => l.key === e.key);
                   if (obj) {
                     e.node.replaceWith(obj.node);
                     e = obj;
                   }
-                })
+                });
               } else if (target.lastCall.length > parsed.length) {
                 //console.log(parsed, target.lastCall);
-                for(let i = 0; i !== target.lastCall.length; i++) {
-                  const obj = parsed.find((e) => e.key === target.lastCall[i].key);
+                for (let i = 0; i !== target.lastCall.length; i++) {
+                  const obj = parsed.find(
+                    (e) => e.key === target.lastCall[i].key,
+                  );
                   if (!obj) {
                     target.lastCall[i].node.remove();
                     delete target.lastCall[i];
@@ -108,17 +115,21 @@ export function effect(callback, dependency = []) {
                     target.lastCall[i] = obj;
                   }
                 }
-                target.lastCall = target.lastCall.filter((e) => typeof(e) !== undefined);
+                target.lastCall = target.lastCall.filter(
+                  (e) => typeof e !== undefined,
+                );
               } else if (target.lastCall.length < parsed.length) {
                 parsed.forEach((e) => {
-                  const obj = target.lastCall.findIndex(l => l.key === e.key);
+                  const obj = target.lastCall.findIndex((l) => l.key === e.key);
                   //console.log(e, target.lastCall[obj]);
                   if (target.lastCall[obj] !== undefined) {
                     // TODO проверять равны ли элементы
                     target.lastCall[obj].node.replaceWith(e.node);
                     target.lastCall[obj] = e;
                   } else {
-                    target.lastCall[target.lastCall.length - 1].node.insertAdjacentElement('afterend', e.node);
+                    target.lastCall[
+                      target.lastCall.length - 1
+                    ].node.insertAdjacentElement("afterend", e.node);
                     target.lastCall.push(e);
                   }
                 });
@@ -144,10 +155,10 @@ export function effect(callback, dependency = []) {
       } else {
         return false;
       }
-    }
-  })
+    },
+  });
 
-  dependency.forEach(i => {
+  dependency.forEach((i) => {
     const type = typeOf(i);
     if (type !== "proxy") {
       error(errMessage.ONLY_PROXY);
@@ -155,7 +166,7 @@ export function effect(callback, dependency = []) {
       i.parent.push({
         type: "effect",
         parent: proxy,
-      })
+      });
     }
   });
   return proxy;

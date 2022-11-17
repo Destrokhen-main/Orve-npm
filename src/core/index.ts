@@ -1,6 +1,6 @@
 declare global {
   interface Window {
-    sReact: any 
+    sReact: Record<string, object>;
   }
 }
 
@@ -13,25 +13,33 @@ import { createObjectContext } from "./helper";
 
 let Context: object = null;
 
-export const createApp = function ({ App, ...all } : { App:() => Node }): CreateApp {
+export const createApp = function ({
+  App,
+  ...all
+}: {
+  App: () => Node;
+}): CreateApp {
   Context = createObjectContext(all);
-  
+
   window.sReact = {
     sReactContext: Context,
-    sReactDOM: builder.bind(Context)(App)
-  }
-  
+    sReactDOM: builder.bind(Context)(App),
+  };
+
   return {
-    mount: function(query: string) {
+    mount: function (query: string) {
       window.sReact.sReactDOM = mount(query);
-    }
+    },
   };
 };
 
 export const context = () => {
-  if (window.sReact !== undefined && window.sReact.sReactContext !== undefined) {
+  if (
+    window.sReact !== undefined &&
+    window.sReact.sReactContext !== undefined
+  ) {
     return window.sReact.sReactContext;
   } else {
-    return Context
+    return Context;
   }
 };

@@ -5,24 +5,24 @@ import { builder } from "../../builder/index";
 import { objectToArray } from "../../helper/index";
 
 const hasComponentInArray = (e) => {
-  for(let i = 0; i !== e.length; i++) {
+  for (let i = 0; i !== e.length; i++) {
     if (e[i]["tag"] !== undefined) {
       return true;
     }
   }
   return false;
-}
+};
 
-export default function(app : HTMLElement, ch: any, callback: any) {
+export default function (app: HTMLElement, ch: any, callback: any) {
   const type = typeOf(ch.value);
   if (type === "string" || type === "number") {
-    const el = document.createTextNode(ch.value)
+    const el = document.createTextNode(ch.value);
     ch.node = el;
     ch.proxy.parent.push({
       type: "child",
       value: el,
     });
-    app.appendChild(el); 
+    app.appendChild(el);
     return ch;
   } else if (type === "object") {
     if (ch.value["tag"] !== undefined) {
@@ -34,7 +34,7 @@ export default function(app : HTMLElement, ch: any, callback: any) {
       const el = callback(app, c);
       ch.proxy.parent.push({
         type: Type.Component,
-        value: el
+        value: el,
       });
       return el;
     } else {
@@ -42,8 +42,8 @@ export default function(app : HTMLElement, ch: any, callback: any) {
       app.appendChild(el);
       ch.proxy.parent.push({
         type: "object-notComponent",
-        value: el
-      })
+        value: el,
+      });
       return el;
     }
   } else if (type === "array") {
@@ -52,8 +52,8 @@ export default function(app : HTMLElement, ch: any, callback: any) {
       app.appendChild(el);
       ch.proxy.parent.push({
         type: "array-notComponent",
-        value: el
-      })
+        value: el,
+      });
       return el;
     } else {
       ch.value = ch.value.map((e, i) => {
@@ -65,14 +65,14 @@ export default function(app : HTMLElement, ch: any, callback: any) {
           const el = callback(app, c);
           return {
             key: i,
-            ...el
-          }
+            ...el,
+          };
         }
         return e;
       });
       ch.proxy.parent.push({
         type: Type.ArrayComponent,
-        value: ch.value
+        value: ch.value,
       });
       ch.proxy.lastCall = ch.value;
     }

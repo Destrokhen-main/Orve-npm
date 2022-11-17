@@ -1,8 +1,8 @@
 import { validSingleProps } from "../linter/index";
-const reactToCSS = require('react-style-object-to-css')
+const reactToCSS = require("react-style-object-to-css");
 import { typeOf } from "../helper/index";
 
-export const addProps = function(tag: HTMLElement, props : object) {
+export const addProps = function (tag: HTMLElement, props: object) {
   Object.keys(props).forEach((pr) => {
     if (pr === "src") {
       // check for function
@@ -20,8 +20,7 @@ export const addProps = function(tag: HTMLElement, props : object) {
       } else {
         sheet = reactToCSS(props[pr]);
       }
-      if (sheet.length !== 0)
-        tag.setAttribute("style", sheet);
+      if (sheet.length !== 0) tag.setAttribute("style", sheet);
     } else if (typeOf(props[pr]) === "proxy") {
       if (props[pr].value !== "") {
         tag.setAttribute(pr, props[pr].value);
@@ -29,9 +28,9 @@ export const addProps = function(tag: HTMLElement, props : object) {
       props[pr].parent.push({
         type: "props",
         value: tag,
-        key: pr
-      })
-    } else  {
+        key: pr,
+      });
+    } else {
       if (typeOf(props[pr]) === "function") {
         const parsedProp = props[pr].bind(window.sReact.sReactContext)();
         validSingleProps(parsedProp, pr);
@@ -40,5 +39,5 @@ export const addProps = function(tag: HTMLElement, props : object) {
         tag.setAttribute(pr, props[pr]);
       }
     }
-  })
-}
+  });
+};

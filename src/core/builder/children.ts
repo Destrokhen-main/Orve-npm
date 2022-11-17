@@ -1,35 +1,44 @@
 import { typeOf } from "../helper/index";
-import { validatorTagNode, validateFunctionAnswer } from "../linter/index";
+import { validatorTagNode } from "../linter/index";
 import { Type } from "../tsType/type";
 import TYPE_MESSAGE from "../error/errorMessage";
 import { ProxyType } from "../tsType/type";
 import { builder } from "../builder/index";
 import { Node } from "../tsType/index";
-import { objectToArray } from "../helper"
+import { objectToArray } from "../helper";
 
-import recursiveCheckFunctionAnswer from "./recuriveFunction"
+import recursiveCheckFunctionAnswer from "./recuriveFunction";
 
-const recursiveChild = function(nodeProps = null, nodeChilds: Node[], callback: () => {}) {
+const recursiveChild = function (
+  nodeProps = null,
+  nodeChilds: Node[],
+  callback: () => Record<string, unknown>,
+) {
   if (
     nodeChilds !== undefined &&
     typeOf(nodeChilds) === "array" &&
     nodeChilds.length > 0
   ) {
     nodeChilds = nodeChilds.flat(1);
-    return nodeChilds.map((child: any, index: number) => {
+    return nodeChilds.map((child: any) => {
       const typeChild = typeOf(child);
-      if (typeChild === "string" && (child.includes("<") && child.includes(">") && (child.includes('</') || child.includes("/>")))) {
+      if (
+        typeChild === "string" &&
+        child.includes("<") &&
+        child.includes(">") &&
+        (child.includes("</") || child.includes("/>"))
+      ) {
         return {
           type: Type.HTMLCode,
           value: child,
-        }
+        };
       }
 
       if (typeChild === "string" || typeChild === "number") {
         return {
           type: Type.NotMutable,
-          value: child
-        }
+          value: child,
+        };
       }
 
       if (typeChild === "object") {
@@ -39,40 +48,47 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[], callback: 
 
         validatorTagNode(child);
 
-        if(typeof child["tag"] === "function") {
+        if (typeof child["tag"] === "function") {
           const nodeTag = recursiveCheckFunctionAnswer.bind(this)(child);
 
           if (nodeTag["child"] !== undefined) {
-            nodeTag["child"] = recursiveChild.bind(this)(nodeTag["props"], nodeTag["child"]);
+            nodeTag["child"] = recursiveChild.bind(this)(
+              nodeTag["props"],
+              nodeTag["child"],
+            );
           }
 
           return {
             type: Type.Layer,
             value: nodeTag,
             parent: child,
-          }
+          };
         } else {
           if (child["child"] !== undefined) {
-            child["child"] = recursiveChild.bind(this)(child["props"], child["child"]);
+            child["child"] = recursiveChild.bind(this)(
+              child["props"],
+              child["child"],
+            );
           }
         }
 
         return {
           type: Type.Component,
           value: child,
-        }
+        };
       }
 
       if (typeChild === "function") {
-        const object = nodeProps !== undefined
-                        ? callback.bind(this)(child, nodeProps)
-                        : callback.bind(this)(child);
+        const object =
+          nodeProps !== undefined
+            ? callback.bind(this)(child, nodeProps)
+            : callback.bind(this)(child);
         return {
           type: Type.Component,
           value: object,
-          function: child
+          function: child,
         };
-        
+
         // const typeCompleteFunction = typeOf(completeFunction);
         // validateFunctionAnswer(completeFunction, index);
 
@@ -105,7 +121,6 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[], callback: 
         //     function: child,
         //   }
         // }
-
       }
 
       if (typeChild === "proxy") {
@@ -115,8 +130,8 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[], callback: 
           return {
             type: Type.Proxy,
             value: child.value,
-            proxy: child
-          }
+            proxy: child,
+          };
         }
 
         if (typeProxy === ProxyType.proxyComponent) {
@@ -129,31 +144,30 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[], callback: 
           return {
             type: Type.ProxyComponent,
             value: result,
-            proxy: child
-          }
+            proxy: child,
+          };
         }
 
         if (typeProxy === ProxyType.proxyEffect) {
           return {
             type: Type.ProxyEffect,
             value: child.value,
-            proxy: child
-          }
+            proxy: child,
+          };
         }
 
         if (typeProxy === ProxyType.proxyObject) {
-          console.warn(TYPE_MESSAGE.incorrectUsedRefO)
+          console.warn(TYPE_MESSAGE.incorrectUsedRefO);
           return {
             type: Type.NotMutable,
-            value: ""
-          }
+            value: "",
+          };
         }
       }
     });
   } else {
     return [];
   }
-
-}
+};
 
 export default recursiveChild;

@@ -1,5 +1,5 @@
 const message = {
-  appNotAFunction : "Входной объект должен быть типа function",
+  appNotAFunction: "Входной объект должен быть типа function",
   resultCallNotAObject: "Результат выполнения главной node не объект",
   useUnsupportedVariables: "Вы используете в объекте неподдерживаемые ключи",
   missTagOnObject: "Отсуствует `tag` в объекте",
@@ -9,11 +9,12 @@ const message = {
   childNotArray: "Child могут храниться только как array",
   unsupportedTag: "Тип данных ребёнка не устраивает",
   unsupportedTagC: "Tag может хранить в себе либо string или function",
-  usedFunctionTagWithChildren: "Если вы прописываете в tag component, тогда использовать детей невозможно",
+  usedFunctionTagWithChildren:
+    "Если вы прописываете в tag component, тогда использовать детей невозможно",
   functionInTagReturn: "Функция в tag вернула не объект",
-  functionReturnUndefinedOrNull : "Функция вернула undefined или null",
+  functionReturnUndefinedOrNull: "Функция вернула undefined или null",
   functionReturnIncorrectData: "Функция вернула некоретный ответ",
-  incorrectUsedRefO: `Вы указали весь объект refO. Не пишите так, пожалуйста!\nОбъект был заменён на пустую строку`
-}
+  incorrectUsedRefO: `Вы указали весь объект refO. Не пишите так, пожалуйста!\nОбъект был заменён на пустую строку`,
+};
 
 export default message;

@@ -11,12 +11,12 @@ import error from "../error/error";
 import { typeOf } from "../helper/index";
 
 function valid(str: string) {
-  return Object.keys(ProxyType).some(e => {
-    return ProxyType[e] === str
-  })
+  return Object.keys(ProxyType).some((e) => {
+    return ProxyType[e] === str;
+  });
 }
 
-const changes = function(target, value) {
+const changes = function (target, value) {
   if (target["parent"].length > 0) {
     target["parent"].forEach((e) => {
       if (e.type === "watch") {
@@ -31,15 +31,15 @@ const changes = function(target, value) {
     });
   }
   return true;
-}
+};
 
-const created = function(target, props, value, proxy) {
+const created = function (target, props, value, proxy) {
   const type = typeOf(value);
   if (type === "array") {
     const r = ref(value);
     r.parent.push({
       type: "refO",
-      value: proxy
+      value: proxy,
     });
     target[props] = r;
     return changes(target, props);
@@ -47,10 +47,10 @@ const created = function(target, props, value, proxy) {
     if (valid(value.typeProxy)) {
       value.parent.push({
         type: "refO",
-        value: proxy
+        value: proxy,
       });
       target[props] = value;
-      changes(target, props)
+      changes(target, props);
       return true;
     } else {
       error("Вы пытаетесь прокинуть не reactive orve");
@@ -60,15 +60,15 @@ const created = function(target, props, value, proxy) {
     const r = refO(value);
     r.parent.push({
       type: "refO",
-      value: proxy
+      value: proxy,
     });
     target[props] = r;
     changes(target, props);
     return true;
   }
-}
+};
 
-const refO = function(object: Record<string, any>) {
+const refO = function (object: Record<string, any>) {
   if (typeOf(object) !== "object") {
     error(`Вы попытались отправить в refO что-то кроме object`);
   }
@@ -91,7 +91,7 @@ const refO = function(object: Record<string, any>) {
         if (typeOf(target[props].value) !== typeOf(value)) {
           created(target, props, value, proxy);
         } else {
-          if(typeOf(target[props]) === "proxy") {
+          if (typeOf(target[props]) === "proxy") {
             // TODO проверка на тип прокси
             // if (target[props].typeProxy === ProxyType.proxyObject) {
             //   target[props] = value;
@@ -106,10 +106,10 @@ const refO = function(object: Record<string, any>) {
         const r = ref(value);
         r.parent.push({
           type: "refO",
-          value: proxy
+          value: proxy,
         });
         target[props] = r;
-        return changes(target, props)
+        return changes(target, props);
       } else {
         return created(target, props, value, proxy);
       }
@@ -122,14 +122,13 @@ const refO = function(object: Record<string, any>) {
         }
       }
       return false;
-    }
+    },
   });
 
-  
   Object.keys(object).forEach((e) => {
     proxy[e] = object[e];
   });
   return proxy;
-}
+};
 
 export { refO };

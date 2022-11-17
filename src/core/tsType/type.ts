@@ -4,7 +4,7 @@ enum ProxyType {
   proxyEffect,
   proxyObject,
   proxyArray,
-  proxyElement
+  proxyElement,
 }
 
 enum Type {
@@ -17,10 +17,7 @@ enum Type {
   Proxy,
   ProxyComponent,
   ProxyEffect,
-  ArrayComponent
+  ArrayComponent,
 }
 
-export {
-  ProxyType,
-  Type
-}
+export { ProxyType, Type };
