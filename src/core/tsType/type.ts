@@ -4,6 +4,7 @@ enum ProxyType {
   proxyEffect,
   proxyObject,
   proxyArray,
+  proxyElement
 }
 
 enum Type {

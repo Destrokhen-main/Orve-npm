@@ -1,5 +1,5 @@
-import error from "../error/error.js";
-import { typeOf } from "../helper/index.js";
+import error from "../error/error";
+import { typeOf } from "../helper/index";
 import { ProxyType } from "../tsType/type";
 import { Type } from "../tsType/type";
 
@@ -12,7 +12,7 @@ import errMessage from "../error/effect";
 
 export function effect(callback, dependency = []) {
   if (typeof callback !== "function") {
-    error(errMessage.NEED_FINCTION);
+    error(errMessage.NEED_FUNCTION);
   }
 
   if (Array.isArray(dependency) !== true) {
@@ -103,6 +103,9 @@ export function effect(callback, dependency = []) {
                   if (!obj) {
                     target.lastCall[i].node.remove();
                     delete target.lastCall[i];
+                  } else {
+                    target.lastCall[i].node.replaceWith(obj.node);
+                    target.lastCall[i] = obj;
                   }
                 }
                 target.lastCall = target.lastCall.filter((e) => typeof(e) !== undefined);

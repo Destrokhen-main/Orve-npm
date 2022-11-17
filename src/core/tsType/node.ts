@@ -1,7 +1,9 @@
 interface Node {
   tag: (_?: object) => Node | Node | string,
   props?: {},
-  child?: []
+  child?: [],
+  key?: number | string,
+  ref?: any
 }
 
 interface VNode extends Node {
