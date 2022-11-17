@@ -1,6 +1,6 @@
 import { typeOf } from "../helper/index";
 import error from "../error/error";
-import errorMessage from "../error/errorMessage.js";
+import errorMessage from "../error/errorMessage";
 import { Node } from "../tsType/index";
 
 const SUPPORTED_CHILD_RESULT = ["string", "object", "array"];

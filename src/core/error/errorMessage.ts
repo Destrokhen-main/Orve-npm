@@ -12,7 +12,8 @@ const message = {
   usedFunctionTagWithChildren: "Если вы прописываете в tag component, тогда использовать детей невозможно",
   functionInTagReturn: "Функция в tag вернула не объект",
   functionReturnUndefinedOrNull : "Функция вернула undefined или null",
-  functionReturnIncorrectData: "Функция вернула некоретный ответ"
+  functionReturnIncorrectData: "Функция вернула некоретный ответ",
+  incorrectUsedRefO: `Вы указали весь объект refO. Не пишите так, пожалуйста!\nОбъект был заменён на пустую строку`
 }
 
 export default message;

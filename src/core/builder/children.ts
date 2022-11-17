@@ -1,15 +1,15 @@
 import { typeOf } from "../helper/index";
 import { validatorTagNode, validateFunctionAnswer } from "../linter/index";
 import { Type } from "../tsType/type";
-import error from "../error/error";
 import TYPE_MESSAGE from "../error/errorMessage";
 import { ProxyType } from "../tsType/type";
 import { builder } from "../builder/index";
 import { Node } from "../tsType/index";
+import { objectToArray } from "../helper"
 
 import recursiveCheckFunctionAnswer from "./recuriveFunction"
 
-const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
+const recursiveChild = function(nodeProps = null, nodeChilds: Node[], callback: () => {}) {
   if (
     nodeChilds !== undefined &&
     typeOf(nodeChilds) === "array" &&
@@ -33,8 +33,8 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
       }
 
       if (typeChild === "object") {
-        if (child["child"] !== undefined && typeOf(child["child"]) !== "array") {
-          child["child"] = [child["child"]];
+        if (child["child"] !== undefined) {
+          child["child"] = objectToArray(child["child"]);
         }
 
         validatorTagNode(child);
@@ -64,43 +64,47 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
       }
 
       if (typeChild === "function") {
-        let completeFunction = nodeProps !== undefined
-                                ? child.bind(this)(nodeProps)
-                                : child.bind(this)();
+        const object = nodeProps !== undefined
+                        ? callback.bind(this)(child, nodeProps)
+                        : callback.bind(this)(child);
+        return {
+          type: Type.Component,
+          value: object,
+          function: child
+        };
         
-        const typeCompleteFunction = typeOf(completeFunction);
-        validateFunctionAnswer(completeFunction, index);
+        // const typeCompleteFunction = typeOf(completeFunction);
+        // validateFunctionAnswer(completeFunction, index);
 
-        if (typeCompleteFunction === "object") {
-          if (completeFunction["child"] !== undefined && typeOf(completeFunction["child"]) !== "array") {
-            completeFunction["child"] = [completeFunction["child"]]
-          }
+        // if (typeCompleteFunction === "object") {
+        //   if (completeFunction["child"] !== undefined) {
+        //     completeFunction["child"] = objectToArray(completeFunction["child"])
+        //   }
 
-          validatorTagNode(completeFunction);
+        //   validatorTagNode(completeFunction);
 
-          if (typeof completeFunction["tag"] === "function") {
-            completeFunction = recursiveCheckFunctionAnswer.bind(this)(completeFunction);
-            console.log(completeFunction);
-          }
+        //   if (typeof completeFunction["tag"] === "function") {
+        //     completeFunction = recursiveCheckFunctionAnswer.bind(this)(completeFunction);
+        //   }
 
-          if (completeFunction["child"] !== undefined) {
-            completeFunction["child"] = recursiveChild.bind(this)(completeFunction["props"], completeFunction["child"]);
-          }
+        //   if (completeFunction["child"] !== undefined) {
+        //     completeFunction["child"] = recursiveChild.bind(this)(completeFunction["props"], completeFunction["child"]);
+        //   }
 
-          return {
-            type: Type.ComponentMutable,
-            value:completeFunction,
-            function: child,
-          }
-        }
+        //   return {
+        //     type: Type.ComponentMutable,
+        //     value:completeFunction,
+        //     function: child,
+        //   }
+        // }
 
-        if (typeCompleteFunction === "string" || typeCompleteFunction === "number") {
-          return {
-            type: Type.Mutable,
-            value: completeFunction,
-            function: child,
-          }
-        }
+        // if (typeCompleteFunction === "string" || typeCompleteFunction === "number") {
+        //   return {
+        //     type: Type.Mutable,
+        //     value: completeFunction,
+        //     function: child,
+        //   }
+        // }
 
       }
 
@@ -134,6 +138,14 @@ const recursiveChild = function(nodeProps = null, nodeChilds: Node[]) {
             type: Type.ProxyEffect,
             value: child.value,
             proxy: child
+          }
+        }
+
+        if (typeProxy === ProxyType.proxyObject) {
+          console.warn(TYPE_MESSAGE.incorrectUsedRefO)
+          return {
+            type: Type.NotMutable,
+            value: ""
           }
         }
       }

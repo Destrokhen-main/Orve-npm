@@ -1,6 +1,19 @@
 import { ProxyType } from "../tsType/type";
+import { typeOf } from "../helper/index";
+import { refO } from "../refO";
+import { refA } from "../refA";
 
 export const ref = function(object : any) {
+  const type = typeOf(object);
+  if (type === "object") {
+    console.warn(`Вы пытались записать в ref объект.\nОбъект был перенаправлен в refO`);
+    return refO(object);
+  }
+
+  if (type === "array") {
+    return refA(object);
+  }
+
   const p = {
     parent: [],
     value: object,
@@ -29,10 +42,12 @@ export const ref = function(object : any) {
               }
             }
             if (el.type === "props") {
-              if (value === "") {
+              if (el.key === "value") {
+                el.value.value = value;
+              } else if (value === "") {
                 el.value.removeAttribute(el.key);
               } else {
-                el.value.setAttribute(el.key, value);
+                el.value.el.setAttribute(el.key, value);
               }
             }
             if (el.type === "watch") {
@@ -41,12 +56,18 @@ export const ref = function(object : any) {
             if (el.type === "effect") {
               el.parent.refresh;
             }
+            if (el.type === "refO") {
+              el.value.changed = true;
+            }
           });
         }
         return true;
       } else {
         return false;
       }
+    },
+    deleteProperty(target,props) {
+      return false;
     }
   })
 }
