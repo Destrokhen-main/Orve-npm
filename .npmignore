@@ -9,3 +9,4 @@ tsconfig.json
 .eslintignore
 .prettierrc.json
 test
+.github
