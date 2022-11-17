@@ -1,10 +1,9 @@
-name: Node.js CI
+name: MAIN PULL-REQUEST
 
 on:
   pull_request:
     branches: 
       - main
-      - development
 
 jobs:
   build:
