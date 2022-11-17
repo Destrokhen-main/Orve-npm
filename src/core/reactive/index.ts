@@ -49,7 +49,7 @@ export const ref = function (object: any) {
               } else if (value === "") {
                 el.value.removeAttribute(el.key);
               } else {
-                el.value.el.setAttribute(el.key, value);
+                el.value.setAttribute(el.key, value);
               }
             }
             if (el.type === "watch") {

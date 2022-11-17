@@ -1,5 +1,6 @@
 import { typeOf } from "../helper/index";
 import { validatorTagNode } from "../linter/index";
+import { validateFunctionAnswer } from "../linter/";
 import { Type } from "../tsType/type";
 import TYPE_MESSAGE from "../error/errorMessage";
 import { ProxyType } from "../tsType/type";
@@ -79,48 +80,43 @@ const recursiveChild = function (
       }
 
       if (typeChild === "function") {
-        const object =
-          nodeProps !== undefined
-            ? callback.bind(this)(child, nodeProps)
-            : callback.bind(this)(child);
-        return {
-          type: Type.Component,
-          value: object,
-          function: child,
-        };
+        let completeFunction = nodeProps !== undefined
+                                 ? child.bind(this)(nodeProps)
+                                 : child.bind(this)();
 
-        // const typeCompleteFunction = typeOf(completeFunction);
-        // validateFunctionAnswer(completeFunction, index);
+         const typeCompleteFunction = typeOf(completeFunction);
+         validateFunctionAnswer(completeFunction, 0);
 
-        // if (typeCompleteFunction === "object") {
-        //   if (completeFunction["child"] !== undefined) {
-        //     completeFunction["child"] = objectToArray(completeFunction["child"])
-        //   }
+         if (typeCompleteFunction === "object") {
+           if (completeFunction["child"] !== undefined && typeOf(completeFunction["child"]) !== "array") {
+             completeFunction["child"] = [completeFunction["child"]]
+           }
 
-        //   validatorTagNode(completeFunction);
+           validatorTagNode(completeFunction);
 
-        //   if (typeof completeFunction["tag"] === "function") {
-        //     completeFunction = recursiveCheckFunctionAnswer.bind(this)(completeFunction);
-        //   }
+           if (typeof completeFunction["tag"] === "function") {
+             completeFunction = recursiveCheckFunctionAnswer.bind(this)(completeFunction);
+             console.log(completeFunction);
+           }
 
-        //   if (completeFunction["child"] !== undefined) {
-        //     completeFunction["child"] = recursiveChild.bind(this)(completeFunction["props"], completeFunction["child"]);
-        //   }
+           if (completeFunction["child"] !== undefined) {
+             completeFunction["child"] = recursiveChild.bind(this)(completeFunction["props"], completeFunction["child"]);
+           }
 
-        //   return {
-        //     type: Type.ComponentMutable,
-        //     value:completeFunction,
-        //     function: child,
-        //   }
-        // }
+           return {
+             type: Type.ComponentMutable,
+             value:completeFunction,
+             function: child,
+           }
+         }
 
-        // if (typeCompleteFunction === "string" || typeCompleteFunction === "number") {
-        //   return {
-        //     type: Type.Mutable,
-        //     value: completeFunction,
-        //     function: child,
-        //   }
-        // }
+         if (typeCompleteFunction === "string" || typeCompleteFunction === "number") {
+           return {
+             type: Type.Mutable,
+             value: completeFunction,
+             function: child,
+           }
+         }
       }
 
       if (typeChild === "proxy") {
