@@ -12,8 +12,7 @@ import recursiveCheckFunctionAnswer from "./recuriveFunction";
 
 const recursiveChild = function (
   nodeProps = null,
-  nodeChilds: Node[],
-  callback: () => Record<string, unknown>,
+  nodeChilds: Node[]
 ) {
   if (
     nodeChilds !== undefined &&
