@@ -12,7 +12,7 @@ import errMessage from "../error/effect";
 
 export function effect(callback, dependency = []) {
   if (typeof callback !== "function") {
-    error(errMessage.NEED_FINCTION);
+    error(errMessage.NEED_FUNCTION);
   }
 
   if (Array.isArray(dependency) !== true) {
