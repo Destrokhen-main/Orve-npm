@@ -1,5 +1,5 @@
 import { validSingleProps } from "../linter/index";
-const reactToCSS = require("react-style-object-to-css");
+import reactToCSS from "react-style-object-to-css";
 import { typeOf } from "../helper/index";
 
 export const addProps = function (tag: HTMLElement, props: object) {

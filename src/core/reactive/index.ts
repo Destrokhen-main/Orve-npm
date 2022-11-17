@@ -68,7 +68,7 @@ export const ref = function (object: any) {
         return false;
       }
     },
-    deleteProperty(target, props) {
+    deleteProperty() {
       return false;
     },
   });

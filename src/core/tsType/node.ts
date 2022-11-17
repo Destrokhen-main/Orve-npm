@@ -1,16 +1,16 @@
 interface Node {
   tag: (_?: object) => Node | Node | string;
-  props?: {};
+  props?: Record<string, any>;
   child?: [];
   key?: number | string;
-  ref?: any;
+  ref?: Record<string, any>;
 }
 
 interface VNode extends Node {
-  type?: any;
+  type?: number | string;
   value?: any;
   node?: HTMLElement | Text;
-  proxy?: any;
+  proxy?: Record<string, any>;
 }
 
 export { Node, VNode };
