@@ -2,9 +2,10 @@ name: Package Publish
 
 
 on:
-  pull_request:
-    branches: 
-      - main
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
 
 jobs:
   build:
