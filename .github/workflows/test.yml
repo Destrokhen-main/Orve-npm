@@ -1,8 +1,10 @@
-name: DEVELOPMENT PULL-REQUEST
+name: PULL-REQUEST
+
 
 on:
   pull_request:
     branches: 
+      - main
       - development
 
 jobs:
