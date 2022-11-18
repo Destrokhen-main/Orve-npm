@@ -30,7 +30,7 @@ describe("Layer test - 1", () => {
   test("mounted component", () => {
     body.innerHTML = "<div id='app'></div>"
     App.mount("#app");
-    expect(body.querySelector("div")?.childNodes.length).not.toBe(0);
+    expect(body.querySelector("div")?.querySelector("div")?.childNodes.length).not.toBe(0);
   })
   test("find mounted component", () => {
     const comp = body.querySelector("#app")?.querySelector("div");
