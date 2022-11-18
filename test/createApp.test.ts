@@ -12,7 +12,9 @@ const component = function () {
         display: "flex"
       }
     },
-    child: "hello"
+    child: [
+      "hello"
+    ]
   }
 } as any
 
@@ -35,6 +37,6 @@ describe("CreateApp function and mounted", () => {
 
     expect(workDiv?.getAttribute("id")).toBe("key");
     expect(workDiv?.getAttribute("class")).toBe("class");
-    expect(workDiv?.innerHTML).toBe("hello");
+    expect(workDiv?.innerHTML).toContain("hello");
   })
 })
