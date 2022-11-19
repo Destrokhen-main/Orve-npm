@@ -21,6 +21,7 @@ export default function (app: HTMLElement, ch: any, callback: any) {
     ch.proxy.parent.push({
       type: "child",
       value: el,
+      node: this
     });
     app.appendChild(el);
     return ch;
@@ -35,6 +36,7 @@ export default function (app: HTMLElement, ch: any, callback: any) {
       ch.proxy.parent.push({
         type: Type.Component,
         value: el,
+        node: this
       });
       return el;
     } else {
@@ -43,6 +45,7 @@ export default function (app: HTMLElement, ch: any, callback: any) {
       ch.proxy.parent.push({
         type: "object-notComponent",
         value: el,
+        node: this
       });
       return el;
     }
@@ -73,6 +76,7 @@ export default function (app: HTMLElement, ch: any, callback: any) {
       ch.proxy.parent.push({
         type: Type.ArrayComponent,
         value: ch.value,
+        node: this
       });
       ch.proxy.lastCall = ch.value;
     }

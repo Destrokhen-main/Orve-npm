@@ -8,7 +8,7 @@ import { validateChildFunction, validatorChild } from "./child";
 import { Node } from "../tsType/index";
 import { ProxyType } from "../tsType/type";
 
-const SUPPORTED_VARIABLES = ["tag", "props", "child", "key", "ref"];
+const SUPPORTED_VARIABLES = ["tag", "props", "child", "key", "ref", "hooks"];
 const validatorMainNode = function (node: Node) {
   // check unsupported object variables
   Object.keys(node).forEach((key) => {

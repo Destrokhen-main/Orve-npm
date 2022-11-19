@@ -38,6 +38,7 @@ export const addChild = function (
       ch.proxy.parent.push({
         type: "child",
         value: el,
+        node: this
       });
       app.appendChild(el);
       return ch;
@@ -50,7 +51,7 @@ export const addChild = function (
     }
 
     if (ch.type === Type.ProxyEffect) {
-      return ProxyEffect(app, ch, callback);
+      return ProxyEffect.bind(this)(app, ch, callback);
     }
   });
 };

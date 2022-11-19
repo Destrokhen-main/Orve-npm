@@ -5,18 +5,22 @@ const cNode = function (app: HTMLElement, node: any) {
   const { tag, props, child, ref } = node;
   const Tag = document.createElement(tag);
   node["node"] = Tag;
+  if (node["hooks"] !== undefined && node["hooks"]["mounted"] !== undefined) {
+    node["hooks"]["mounted"]({...window.sReact.sReactContext, ...node});
+  }
 
   if (props !== undefined && Object.keys(props).length > 0) {
-    addProps(Tag, props);
+    addProps.bind(node)(Tag, props);
   }
   if (child !== undefined && child.length > 0) {
-    node["child"] = addChild(Tag, child, cNode);
+    node["child"] = addChild.bind(node)(Tag, child, cNode);
   }
 
   if (ref !== undefined) {
     ref.value = Tag;
   }
   app.appendChild(Tag);
+
   return node;
 };
 

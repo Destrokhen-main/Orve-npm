@@ -95,7 +95,6 @@ const recursiveChild = function (
 
            if (typeof completeFunction["tag"] === "function") {
              completeFunction = recursiveCheckFunctionAnswer.bind(this)(completeFunction);
-             console.log(completeFunction);
            }
 
            if (completeFunction["child"] !== undefined) {
