@@ -138,7 +138,6 @@ const recursiveChild = function (nodeProps = null, nodeChilds: Node[]) {
 
         if (typeProxy === ProxyType.proxyComponent) {
           let result = builder.bind(this)(child.value);
-
           if (typeof result["tag"] === "function") {
             result = recursiveCheckFunctionAnswer.bind(this)(result);
           }

@@ -31,7 +31,7 @@ export default function (app: HTMLElement, ch: any, callback: any) {
         ch.value["child"] = objectToArray(ch.value["child"]);
       }
       validatorTagNode(ch.value);
-      const c = builder(() => ch.value);
+      const c = builder(ch.value);
       const el = callback(app, c);
       ch.proxy.parent.push({
         type: Type.Component,
@@ -64,7 +64,7 @@ export default function (app: HTMLElement, ch: any, callback: any) {
           e["child"] = objectToArray(e["child"]);
           validatorTagNode(e);
 
-          const c = builder(() => e);
+          const c = builder(e);
           const el = callback(app, c);
           return {
             key: i,
