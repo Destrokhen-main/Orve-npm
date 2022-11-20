@@ -17,9 +17,7 @@ export const builder = function (
 ): VNode {
   let ap = app;
   if (typeOf(app) !== "function") {
-    console.log(typeOf(app));
     if (typeOf(app) === "object") {
-      console.log(app);
       ap = () => app;
     } else {
       error(`${app} - ${errorMessage.appNotAFunction}`);
@@ -27,7 +25,6 @@ export const builder = function (
   }
 
   let mainNode: any = Props !== null ? ap.bind(this)(Props) : ap.bind(this)();
-  console.log(mainNode);
   if (typeOf(mainNode) !== "object") {
     error(`${mainNode} - ${errorMessage.resultCallNotAObject}`);
   }
