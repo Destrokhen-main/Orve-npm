@@ -62,16 +62,14 @@ export default function (app: HTMLElement, ch: any, callback: any) {
       ch.value = ch.value.map((e, i) => {
         if (e["child"] !== undefined) {
           e["child"] = objectToArray(e["child"]);
-          validatorTagNode(e);
-
-          const c = builder(e);
-          const el = callback(app, c);
-          return {
-            key: i,
-            ...el,
-          };
         }
-        return e;
+        validatorTagNode(e);
+        const c = builder(e);
+        const el = callback(app, c);
+        return {
+          key: i,
+          ...el,
+        };
       });
       ch.proxy.parent.push({
         type: Type.ArrayComponent,

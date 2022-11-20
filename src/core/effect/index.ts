@@ -6,7 +6,7 @@ import { Type } from "../tsType/type";
 import { builder } from "../builder/index";
 import { createNode } from "../mount/createNode";
 import { validatorTagNode } from "../linter/index";
-import { objectToArray } from "../helper";
+import { objectToArray, isEqual } from "../helper";
 
 import errMessage from "../error/effect";
 
@@ -75,8 +75,12 @@ export function effect(callback, dependency = []) {
                 newFunction,
               );
               const mounted = createNode(null, newComp);
-              p.value.node.replaceWith(mounted);
-              p.value.node = mounted;
+              // FIXME isEqual does't work
+              if (!isEqual(target.lastCall,newComp)) {
+                p.value.node.replaceWith(mounted);
+                p.value.node = mounted;
+                target.lastCall = newComp;
+              }
             }
             if (p.type === Type.ArrayComponent) {
               const parsed = newFunction.map((e, i) => {
