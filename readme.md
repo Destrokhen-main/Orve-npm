@@ -1,7 +1,7 @@
 <p align="center"><img src="https://i.ibb.co/5cYvr0k/logo.png" alt="orve logo"></p>
 <h1 align="center">orve (npm package) / Simple-reactive</h1>
 
-Library for creating reactive SPA applications. Tries to take the best with react and vue
+Library for creating reactive SPA applications. Trying to take the best from react and vue
 
 ```
 npm i orve
