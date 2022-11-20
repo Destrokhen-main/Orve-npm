@@ -15,16 +15,19 @@ export const builder = function (
   app: () => unknown | Node,
   Props = null,
 ): VNode {
+  let ap = app;
   if (typeOf(app) !== "function") {
+    console.log(typeOf(app));
     if (typeOf(app) === "object") {
-      app = () => app;
+      console.log(app);
+      ap = () => app;
     } else {
       error(`${app} - ${errorMessage.appNotAFunction}`);
     }
   }
 
-  let mainNode: any = Props !== null ? app.bind(this)(Props) : app.bind(this)();
-
+  let mainNode: any = Props !== null ? ap.bind(this)(Props) : ap.bind(this)();
+  console.log(mainNode);
   if (typeOf(mainNode) !== "object") {
     error(`${mainNode} - ${errorMessage.resultCallNotAObject}`);
   }
