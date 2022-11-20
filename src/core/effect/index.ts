@@ -4,7 +4,7 @@ import { ProxyType } from "../tsType/type";
 import { Type } from "../tsType/type";
 
 import { builder } from "../builder/index";
-import { createNodeRebuild } from "../mount/rebiuld";
+import { createNode } from "../mount/createNode";
 import { validatorTagNode } from "../linter/index";
 import { objectToArray } from "../helper";
 
@@ -72,9 +72,9 @@ export function effect(callback, dependency = []) {
               }
               validatorTagNode(newFunction);
               const newComp = builder.bind(window.sReact.sReactContext)(
-                () => newFunction,
+                newFunction,
               );
-              const mounted = createNodeRebuild(null, newComp);
+              const mounted = createNode(null, newComp);
               p.value.node.replaceWith(mounted);
               p.value.node = mounted;
             }
@@ -84,8 +84,8 @@ export function effect(callback, dependency = []) {
                   e["child"] = objectToArray(e["child"]);
                 }
                 validatorTagNode(e);
-                const c = builder.bind(window.sReact.sReactContext)(() => e);
-                const el = createNodeRebuild(null, c);
+                const c = builder.bind(window.sReact.sReactContext)(e);
+                const el = createNode(null, c);
                 // console.log(el);
                 return {
                   ...c,

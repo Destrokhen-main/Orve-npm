@@ -11,9 +11,16 @@ import { objectToArray } from "../helper";
 import reqChild from "./children";
 import recursive from "./recuriveFunction";
 
-export const builder = function (app: () => Node, Props = null): VNode {
+export const builder = function (
+  app: () => unknown | Node,
+  Props = null,
+): VNode {
   if (typeOf(app) !== "function") {
-    error(`${app} - ${errorMessage.appNotAFunction}`);
+    if (typeOf(app) === "object") {
+      app = () => app;
+    } else {
+      error(`${app} - ${errorMessage.appNotAFunction}`);
+    }
   }
 
   let mainNode: any = Props !== null ? app.bind(this)(Props) : app.bind(this)();

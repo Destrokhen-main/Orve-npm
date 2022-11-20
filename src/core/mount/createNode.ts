@@ -1,7 +1,7 @@
 import { addProps } from "./addProps";
 import { addChild } from "./addChild";
 
-const cNode = function (app: HTMLElement, node: any) {
+const cNode = function (app: HTMLElement | null, node: any) {
   const { tag, props, child, ref } = node;
   const Tag = document.createElement(tag);
   node["node"] = Tag;
@@ -19,8 +19,8 @@ const cNode = function (app: HTMLElement, node: any) {
   if (ref !== undefined) {
     ref.value = Tag;
   }
+  if (app === null) return Tag;
   app.appendChild(Tag);
-
   return node;
 };
 
