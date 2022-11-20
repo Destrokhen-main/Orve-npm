@@ -166,7 +166,7 @@ export function effect(callback, dependency = []) {
       i.parent.push({
         type: "effect",
         parent: proxy,
-        node: proxy.parent
+        node: proxy.parent,
       });
     }
   });

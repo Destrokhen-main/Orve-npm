@@ -50,8 +50,11 @@ export const refC = function (component: any) {
             const object = createNodeRebuild(null, newObj);
             target.parent = target.parent.map((el) => {
               if (el.type === undefined) {
-                el.replaceWith(object);
-                return object;
+                el.node.replaceWith(object);
+                return {
+                  node: object,
+                  value: newObj,
+                };
               } else if (el.type === "effect") {
                 el.parent.refresh;
                 return el;

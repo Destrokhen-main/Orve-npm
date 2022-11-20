@@ -6,7 +6,7 @@ const cNode = function (app: HTMLElement, node: any) {
   const Tag = document.createElement(tag);
   node["node"] = Tag;
   if (node["hooks"] !== undefined && node["hooks"]["mounted"] !== undefined) {
-    node["hooks"]["mounted"]({...window.sReact.sReactContext, ...node});
+    node["hooks"]["mounted"]({ ...window.sReact.sReactContext, ...node });
   }
 
   if (props !== undefined && Object.keys(props).length > 0) {

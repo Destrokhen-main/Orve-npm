@@ -38,7 +38,7 @@ export const addChild = function (
       ch.proxy.parent.push({
         type: "child",
         value: el,
-        node: this
+        node: this,
       });
       app.appendChild(el);
       return ch;
@@ -46,7 +46,13 @@ export const addChild = function (
 
     if (ch.type === Type.ProxyComponent) {
       const el = callback(app, ch.value);
-      ch.proxy.parent.push(el.node);
+      if (ch.value["hooks"]?.mounted) {
+        ch.value["hooks"].mounted({
+          ...window.sReact.sReactContext,
+          ...ch.value,
+        });
+      }
+      ch.proxy.parent.push({ node: el.node, value: ch.value });
       return el;
     }
 

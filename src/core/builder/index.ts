@@ -40,8 +40,11 @@ export const builder = function (app: () => Node, Props = null): VNode {
     mainNode["child"] = reqChild.bind(this)(props, child);
   }
 
-  if (mainNode["hooks"] !== undefined && mainNode["hooks"]["created"] !== undefined) {
-    mainNode["hooks"]["created"]({...this, ...mainNode});
+  if (
+    mainNode["hooks"] !== undefined &&
+    mainNode["hooks"]["created"] !== undefined
+  ) {
+    mainNode["hooks"]["created"]({ ...this, ...mainNode });
   }
   return mainNode;
 };

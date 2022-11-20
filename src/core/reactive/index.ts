@@ -5,18 +5,24 @@ import { refA } from "../refA";
 
 function updated(el) {
   if (Array.isArray(el.node) && el.node.length > 0) {
-    el.node.forEach(e => {
-      if (e.node["hooks"] !== undefined && e.node["hooks"]["updated"] !== undefined) {
-        e.node["hooks"]["updated"]({...window.sReact.sReactContext, ...e});
+    el.node.forEach((e) => {
+      if (
+        e.node["hooks"] !== undefined &&
+        e.node["hooks"]["updated"] !== undefined
+      ) {
+        e.node["hooks"]["updated"]({ ...window.sReact.sReactContext, ...e });
       }
-    })
+    });
     return;
   }
-  
-  if (el.node["hooks"] !== undefined && el.node["hooks"]["updated"] !== undefined) {
-    el.node["hooks"]["updated"]({...window.sReact.sReactContext, ...el});
+
+  if (
+    el.node["hooks"] !== undefined &&
+    el.node["hooks"]["updated"] !== undefined
+  ) {
+    el.node["hooks"]["updated"]({ ...window.sReact.sReactContext, ...el });
   }
-} 
+}
 
 export const ref = function (object: any) {
   const type = typeOf(object);
@@ -56,7 +62,6 @@ export const ref = function (object: any) {
             if (el.type === "child") {
               if (el.value.nodeType === 3) {
                 el.value.nodeValue = value;
-
                 updated(el);
               }
             }

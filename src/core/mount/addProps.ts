@@ -29,7 +29,7 @@ export const addProps = function (tag: HTMLElement, props: object) {
         type: "props",
         value: tag,
         key: pr,
-        node: this
+        node: this,
       });
     } else {
       if (typeOf(props[pr]) === "function") {
