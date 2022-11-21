@@ -4,9 +4,9 @@ import { ProxyType } from "../tsType/type";
 import { Type } from "../tsType/type";
 
 import { builder } from "../builder/index";
-import { createNodeRebuild } from "../mount/rebiuld";
+import { createNode } from "../mount/createNode";
 import { validatorTagNode } from "../linter/index";
-import { objectToArray } from "../helper";
+import { objectToArray, isEqual } from "../helper";
 
 import errMessage from "../error/effect";
 
@@ -72,11 +72,15 @@ export function effect(callback, dependency = []) {
               }
               validatorTagNode(newFunction);
               const newComp = builder.bind(window.sReact.sReactContext)(
-                () => newFunction,
+                newFunction,
               );
-              const mounted = createNodeRebuild(null, newComp);
-              p.value.node.replaceWith(mounted);
-              p.value.node = mounted;
+              const mounted = createNode(null, newComp);
+              // FIXME isEqual does't work
+              if (!isEqual(target.lastCall, newComp)) {
+                p.value.node.replaceWith(mounted);
+                p.value.node = mounted;
+                target.lastCall = newComp;
+              }
             }
             if (p.type === Type.ArrayComponent) {
               const parsed = newFunction.map((e, i) => {
@@ -84,8 +88,8 @@ export function effect(callback, dependency = []) {
                   e["child"] = objectToArray(e["child"]);
                 }
                 validatorTagNode(e);
-                const c = builder.bind(window.sReact.sReactContext)(() => e);
-                const el = createNodeRebuild(null, c);
+                const c = builder.bind(window.sReact.sReactContext)(e);
+                const el = createNode(null, c);
                 // console.log(el);
                 return {
                   ...c,
@@ -166,6 +170,7 @@ export function effect(callback, dependency = []) {
       i.parent.push({
         type: "effect",
         parent: proxy,
+        node: proxy.parent,
       });
     }
   });

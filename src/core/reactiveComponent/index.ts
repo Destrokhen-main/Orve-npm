@@ -1,21 +1,12 @@
 import { ProxyType } from "../tsType/type";
 
 import { builder } from "../builder/index";
-import { createNodeRebuild } from "../mount/rebiuld";
-import { typeOf } from "../helper/index";
+import { createNode } from "../mount/createNode";
 
 export const refC = function (component: any) {
-  let comp = component;
-  const type = typeOf(component);
-  if (type !== "function") {
-    if (type === "object") {
-      comp = () => component;
-    }
-  }
-
   const object = {
     parent: [],
-    value: comp,
+    value: component,
   };
 
   return new Proxy(object, {
@@ -32,26 +23,20 @@ export const refC = function (component: any) {
     },
     set(target, prop, value) {
       if (prop in target) {
-        let comp = value;
-        if (prop === "value") {
-          const type = typeOf(component);
-          if (type !== "function") {
-            if (type === "object") {
-              comp = () => value;
-            }
-          }
-        }
-
-        target[prop] = value;
-
         if (prop === "value") {
           if (target.parent.length > 0) {
-            const newObj = builder.bind(window.sReact.sReactContext)(comp);
-            const object = createNodeRebuild(null, newObj);
+            const newObj = builder.bind(window.sReact.sReactContext)(value);
+            const object = createNode(null, newObj);
             target.parent = target.parent.map((el) => {
               if (el.type === undefined) {
-                el.replaceWith(object);
-                return object;
+                el.node.replaceWith(object);
+                if (el.value.hooks?.unmounted) {
+                  el.value.hooks.unmounted();
+                }
+                return {
+                  node: object,
+                  value: newObj,
+                };
               } else if (el.type === "effect") {
                 el.parent.refresh;
                 return el;
@@ -59,7 +44,7 @@ export const refC = function (component: any) {
             });
           }
         }
-
+        target[prop] = value;
         return true;
       }
       return false;

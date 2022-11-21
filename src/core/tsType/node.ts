@@ -4,6 +4,7 @@ interface Node {
   child?: [];
   key?: number | string;
   ref?: Record<string, any>;
+  hooks?: Record<string, () => void>;
 }
 
 interface VNode extends Node {

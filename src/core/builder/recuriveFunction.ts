@@ -12,7 +12,7 @@ const recursive = function (node: Node) {
   let haveDop = false;
   let propsCh: Props = {};
 
-  const { tag, props, child }: Node = node;
+  const { tag, props, child, hooks, ref }: Node = node;
 
   if (props !== undefined) {
     propsCh = props;
@@ -21,6 +21,11 @@ const recursive = function (node: Node) {
 
   if (child !== undefined) {
     propsCh["children"] = child.flat(1);
+    haveDop = true;
+  }
+
+  if (hooks !== undefined) {
+    propsCh["hooks"] = hooks;
     haveDop = true;
   }
 
@@ -34,6 +39,14 @@ const recursive = function (node: Node) {
 
   if (typeof fTag["tag"] === "function") {
     return recursive.bind(this)(fTag);
+  }
+
+  if (hooks) {
+    fTag["hooks"] = hooks;
+  }
+
+  if (ref) {
+    fTag["ref"] = ref;
   }
 
   return fTag;
