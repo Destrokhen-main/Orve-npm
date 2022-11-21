@@ -80,7 +80,6 @@ const recursiveChild = function (nodeProps = null, nodeChilds: Node[]) {
           nodeProps !== undefined
             ? child.bind(this)(nodeProps)
             : child.bind(this)();
-
         const typeCompleteFunction = typeOf(completeFunction);
         validateFunctionAnswer(completeFunction, 0);
 
@@ -140,10 +139,6 @@ const recursiveChild = function (nodeProps = null, nodeChilds: Node[]) {
           let result = builder.bind(this)(child.value);
           if (typeof result["tag"] === "function") {
             result = recursiveCheckFunctionAnswer.bind(this)(result);
-          }
-
-          if (result["hooks"]?.created) {
-            result["hooks"].created({ ...this, ...result });
           }
 
           return {

@@ -31,7 +31,9 @@ export default function (app: HTMLElement, ch: any, callback: any) {
         ch.value["child"] = objectToArray(ch.value["child"]);
       }
       validatorTagNode(ch.value);
-      const c = builder(ch.value);
+      const c = builder.bind({ ...window.sReact.sReactContext, ...ch.value })(
+        ch.value,
+      );
       const el = callback(app, c);
       ch.proxy.parent.push({
         type: Type.Component,

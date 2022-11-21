@@ -76,7 +76,7 @@ export function effect(callback, dependency = []) {
               );
               const mounted = createNode(null, newComp);
               // FIXME isEqual does't work
-              if (!isEqual(target.lastCall,newComp)) {
+              if (!isEqual(target.lastCall, newComp)) {
                 p.value.node.replaceWith(mounted);
                 p.value.node = mounted;
                 target.lastCall = newComp;

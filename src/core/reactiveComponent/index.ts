@@ -30,6 +30,9 @@ export const refC = function (component: any) {
             target.parent = target.parent.map((el) => {
               if (el.type === undefined) {
                 el.node.replaceWith(object);
+                if (el.value.hooks?.unmounted) {
+                  el.value.hooks.unmounted();
+                }
                 return {
                   node: object,
                   value: newObj,

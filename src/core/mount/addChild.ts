@@ -46,12 +46,6 @@ export const addChild = function (
 
     if (ch.type === Type.ProxyComponent) {
       const el = callback(app, ch.value);
-      if (ch.value["hooks"]?.mounted) {
-        ch.value["hooks"].mounted({
-          ...window.sReact.sReactContext,
-          ...ch.value,
-        });
-      }
       ch.proxy.parent.push({ node: el.node, value: ch.value });
       return el;
     }

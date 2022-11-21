@@ -19,11 +19,6 @@ const cNode = function (app: HTMLElement | null, node: any) {
   if (ref !== undefined) {
     ref.value = Tag;
   }
-  Tag.addEventListener("DOMNodeRemoved", () => {
-    if (node["hooks"]?.unmounted) {
-      node["hooks"].unmounted({ ...window.sReact.sReactContext, ...node });
-    }
-  })
   if (app === null) return Tag;
   app.appendChild(Tag);
   return node;

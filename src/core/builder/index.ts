@@ -47,10 +47,7 @@ export const builder = function (
     mainNode["child"] = reqChild.bind(this)(props, child);
   }
 
-  if (
-    mainNode["hooks"] !== undefined &&
-    mainNode["hooks"]["created"] !== undefined
-  ) {
+  if (mainNode["hooks"]?.created) {
     mainNode["hooks"]["created"]({ ...this, ...mainNode });
   }
   return mainNode;
