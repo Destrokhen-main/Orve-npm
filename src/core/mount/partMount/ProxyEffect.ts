@@ -21,6 +21,7 @@ export default function (app: HTMLElement, ch: any, callback: any) {
     ch.proxy.parent.push({
       type: "child",
       value: el,
+      node: this,
     });
     app.appendChild(el);
     return ch;
@@ -30,11 +31,14 @@ export default function (app: HTMLElement, ch: any, callback: any) {
         ch.value["child"] = objectToArray(ch.value["child"]);
       }
       validatorTagNode(ch.value);
-      const c = builder(() => ch.value);
+      const c = builder.bind({ ...window.sReact.sReactContext, ...ch.value })(
+        ch.value,
+      );
       const el = callback(app, c);
       ch.proxy.parent.push({
         type: Type.Component,
         value: el,
+        node: this,
       });
       return el;
     } else {
@@ -43,6 +47,7 @@ export default function (app: HTMLElement, ch: any, callback: any) {
       ch.proxy.parent.push({
         type: "object-notComponent",
         value: el,
+        node: this,
       });
       return el;
     }
@@ -59,20 +64,19 @@ export default function (app: HTMLElement, ch: any, callback: any) {
       ch.value = ch.value.map((e, i) => {
         if (e["child"] !== undefined) {
           e["child"] = objectToArray(e["child"]);
-          validatorTagNode(e);
-
-          const c = builder(() => e);
-          const el = callback(app, c);
-          return {
-            key: i,
-            ...el,
-          };
         }
-        return e;
+        validatorTagNode(e);
+        const c = builder(e);
+        const el = callback(app, c);
+        return {
+          key: i,
+          ...el,
+        };
       });
       ch.proxy.parent.push({
         type: Type.ArrayComponent,
         value: ch.value,
+        node: this,
       });
       ch.proxy.lastCall = ch.value;
     }

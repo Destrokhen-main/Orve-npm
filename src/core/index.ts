@@ -8,7 +8,6 @@ import { CreateApp } from "./tsType";
 
 import { builder } from "./builder/index";
 import { mount } from "./mount/index";
-import { Node } from "./tsType";
 import { createObjectContext } from "./helper";
 
 let Context: object = null;
@@ -17,7 +16,7 @@ export const createApp = function ({
   App,
   ...all
 }: {
-  App: () => Node;
+  App: () => unknown;
 }): CreateApp {
   Context = createObjectContext(all);
 

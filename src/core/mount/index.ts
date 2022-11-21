@@ -9,5 +9,6 @@ export const mount = function (query: string) {
   if (APP === null) {
     error("Не смог найти tag " + query);
   }
+
   return createNode(APP, node);
 };

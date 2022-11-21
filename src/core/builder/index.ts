@@ -11,13 +11,20 @@ import { objectToArray } from "../helper";
 import reqChild from "./children";
 import recursive from "./recuriveFunction";
 
-export const builder = function (app: () => Node, Props = null): VNode {
+export const builder = function (
+  app: () => unknown | Node,
+  Props = null,
+): VNode {
+  let ap = app;
   if (typeOf(app) !== "function") {
-    error(`${app} - ${errorMessage.appNotAFunction}`);
+    if (typeOf(app) === "object") {
+      ap = () => app;
+    } else {
+      error(`${app} - ${errorMessage.appNotAFunction}`);
+    }
   }
 
-  let mainNode: any = Props !== null ? app.bind(this)(Props) : app.bind(this)();
-
+  let mainNode: any = Props !== null ? ap.bind(this)(Props) : ap.bind(this)();
   if (typeOf(mainNode) !== "object") {
     error(`${mainNode} - ${errorMessage.resultCallNotAObject}`);
   }
@@ -38,6 +45,10 @@ export const builder = function (app: () => Node, Props = null): VNode {
 
   if (child !== undefined) {
     mainNode["child"] = reqChild.bind(this)(props, child);
+  }
+
+  if (mainNode["hooks"]?.created) {
+    mainNode["hooks"]["created"]({ ...this, ...mainNode });
   }
   return mainNode;
 };
