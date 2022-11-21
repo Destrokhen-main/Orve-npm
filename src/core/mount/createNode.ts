@@ -21,7 +21,6 @@ const cNode = function (app: HTMLElement | null, node: any) {
   }
   Tag.addEventListener("DOMNodeRemoved", () => {
     if (node["hooks"]?.unmounted) {
-      console.log("asd");
       node["hooks"].unmounted({ ...window.sReact.sReactContext, ...node });
     }
   })
