@@ -83,19 +83,23 @@ export function effect(callback, dependency = []) {
               }
             }
             if (p.type === Type.ArrayComponent) {
+              console.log(newFunction);
               const parsed = newFunction.map((e, i) => {
-                if (e["child"] !== undefined) {
-                  e["child"] = objectToArray(e["child"]);
+                if (!e.type && !e.node) {
+                  if (e["child"] !== undefined) {
+                    e["child"] = objectToArray(e["child"]);
+                  }
+                  const c = builder.bind(window.sReact.sReactContext)(e);
+                  const el = createNode(null, c);
+                  // console.log(el);
+                  return {
+                    ...c,
+                    key: c.key !== undefined ? c.key : i,
+                    node: el,
+                  };
+                } else {
+                  return e;
                 }
-                validatorTagNode(e);
-                const c = builder.bind(window.sReact.sReactContext)(e);
-                const el = createNode(null, c);
-                // console.log(el);
-                return {
-                  ...c,
-                  key: c.key !== undefined ? c.key : i,
-                  node: el,
-                };
               });
               if (target.lastCall.length === parsed.length) {
                 target.lastCall = target.lastCall.map((e) => {

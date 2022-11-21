@@ -27,12 +27,6 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - name: install node_modules
         run: npm ci
-      - name: push Tags
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          npm version v${{ github.event.inputs.version }}
-          git push origin main
       - name: Build npm
         run: npm run build
       - name: publish
