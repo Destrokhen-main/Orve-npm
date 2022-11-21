@@ -2,9 +2,6 @@ name: PULL-REQUEST-DEV, PUSH-DEV
 
 
 on:
-  push:
-    branches:
-      - development
   pull_request:
     branches: 
       - development
