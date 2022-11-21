@@ -5,5 +5,6 @@ import { refC } from "./core/reactiveComponent/index";
 import { effect } from "./core/effect/index";
 import { refO } from "./core/refO/index";
 import { refL } from "./core/ref-link/index";
+import { refA } from "./core/refA/index";
 
-export { createApp, ref, refC, watch, effect, context, refO, refL };
+export { createApp, ref, refC, watch, effect, context, refO, refL, refA };
