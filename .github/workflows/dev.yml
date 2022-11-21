@@ -1,4 +1,4 @@
-name: PULL-REQUEST-DEV
+name: PULL-REQUEST-DEV, PUSH-DEV
 
 
 on:
