@@ -83,7 +83,6 @@ export function effect(callback, dependency = []) {
               }
             }
             if (p.type === Type.ArrayComponent) {
-              console.log(newFunction);
               const parsed = newFunction.map((e, i) => {
                 if (!e.type && !e.node) {
                   if (e["child"] !== undefined) {
