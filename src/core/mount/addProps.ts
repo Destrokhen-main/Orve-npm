@@ -14,13 +14,29 @@ export const addProps = function (tag: HTMLElement, props: object) {
       tag.addEventListener(name, func);
     } else if (pr === "style") {
       // check for function
-      let sheet: string;
-      if (typeOf(props[pr]) === "string") {
-        sheet = props[pr];
+      if (typeOf(props[pr]) === "proxy") {
+        let sheet;
+        if (typeOf(props[pr].value) === "string") {
+          sheet = props[pr].value;
+        } else {
+          sheet = reactToCSS(props[pr].value);
+        }
+        if (sheet.length !== 0) tag.setAttribute("style", sheet);
+        props[pr].parent.push({
+          type: "props",
+          value: tag,
+          key: pr,
+          node: this,
+        });
       } else {
-        sheet = reactToCSS(props[pr]);
+        let sheet: string;
+        if (typeOf(props[pr]) === "string") {
+          sheet = props[pr];
+        } else {
+          sheet = reactToCSS(props[pr]);
+        }
+        if (sheet.length !== 0) tag.setAttribute("style", sheet);
       }
-      if (sheet.length !== 0) tag.setAttribute("style", sheet);
     } else if (typeOf(props[pr]) === "proxy") {
       if (props[pr].value !== "") {
         tag.setAttribute(pr, props[pr].value);

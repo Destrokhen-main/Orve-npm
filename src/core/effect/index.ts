@@ -2,6 +2,7 @@ import error from "../error/error";
 import { typeOf } from "../helper/index";
 import { ProxyType } from "../tsType/type";
 import { Type } from "../tsType/type";
+import * as reactToCSS from "react-style-object-to-css";
 
 import { builder } from "../builder/index";
 import { createNode } from "../mount/createNode";
@@ -54,6 +55,17 @@ export function effect(callback, dependency = []) {
               if (newFunction === "") {
                 p.value.removeAttribute(p.key);
               } else {
+                if (p.key === "style") {
+                  let sheet;
+                  if (typeOf(newFunction) === "string") {
+                    sheet = newFunction;
+                  } else {
+                    sheet = reactToCSS(newFunction);
+                  }
+                  if (sheet.length !== 0) p.value.setAttribute("style", sheet);
+                  return;
+                }
+
                 p.value.setAttribute(p.key, newFunction);
               }
             }
