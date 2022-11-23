@@ -63,10 +63,16 @@ export function effect(callback, dependency = []) {
                     sheet = reactToCSS(newFunction);
                   }
                   if (sheet.length !== 0) p.value.setAttribute("style", sheet);
+                  if(p.node.hooks?.updated) {
+                    p.node.hooks.updated({ ...window.sReact.sReactContext, ...p.node });
+                  }
                   return;
                 }
 
                 p.value.setAttribute(p.key, newFunction);
+                if(p.node.hooks?.updated) {
+                  p.node.hooks.updated({ ...window.sReact.sReactContext, ...p.node });
+                }
               }
             }
             if (p.type === "watch") {
