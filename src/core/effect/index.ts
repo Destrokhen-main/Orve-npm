@@ -49,6 +49,13 @@ export function effect(callback, dependency = []) {
             if (p.type === "child") {
               if (p.value.nodeType === 3) {
                 p.value.nodeValue = newFunction;
+
+                if (p.node.hooks?.updated) {
+                  p.node.hooks.updated({
+                    ...window.sReact.sReactContext,
+                    ...p.node,
+                  });
+                }
               }
             }
             if (p.type === "props") {
@@ -63,15 +70,36 @@ export function effect(callback, dependency = []) {
                     sheet = reactToCSS(newFunction);
                   }
                   if (sheet.length !== 0) p.value.setAttribute("style", sheet);
-                  if(p.node.hooks?.updated) {
-                    p.node.hooks.updated({ ...window.sReact.sReactContext, ...p.node });
+                  if (p.node.hooks?.updated) {
+                    p.node.hooks.updated({
+                      ...window.sReact.sReactContext,
+                      ...p.node,
+                    });
                   }
                   return;
                 }
 
+                if (p.key.startsWith("@")) {
+                  if (typeOf(newFunction) === "function") {
+                    const key = p.key.replace("@", "");
+                    p.value.removeEventListener(key, p.lastFunc);
+
+                    const func = newFunction.bind(window.sReact.sReactContext);
+                    p.value.addEventListener(key, func);
+                    p.lastFunc = func;
+                    return;
+                  } else {
+                    error(errMessage.PROXY_IN_EVENT);
+                    return;
+                  }
+                }
+
                 p.value.setAttribute(p.key, newFunction);
-                if(p.node.hooks?.updated) {
-                  p.node.hooks.updated({ ...window.sReact.sReactContext, ...p.node });
+                if (p.node.hooks?.updated) {
+                  p.node.hooks.updated({
+                    ...window.sReact.sReactContext,
+                    ...p.node,
+                  });
                 }
               }
             }
@@ -83,6 +111,12 @@ export function effect(callback, dependency = []) {
               p.type === "array-notComponent"
             ) {
               p.value.textContent = JSON.stringify(newFunction);
+              if (p.node.hooks?.updated) {
+                p.node.hooks.updated({
+                  ...window.sReact.sReactContext,
+                  ...p.node,
+                });
+              }
             }
             if (p.type === Type.Component) {
               if (newFunction["child"] !== undefined) {

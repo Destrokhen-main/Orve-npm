@@ -23,7 +23,7 @@ const validatorProps = function (props: object) {
 
     // this is event function
     if (key.startsWith("@")) {
-      if (typeOf(value) !== "function") {
+      if (typeOf(value) !== "function" && typeOf(value) !== "proxy") {
         error(`${key} - ${errorMessage.eventNotAFunction}`);
       }
     }
