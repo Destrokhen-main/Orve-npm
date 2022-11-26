@@ -19,6 +19,10 @@ export const addChild = function (
     }
 
     if (ch.type === Type.NotMutable) {
+      const r = /&#+[0-9]+;/gm;
+      if (r.test(ch.value)) {
+        console.warn("Вы использовали html code в тексте, оберните пожалуйста ваш код в какой-то html tag (ex: span)");
+      }
       const el = document.createTextNode(ch.value);
       app.appendChild(el);
       return ch;
