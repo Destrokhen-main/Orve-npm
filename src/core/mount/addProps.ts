@@ -9,7 +9,13 @@ export const addProps = function (tag: HTMLElement, props: object) {
     if (pr === "src") {
       // check for function
       //let img = props[pr].default.split("/");
-      tag.setAttribute(pr, props[pr].default);
+      if (typeOf(props[pr]) === "object"){
+        tag.setAttribute(pr, props[pr].default);
+      }
+      
+      if (typeOf(props[pr]) === "string") {
+        tag.setAttribute(pr, props[pr]);
+      }
     } else if (pr.startsWith("@")) {
       const name = pr.replace("@", "").trim();
       if (typeOf(props[pr]) === "proxy") {
