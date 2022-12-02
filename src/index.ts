@@ -1,10 +1,9 @@
-import { createApp, context } from "./core/index";
-import { ref } from "./core/reactive/index";
-import { watch } from "./core/watch/index";
-import { refC } from "./core/reactiveComponent/index";
-import { effect } from "./core/effect/index";
-import { refO } from "./core/refO/index";
-import { refL } from "./core/ref-link/index";
-import { refA } from "./core/refA/index";
-
-export { createApp, ref, refC, watch, effect, context, refO, refL, refA };
+import { createApp } from "./package/dom/index";
+import { refL } from "./package/reactive/refL";
+import { ref } from "./package/reactive/ref";
+ 
+export {
+  createApp,
+  refL,
+  ref
+}
