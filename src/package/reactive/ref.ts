@@ -2,6 +2,7 @@
 import { RefProxy, ProxyType, PropsStartType } from "./type";
 import { ONodeOrve } from "../dom/types";
 import { HookObject } from "../dom/types";
+import { HookObjectType } from "../dom/types";
 
 enum PropsTypeRef {
   PropStatic = "PropStatic",
@@ -30,11 +31,12 @@ type ChildRef = {
 //   }
 // }
 
-function updatedHook(item) {
+function updatedHook(item: any, type : HookObjectType) {
   if (item.ONode.hooks && item.ONode.hooks.updated) {
     item.ONode.hooks.updated({
       context: window.orve.context,
-      oNode: item.ONode
+      oNode: item.ONode,
+      type
     } as HookObject)
   }
 }
@@ -85,7 +87,7 @@ function ref(value: string | number | (() => any)) : RefProxy {
                 } else {
                   node.setAttribute((item as PropRef).key, insertValue);
                 }
-                updatedHook(item);
+                updatedHook(item, HookObjectType.Props);
                 return;
               }
               if (item.type === PropsTypeRef.PropEvent) {
@@ -96,11 +98,12 @@ function ref(value: string | number | (() => any)) : RefProxy {
                 } else {
                   node.addEventListener((item as PropRef).key, value);
                 }
+                updatedHook(item, HookObjectType.Props);
               }
               if (item.type === PropsTypeRef.Child) {
                 if ((item as ChildRef).node.nodeType === 3) {
                   (item as ChildRef).node.nodeValue = value;
-                  updatedHook(item);
+                  updatedHook(item, HookObjectType.Child);
                 }
               }
             });

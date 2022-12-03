@@ -19,9 +19,15 @@ type ONodeOrve = {
   parent: ONodeOrve | null,
 }
 
+enum HookObjectType {
+  Child = "Child",
+  Props = "Props",
+}
+
 type HookObject = {
   context: Record<string, any>,
-  oNode: ONodeOrve
+  oNode: ONodeOrve,
+  type?: HookObjectType
 };
 
 type Hooks = {
@@ -45,5 +51,6 @@ export {
   ONodeOrve,
   TypeNode,
   Props,
-  HookObject
+  HookObject,
+  HookObjectType
 }
