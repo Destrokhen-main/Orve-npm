@@ -21,14 +21,14 @@ type ChildRef = {
   ONode: ONodeOrve
 }
 
-function retTypeRef(value: string | number | (() => any)): PropsStartType  {
-  const tValue = typeof value;
-  if (tValue === "string" || tValue === "number") {
-    return PropsStartType.Static;
-  } else if (tValue === "function") {
-    return PropsStartType.Function;
-  }
-}
+// function retTypeRef(value: string | number | (() => any)): PropsStartType  {
+//   const tValue = typeof value;
+//   if (tValue === "string" || tValue === "number") {
+//     return PropsStartType.Static;
+//   } else if (tValue === "function") {
+//     return PropsStartType.Function;
+//   }
+// }
 
 function updatedHook(item) {
   if (item.ONode.hooks && item.ONode.hooks.updated) {
@@ -90,11 +90,11 @@ function ref(value: string | number | (() => any)) : RefProxy {
               }
               if (item.type === PropsTypeRef.PropEvent) {
                 const node = item.ONode.node;
-                node.removeEventListener(item.key, target["value"] as () => any);
+                node.removeEventListener((item as PropRef).key, target["value"] as () => any);
                 if (typeof value !== "function") {
                   console.error("insert not a function in eventlister");
                 } else {
-                  node.addEventListener(item.key, value);
+                  node.addEventListener((item as PropRef).key, value);
                 }
               }
               if (item.type === PropsTypeRef.Child) {
