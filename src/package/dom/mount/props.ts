@@ -80,7 +80,11 @@ export const propsF = function(
         if (typeof value === "function") {
           value = value();
         }
-        tag.setAttribute(prop, value);
+        if (prop === "value") {
+          (tag as HTMLInputElement).value = value;
+        } else {
+          tag.setAttribute(prop, value);
+        }
         (props[prop] as any).parent.push(
           {
             key: prop,

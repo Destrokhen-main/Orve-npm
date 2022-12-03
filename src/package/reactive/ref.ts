@@ -15,6 +15,12 @@ type PropRef = {
   ONode: ONodeOrve
 }
 
+type ChildRef = {
+  type: PropsTypeRef,
+  node: HTMLElement | Text | ChildNode,
+  ONode: ONodeOrve
+}
+
 function retTypeRef(value: string | number | (() => any)): PropsStartType  {
   const tValue = typeof value;
   if (tValue === "string" || tValue === "number") {
@@ -66,7 +72,7 @@ function ref(value: string | number | (() => any)) : RefProxy {
           if (target.parent.length > 0) {
             let insertValue = value;
 
-            target.parent.forEach((item : PropRef) => {
+            target.parent.forEach((item : PropRef | ChildRef) => {
               if (item.type === PropsTypeRef.PropStatic) {
                 const node = item.ONode.node;
 
@@ -74,10 +80,10 @@ function ref(value: string | number | (() => any)) : RefProxy {
                   insertValue = insertValue();
                 }
 
-                if (item.key === "value") {
+                if ((item as PropRef).key === "value") {
                   (node as HTMLInputElement).value = insertValue;
                 } else {
-                  node.setAttribute(item.key, insertValue);
+                  node.setAttribute((item as PropRef).key, insertValue);
                 }
                 updatedHook(item);
                 return;
@@ -89,6 +95,12 @@ function ref(value: string | number | (() => any)) : RefProxy {
                   console.error("insert not a function in eventlister");
                 } else {
                   node.addEventListener(item.key, value);
+                }
+              }
+              if (item.type === PropsTypeRef.Child) {
+                if ((item as ChildRef).node.nodeType === 3) {
+                  (item as ChildRef).node.nodeValue = value;
+                  updatedHook(item);
                 }
               }
             });
@@ -107,4 +119,4 @@ function ref(value: string | number | (() => any)) : RefProxy {
   });
 }
 
-export { ref, PropRef, PropsTypeRef };
+export { ref, PropRef, PropsTypeRef, ChildRef };

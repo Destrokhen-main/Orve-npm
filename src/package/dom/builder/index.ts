@@ -52,9 +52,7 @@ function parser(
   // NOTE work with CHILD
   if (newNode.child) {
     // work with child
-    const s = Object.assign({}, newNode);
-    delete s.child;
-    newNode.child = parseChildren.call(this, newNode.child, props, s);
+    newNode.child = parseChildren.call(this, newNode.child, props, newNode);
   }
 
   // hooks created

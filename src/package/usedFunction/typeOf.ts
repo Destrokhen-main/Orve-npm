@@ -1,12 +1,14 @@
+import { ProxyType } from "../reactive/type";
+
 const isProxy = function (obj: any) {
-  return obj.type === "proxy" ? true : false;
+  return obj.type === ProxyType.Proxy ? true : false;
 };
 
 export const typeOf = function (obj: any) {
   const type = typeof obj;
   if (type === "object") {
     if (isProxy(obj)) {
-      return "proxy";
+      return ProxyType.Proxy;
     } else if (Array.isArray(obj)) {
       return "array";
     }

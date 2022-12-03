@@ -2,6 +2,8 @@ import { ONodeOrve, TypeNode } from "../types";
 import { Child, ChildType } from "../builder/children";
 import { mountedNode } from "./index";
 import { message as m } from "./erMessage";
+import { RefProxy } from "../../reactive/type";
+import { PropsTypeRef, ChildRef } from "../../reactive/ref";
 
 export const childF = function(
   tag: HTMLElement,
@@ -31,6 +33,19 @@ export const childF = function(
 
     if (item.type === TypeNode.Component) {
       return mountedNode.call(this, tag as HTMLElement, item as ONodeOrve) as ONodeOrve;
+    }
+
+    if (item.type === ChildType.ReactiveStatic) {
+      console.log("component ", item);
+      const element = document.createTextNode((item.value as RefProxy).value as string);
+      item.node = element;
+      tag.appendChild(element);
+      (item.value as RefProxy).parent.push({
+        type: PropsTypeRef.Child,
+        node: element,
+        ONode: item.ONode
+      } as ChildRef)  
+      return item;
     }
     return item;
   })
