@@ -18,7 +18,7 @@ type PropRef = {
 function updatedHook(item) {
   if (item.ONode.hooks && item.ONode.hooks.updated) {
     item.ONode.hooks.updated({
-      context: { help:"use () => {}" },
+      context: window.orve.context,
       oNode: item.ONode
     } as HookObject)
   }
@@ -33,7 +33,7 @@ function ref(value: string | number | (() => any)) : RefProxy {
   return new Proxy<RefProxy>(object, {
     get(target, prop) {
       if (prop === "type") return ProxyType.Proxy;
-      if (prop === "typeProxy") return ProxyType.Ref;
+      if (prop === "proxyType") return ProxyType.Ref;
       if (prop in target) {
         return target[prop];
       }
@@ -62,7 +62,11 @@ function ref(value: string | number | (() => any)) : RefProxy {
               if (item.type === PropsTypeRef.PropEvent) {
                 const node = item.ONode.node;
                 node.removeEventListener(item.key, target["value"] as () => any);
-                node.addEventListener(item.key, value);
+                if (typeof value !== "function") {
+                  console.error("insert not a function in eventlister");
+                } else {
+                  node.addEventListener(item.key, value);
+                }
               }
             });
           }

@@ -3,6 +3,7 @@ type ONode = {
   props?: Record<string, any>,
   child?: Array<() => ONode | string | number | object> | string | number | object,
   hooks?: Hooks,
+  keyNode: string,
   ref?: object
 }
 
@@ -13,6 +14,7 @@ type ONodeOrve = {
   hooks?: Hooks,
   ref?: object,
   type: TypeNode,
+  keyNode: string,
   node: null | HTMLElement,
   parent: ONodeOrve | null,
 }

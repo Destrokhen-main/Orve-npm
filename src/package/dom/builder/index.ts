@@ -5,6 +5,7 @@ import { isONode } from "../builder/validator";
 import { parseChildren } from "./children";
 import { recursiveTag } from "./recursiveTag";
 import { RefLProxy, ProxyType } from "../../reactive/type";
+import { generationID } from "../../usedFunction/keyGeneration";
 
 function parser(
   app: () => unknown | ONode,
@@ -43,6 +44,7 @@ function parser(
   const newNode: ONodeOrve = {
     ...workObj,
     node: null,
+    keyNode: generationID(16),
     type: TypeNode.Component,
     parent: parent ? parent : null
   }
