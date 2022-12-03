@@ -75,7 +75,6 @@ export const propsF = function(
     // check if PROXY
     if (typeof props[prop] === "object" && (props[prop] as any).type === ProxyType.Proxy) {
       const proxyType = (props[prop] as any).proxyType;
-      console.log(proxyType);
       if (proxyType == ProxyType.Ref) {
         let value = (props[prop] as any).value;
         if (typeof value === "function") {
@@ -89,7 +88,6 @@ export const propsF = function(
             ONode: this.ONode
           } as PropRef
         );
-        console.log("proxy - ", props[prop]);
       }
       return;
     }

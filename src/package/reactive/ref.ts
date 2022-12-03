@@ -1,5 +1,5 @@
 
-import { RefProxy, ProxyType } from "./type";
+import { RefProxy, ProxyType, PropsStartType } from "./type";
 import { ONodeOrve } from "../dom/types";
 import { HookObject } from "../dom/types";
 
@@ -15,6 +15,15 @@ type PropRef = {
   ONode: ONodeOrve
 }
 
+function retTypeRef(value: string | number | (() => any)): PropsStartType  {
+  const tValue = typeof value;
+  if (tValue === "string" || tValue === "number") {
+    return PropsStartType.Static;
+  } else if (tValue === "function") {
+    return PropsStartType.Function;
+  }
+}
+
 function updatedHook(item) {
   if (item.ONode.hooks && item.ONode.hooks.updated) {
     item.ONode.hooks.updated({
@@ -24,10 +33,22 @@ function updatedHook(item) {
   }
 }
 
+function checkExistParents(ar: Array<PropRef>) : Array<PropRef> {
+  const nArr : Array<PropRef> = [];
+
+  ar.forEach((e : PropRef) => {
+    if (document.body.contains(e.ONode.node))
+      nArr.push(e);
+  })
+
+  return nArr;
+}
+
 function ref(value: string | number | (() => any)) : RefProxy {
   const object = {
     value,
     parent: [],
+    startType: PropsStartType.None
   } as RefProxy
 
   return new Proxy<RefProxy>(object, {
@@ -47,10 +68,12 @@ function ref(value: string | number | (() => any)) : RefProxy {
 
             target.parent.forEach((item : PropRef) => {
               if (item.type === PropsTypeRef.PropStatic) {
+                const node = item.ONode.node;
+
                 if (typeof insertValue === "function") {
                   insertValue = insertValue();
                 }
-                const node = item.ONode.node;
+
                 if (item.key === "value") {
                   (node as HTMLInputElement).value = insertValue;
                 } else {
@@ -69,6 +92,7 @@ function ref(value: string | number | (() => any)) : RefProxy {
                 }
               }
             });
+            target.parent = checkExistParents(target.parent);
           }
         }
         target[prop] = value;

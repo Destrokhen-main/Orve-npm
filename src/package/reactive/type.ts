@@ -5,18 +5,25 @@ enum ProxyType {
   RefF = "RefF"
 }
 
+enum PropsStartType {
+  Static = "Static",
+  Function = "Function",
+  None = "None"
+}
+
 type RefLProxy = {
   parent: Array<any>,
   value: HTMLElement | null,
   type: ProxyType,
-  typeProxy: ProxyType,
+  proxyType: ProxyType,
 } 
 
 type RefProxy = {
   parent: Array<any>,
   value: string | number | (() => any),
   type: ProxyType,
-  typeProxy: ProxyType
+  proxyType: ProxyType,
+  startType: PropsStartType
 }
 
-export { ProxyType, RefLProxy, RefProxy };
+export { ProxyType, RefLProxy, RefProxy, PropsStartType };

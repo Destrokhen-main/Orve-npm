@@ -71,8 +71,8 @@ function parser(
   if (newNode.ref !== undefined) {
     if (typeof newNode.ref === "object") {
       const type = (newNode.ref as RefLProxy).type;
-      const typeProxy = (newNode.ref as RefLProxy).typeProxy;
-      if (type === undefined && type !== ProxyType.Proxy && typeProxy === undefined && typeProxy !== ProxyType.RefL) {
+      const typeProxy = (newNode.ref as RefLProxy).proxyType;
+      if (type === undefined || type !== ProxyType.Proxy || typeProxy === undefined || typeProxy !== ProxyType.RefL) {
         er(m.REFL_INSERT_NOT_A_PROXY);
       }
     } else {
