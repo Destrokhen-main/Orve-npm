@@ -4,6 +4,7 @@ import { parser } from "../dom/builder/index";
 import { mountedNode } from "../dom/mount/index";
 import { HookObject } from "../dom/types";
 import { HookObjectType } from "../dom/types";
+import { isEqual } from "../usedFunction/isEqual";
 
 type RefComponent = {
   parent: Array<any>,
@@ -34,7 +35,7 @@ function checkExistParents(ar: any) : any {
 function refC(app : () => any | object | null = null) {
   let block = app;
   if (app === null) {
-    block = () => ({ tag: "span" })
+    block = () => ({ tag: "comment" })
   }
 
   if (typeof block !== "function") {
@@ -62,7 +63,7 @@ function refC(app : () => any | object | null = null) {
           if (target.parent.length > 0) {
             let comp = value;
             if (comp === undefined || comp === "" || comp === null) {
-              comp = () => ({tag: "span"});
+              comp = () => ({tag: "comment"});
             }
             if (typeof comp !== "function") {
               comp = () => comp;
@@ -71,10 +72,11 @@ function refC(app : () => any | object | null = null) {
               if (item.type === ChildType.ReactiveComponent) {
                 const parsedItem = parser.call(window.orve.context, comp, item.ONode.parent.props, item.ONode.parent);
                 const element = mountedNode.call(window.orve.context, null, parsedItem);
-                item.ONode.node.replaceWith(element.node);
-                item.ONode = element;
-                updatedHook(item.ONode.parent, HookObjectType.Component);
-
+                if(!isEqual(element, item.ONode)) {
+                  item.ONode.node.replaceWith(element.node);
+                  item.ONode = element;
+                  updatedHook(item.ONode.parent, HookObjectType.Component);
+                }
                 return item;
               }
               if (item.type === ProxyType.Watch) {

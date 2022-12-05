@@ -15,7 +15,7 @@ type ONodeOrve = {
   ref?: object,
   type: TypeNode,
   keyNode: string,
-  node: null | HTMLElement,
+  node: null | HTMLElement | Comment,
   parent: ONodeOrve | null,
 }
 
@@ -40,7 +40,8 @@ type Hooks = {
 
 
 enum TypeNode {
-  Component = "Component"
+  Component = "Component",
+  Comment = "Comment"
 }
 
 type Props = {

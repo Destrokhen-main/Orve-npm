@@ -1,5 +1,5 @@
 import er, {message as m} from "./error";
-import { ONodeOrve, HookObject } from "../types";
+import { ONodeOrve, HookObject, TypeNode } from "../types";
 import { propsF } from "./props";
 
 import { childF } from "./child";
@@ -22,6 +22,23 @@ function mount(query: string): void {
 
 function mountedNode(app: HTMLElement | null, nodes: ONodeOrve): ONodeOrve | HTMLElement {
   const { tag, props, child, ref, hooks } = nodes;
+
+  if (tag === "comment") {
+    const comment = document.createComment(`refC - ${nodes.keyNode}`);
+    const object = {
+      ...nodes,
+      node: comment,
+      type: TypeNode.Comment
+    } as ONodeOrve;
+
+    if (app === null) return object;
+
+    app.appendChild(comment);
+    return object;
+  }
+  if (typeof tag !== "string") {
+    er(m.TAG_NOT_A_STRING);
+  }
   const TAG = document.createElement((tag as string).toLowerCase());
 
   if (hooks && hooks.mounted) {

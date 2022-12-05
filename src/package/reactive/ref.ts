@@ -86,7 +86,7 @@ function ref(value: string | number | (() => any)) : RefProxy {
                 if ((item as PropRef).key === "value") {
                   (node as HTMLInputElement).value = insertValue;
                 } else {
-                  node.setAttribute((item as PropRef).key, insertValue);
+                  (node as HTMLElement).setAttribute((item as PropRef).key, insertValue);
                 }
                 updatedHook(item, HookObjectType.Props);
                 return;
