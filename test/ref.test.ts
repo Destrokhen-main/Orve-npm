@@ -42,7 +42,7 @@ describe("Ref number child", () => {
         tag: "div",
         props: {
           "@click" : () => {
-            string.value += 1;
+            (string.value as number) += 1;
           }
         },
         child: [
@@ -76,7 +76,7 @@ describe("Ref string, number props", () => {
           atr: number,
           "@click" : () => {
             string.value = "2";
-            number.value += 1;
+            (number.value as number) += 1;
           }
         },
         child: "text"
