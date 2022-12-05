@@ -1,4 +1,4 @@
-import { ProxyType, RefLProxy, RefCProxy  } from "./type";
+import { ProxyType, RefCProxy  } from "./type";
 import { ChildType } from "../dom/builder/children";
 import { parser } from "../dom/builder/index";
 import { mountedNode } from "../dom/mount/index";
