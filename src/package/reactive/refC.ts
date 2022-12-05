@@ -35,7 +35,7 @@ function checkExistParents(ar: any) : any {
 function refC(app : () => any | object | null = null) {
   let block = app;
   if (app === null) {
-    block = () => ({ tag: "comment" })
+    block = () => ({ tag: "comment" , child: "refC" })
   }
 
   if (typeof block !== "function") {
@@ -63,7 +63,7 @@ function refC(app : () => any | object | null = null) {
           if (target.parent.length > 0) {
             let comp = value;
             if (comp === undefined || comp === "" || comp === null) {
-              comp = () => ({tag: "comment"});
+              comp = () => ({tag: "comment", child: "refC"});
             }
             if (typeof comp !== "function") {
               comp = () => comp;
