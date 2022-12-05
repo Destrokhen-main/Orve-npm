@@ -11,9 +11,14 @@ function refL() : RefLProxy {
     set(target, prop, value) {
       if (prop in target) {
         if (prop === "value") {
+          if (target.parent.length > 0) {
+            target.parent.forEach((item) => {
+              if (item.type === ProxyType.Watch) {
+                item.value.updated(value, target.value);
+              }
+            })
+          }
           target["value"] = value;
-
-          // call all parents
           return true;
         }
       }

@@ -11,13 +11,13 @@ enum PropsTypeRef {
 }
 
 type PropRef = {
-  type: PropsTypeRef,
+  type: PropsTypeRef | ProxyType,
   key: string,
   ONode: ONodeOrve
 }
 
 type ChildRef = {
-  type: PropsTypeRef,
+  type: PropsTypeRef | ProxyType,
   node: HTMLElement | Text | ChildNode,
   ONode: ONodeOrve
 }
@@ -106,6 +106,9 @@ function ref(value: string | number | (() => any)) : RefProxy {
                   (item as ChildRef).node.nodeValue = value;
                   updatedHook(item, HookObjectType.Child);
                 }
+              }
+              if (item.type === ProxyType.Watch) {
+                (item as any).value.updated(value, target.value);
               }
             });
             target.parent = checkExistParents(target.parent);

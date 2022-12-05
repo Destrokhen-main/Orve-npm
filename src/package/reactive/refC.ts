@@ -67,7 +67,6 @@ function refC(app : () => any | object | null = null) {
             if (typeof comp !== "function") {
               comp = () => comp;
             };
-
             target.parent = target.parent.map((item) => {
               if (item.type === ChildType.ReactiveComponent) {
                 const parsedItem = parser.call(window.orve.context, comp, item.ONode.parent.props, item.ONode.parent);
@@ -78,6 +77,10 @@ function refC(app : () => any | object | null = null) {
 
                 return item;
               }
+              if (item.type === ProxyType.Watch) {
+                item.value.updated(value, undefined);
+                return item;
+              }
             });
 
             target.parent = checkExistParents(target.parent);
@@ -86,6 +89,10 @@ function refC(app : () => any | object | null = null) {
 
         return true;
       }
+      return false;
+    },
+    deleteProperty() {
+      console.error("refC - You try to delete prop in ref");
       return false;
     }
   });
