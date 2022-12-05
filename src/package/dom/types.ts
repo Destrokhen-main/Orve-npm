@@ -22,6 +22,7 @@ type ONodeOrve = {
 enum HookObjectType {
   Child = "Child",
   Props = "Props",
+  Component = "Component"
 }
 
 type HookObject = {

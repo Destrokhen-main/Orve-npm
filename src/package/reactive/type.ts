@@ -2,7 +2,8 @@ enum ProxyType {
   Proxy = "Proxy",
   RefL = "RefL",
   Ref = "Ref",
-  RefF = "RefF"
+  RefF = "RefF",
+  RefC = "RefC"
 }
 
 enum PropsStartType {

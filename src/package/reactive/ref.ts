@@ -45,6 +45,7 @@ function checkExistParents(ar: Array<PropRef>) : Array<PropRef> {
   const nArr : Array<PropRef> = [];
 
   ar.forEach((e : PropRef) => {
+    if (!(e.type in PropsTypeRef)) { nArr.push(e); return; }
     if (document.body.contains(e.ONode.node))
       nArr.push(e);
   })

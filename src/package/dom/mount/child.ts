@@ -36,7 +36,6 @@ export const childF = function(
     }
 
     if (item.type === ChildType.ReactiveStatic) {
-      console.log("component ", item);
       const element = document.createTextNode((item.value as RefProxy).value as string);
       item.node = element;
       tag.appendChild(element);
@@ -46,6 +45,16 @@ export const childF = function(
         ONode: item.ONode
       } as ChildRef)  
       return item;
+    }
+
+    if (item.type === ChildType.ReactiveComponent) {
+      const element = mountedNode.call(this, tag,  item.value);
+      (item as any).proxy.parent.push(
+        {
+          type: ChildType.ReactiveComponent,
+          ONode: element,
+        }
+      )
     }
     return item;
   })

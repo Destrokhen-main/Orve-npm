@@ -50,7 +50,7 @@ function mountedNode(app: HTMLElement | null, nodes: ONodeOrve): ONodeOrve | HTM
 
   nodes["node"] = TAG;
 
-  if (app === null) return TAG;
+  if (app === null) return nodes
   
   app.appendChild(TAG);
   return nodes;

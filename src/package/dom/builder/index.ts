@@ -20,9 +20,7 @@ function parser(
       component = () => app;
     else
       er(m.APP_NOT_A_FUNCTION_OR_OBJECT);
-
   const Node: ONode | unknown  = props ? component.call(this, props) : component.call(this);
-  
   const typeNode = typeOf(Node);
 
   if (typeNode !== "object") {
