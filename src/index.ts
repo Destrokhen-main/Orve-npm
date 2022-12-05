@@ -3,11 +3,13 @@ import { refL } from "./package/reactive/refL";
 import { ref } from "./package/reactive/ref";
 import { refC } from "./package/reactive/refC";
 import { watch } from "./package/reactive/watch";
+import { refO } from "./package/reactive/refO";
  
 export {
   createApp,
   refL,
   ref,
   refC,
-  watch
+  watch,
+  refO
 }

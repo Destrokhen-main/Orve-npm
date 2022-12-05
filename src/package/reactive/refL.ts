@@ -15,6 +15,11 @@ function refL() : RefLProxy {
             target.parent.forEach((item) => {
               if (item.type === ProxyType.Watch) {
                 item.value.updated(value, target.value);
+                return;
+              }
+              if (item.type === ProxyType.RefO) {
+                item.value.updated;
+                return;
               }
             })
           }

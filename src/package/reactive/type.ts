@@ -4,7 +4,8 @@ enum ProxyType {
   Ref = "Ref",
   RefF = "RefF",
   RefC = "RefC",
-  Watch = "Watch"
+  Watch = "Watch",
+  RefO = "RefO"
 }
 
 enum PropsStartType {
@@ -35,4 +36,10 @@ type RefCProxy = {
   proxyType: ProxyType,
 }
 
-export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy };
+type RefOProxy = {
+  $parent: Array<any>,
+  type: ProxyType,
+  proxyType: ProxyType
+}
+
+export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy, RefOProxy };

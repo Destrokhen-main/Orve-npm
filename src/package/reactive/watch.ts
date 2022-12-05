@@ -1,8 +1,8 @@
 
-import { ProxyType, RefLProxy, RefProxy, RefCProxy } from "./type";
+import { ProxyType, RefLProxy, RefProxy, RefCProxy, RefOProxy } from "./type";
 import e from "./error";
 
-function watch(func: () => void, dependencies: RefLProxy | RefProxy | RefCProxy = null) {
+function watch(func: () => void, dependencies: RefLProxy | RefProxy | RefCProxy | RefOProxy = null) {
   const object = {
     value: func,
     updated: function(n: any, o: any) { this.value(n, o) }
@@ -17,10 +17,19 @@ function watch(func: () => void, dependencies: RefLProxy | RefProxy | RefCProxy 
     e(" Watch - dependencies need to be orve reactive object (ref, refL, refC)");
   }
 
-  dependencies.parent.push({
-    type: ProxyType.Watch,
-    value: object
-  });
+  const typeProxy = dependencies.proxyType;
+  
+  if (typeProxy === ProxyType.RefO) {
+    (dependencies as RefOProxy).$parent.push({
+      type: ProxyType.Watch,
+      value: object
+    });
+  } else {
+    (dependencies as any).parent.push({
+      type: ProxyType.Watch,
+      value: object
+    });
+  }
 
   return new Proxy(object, {
     get(target, prop) {

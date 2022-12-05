@@ -80,6 +80,10 @@ function refC(app : () => any | object | null = null) {
                 item.value.updated(value, undefined);
                 return item;
               }
+              if (item.type === ProxyType.RefO) {
+                item.value.updated;
+                return item;
+              }
             });
 
             target.parent = checkExistParents(target.parent);

@@ -49,7 +49,7 @@ function parseChildren (
       }
       
       // NOTE static string or nubmer 
-      if ( typeNode === "string" || typeNode === "number" ) {
+      if (typeNode === "string" || typeNode === "number" ) {
         return {
           type: ChildType.Static,
           value: item

@@ -1,8 +1,10 @@
 
-import { RefProxy, ProxyType, PropsStartType } from "./type";
+import { RefProxy, ProxyType, PropsStartType, RefOProxy } from "./type";
 import { ONodeOrve } from "../dom/types";
 import { HookObject } from "../dom/types";
 import { HookObjectType } from "../dom/types";
+import { typeOf } from "../usedFunction/typeOf";
+import { refO } from "../reactive/refO";
 
 enum PropsTypeRef {
   PropStatic = "PropStatic",
@@ -53,7 +55,11 @@ function checkExistParents(ar: Array<PropRef>) : Array<PropRef> {
   return nArr;
 }
 
-function ref(value: string | number | (() => any)) : RefProxy {
+function ref(value: string | number | (() => any)) : RefProxy | RefOProxy {
+  if (typeOf(value) === "object") {
+    return refO(value);
+  }
+
   const object = {
     value,
     parent: [],
@@ -100,15 +106,22 @@ function ref(value: string | number | (() => any)) : RefProxy {
                   node.addEventListener((item as PropRef).key, value);
                 }
                 updatedHook(item, HookObjectType.Props);
+                return;
               }
               if (item.type === PropsTypeRef.Child) {
                 if ((item as ChildRef).node.nodeType === 3) {
                   (item as ChildRef).node.nodeValue = value;
                   updatedHook(item, HookObjectType.Child);
                 }
+                return;
               }
               if (item.type === ProxyType.Watch) {
                 (item as any).value.updated(value, target.value);
+                return;
+              }
+              if (item.type === ProxyType.RefO) {
+                (item as any).value.updated;
+                return;
               }
             });
             target.parent = checkExistParents(target.parent);
