@@ -1,15 +1,10 @@
-import { ProxyType } from "./type";
+import { ProxyType, RefLProxy, RefCProxy  } from "./type";
 import { ChildType } from "../dom/builder/children";
 import { parser } from "../dom/builder/index";
 import { mountedNode } from "../dom/mount/index";
 import { HookObject } from "../dom/types";
 import { HookObjectType } from "../dom/types";
 import { isEqual } from "../usedFunction/isEqual";
-
-type RefComponent = {
-  parent: Array<any>,
-  value: () => any
-}
 
 function updatedHook(item: any, type : HookObjectType) {
   if (item.hooks && item.hooks.updated) {
@@ -45,9 +40,11 @@ function refC(app : () => any | object | null = null) {
   const object = {
     parent: [],
     value: block,
-  };
+    type: ProxyType.Proxy,
+    proxyType: ProxyType.RefC,
+  } as RefCProxy;
 
-  return new Proxy<RefComponent>(object, {
+  return new Proxy<RefCProxy>(object, {
     get(target, prop) {
       if (prop === "type") return ProxyType.Proxy;
       if (prop === "proxyType") return ProxyType.RefC;
@@ -100,4 +97,4 @@ function refC(app : () => any | object | null = null) {
   });
 }
 
-export { refC , RefComponent }
+export { refC }

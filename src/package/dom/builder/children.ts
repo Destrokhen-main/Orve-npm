@@ -2,7 +2,7 @@ import { ONode, Props, ONodeOrve } from "../types";
 import { typeOf } from "../../usedFunction/typeOf";
 import { parser } from "./index";
 import { ProxyType, RefProxy } from "../../reactive/type";
-import { RefComponent } from "../../reactive/refC";
+import { RefCProxy } from "../../reactive/type";
 
 enum ChildType {
   HTML = "HTML",
@@ -73,7 +73,7 @@ function parseChildren (
         }
 
         if (proxyType === ProxyType.RefC) {
-          const o = item as RefComponent;
+          const o = item as RefCProxy;
           const object = parser.call(this, o.value, props, parent);
           return {
             type: ChildType.ReactiveComponent,

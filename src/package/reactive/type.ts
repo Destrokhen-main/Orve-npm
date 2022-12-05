@@ -28,4 +28,11 @@ type RefProxy = {
   startType: PropsStartType
 }
 
-export { ProxyType, RefLProxy, RefProxy, PropsStartType };
+type RefCProxy = {
+  parent: Array<any>,
+  value: () => any,
+  type: ProxyType,
+  proxyType: ProxyType,
+}
+
+export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy };

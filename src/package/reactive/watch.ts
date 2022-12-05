@@ -1,8 +1,8 @@
 
-import { ProxyType } from "./type";
+import { ProxyType, RefLProxy, RefProxy, RefCProxy } from "./type";
 import e from "./error";
 
-function watch(func: () => void, dependencies: any = null) {
+function watch(func: () => void, dependencies: RefLProxy | RefProxy | RefCProxy = null) {
   const object = {
     value: func,
     updated: function(n: any, o: any) { this.value(n, o) }
