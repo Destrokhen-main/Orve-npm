@@ -5,7 +5,7 @@ import { parseChildren } from "../dom/builder/children";
 import { childF } from "../dom/mount/child";
 import { HookObject } from "../dom/types";
 
-function updated(obj) {
+function updated(obj: any) {
   if (obj.parentNode && obj.parentNode.hooks && obj.parentNode.hooks.updated) {
     obj.parentNode.hooks.updated({
       context: window.orve.context,
