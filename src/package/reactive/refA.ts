@@ -73,7 +73,7 @@ function refA(ar: Array<any>) {
     },
     set(target, prop, value) {
       const isNum = parseInt(prop as string, 10);
-      if (!Number.isNaN(isNum) && isNum < target.length) {
+      if (!Number.isNaN(isNum) && isNum < target.length && object.render !== null) {
         replaceValue(object, (prop as string), value);
         if (mutationArray) {
           if (checkAr !== null) clearTimeout(checkAr);
@@ -82,7 +82,7 @@ function refA(ar: Array<any>) {
             mutationArray = false;
           }, 1);
         }
-      } else if (!Number.isNaN(isNum) && isNum === target.length) {
+      } else if (!Number.isNaN(isNum) && isNum === target.length && object.render !== null) {
         newValueInsert(object, value);
       }
       return Reflect.set(target, prop, value);
