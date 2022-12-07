@@ -1,11 +1,15 @@
 
 import { ProxyType, RefLProxy, RefProxy, RefCProxy, RefOProxy } from "./type";
 import e from "./error";
+import { generationID } from "../usedFunction/keyGeneration";
 
 function watch(func: () => void, dependencies: RefLProxy | RefProxy | RefCProxy | RefOProxy = null) {
   const object = {
+    key: generationID(8),
+    parent: dependencies,
+    watch: false,
     value: func,
-    updated: function(n: any, o: any) { this.value(n, o) }
+    updated: function(n: any, o: any) { this.value(n, o) },
   }
 
   if (dependencies === null) {
@@ -30,6 +34,34 @@ function watch(func: () => void, dependencies: RefLProxy | RefProxy | RefCProxy 
       value: object
     });
   }
+
+  const startWatch = () => {
+    if (!object.watch) {
+      if (typeProxy === ProxyType.RefO) {
+        (dependencies as RefOProxy).$parent.push({
+          type: ProxyType.Watch,
+          value: object
+        });
+      } else {
+        (dependencies as any).parent.push({
+          type: ProxyType.Watch,
+          value: object
+        });
+      }
+      object.watch = true;
+    }
+  }
+  startWatch();
+
+  object["stop"] = () => {
+    if (object.watch) {
+      (dependencies as any ).parent = (dependencies as any ).parent.filter((i: any) => i.key !== undefined && i.key === object.key);
+      object.watch = false;
+    }
+  }
+
+  object["start"] = startWatch
+
 
   return new Proxy(object, {
     get(target, prop) {

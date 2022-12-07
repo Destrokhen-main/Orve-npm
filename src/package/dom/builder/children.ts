@@ -3,12 +3,15 @@ import { typeOf } from "../../usedFunction/typeOf";
 import { parser } from "./index";
 import { ProxyType, RefProxy } from "../../reactive/type";
 import { RefCProxy } from "../../reactive/type";
+import { isNodeBoolean } from "./validator";
+import { generationID } from "../../usedFunction/keyGeneration";
 
 enum ChildType {
   HTML = "HTML",
   Static = "Static",
   ReactiveStatic = "ReactiveStatic",
-  ReactiveComponent = "ReactiveComponent"
+  ReactiveComponent = "ReactiveComponent",
+  ReactiveArray = "ReactiveArray"
 }
 
 type Child = {
@@ -28,7 +31,8 @@ function isHaveAnyArray(ar: Array<() => ONode | string | number | object>) {
 function parseChildren (
   ar: Array<() => ONode | string | number | object>,
   props: Props = null,
-  parent: ONodeOrve = null
+  parent: ONodeOrve = null,
+  isArray = false
 ) {
   if (ar.length > 0) {
     if (isHaveAnyArray(ar)) 
@@ -57,8 +61,17 @@ function parseChildren (
       }
 
       // NOTE component
-      if (typeNode === "object" || typeNode === "function") {
+      if ((typeNode === "object" || typeNode === "function") && !isArray) {
         return parser.call(this, item,  props, parent);
+      } else if (isArray) {
+        if (isNodeBoolean(item as object)) {
+          return parser.call(this, item,  props, parent);
+        } else {
+          return {
+            type: ChildType.Static,
+            value: JSON.stringify(item)
+          }
+        }
       }
 
       if (typeNode === ProxyType.Proxy) {
@@ -81,6 +94,16 @@ function parseChildren (
             proxy: item,
             ONode: parent
           } 
+        }
+
+        if (proxyType === ProxyType.RefA) {
+          return {
+            type: ChildType.ReactiveArray,
+            value: parseChildren.call(this, (item as any).value, props, parent, true),
+            proxy: item,
+            parent,
+            keyNode: generationID(8)
+          }
         }
       }
     });

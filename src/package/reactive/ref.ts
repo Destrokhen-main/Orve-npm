@@ -5,6 +5,7 @@ import { HookObject } from "../dom/types";
 import { HookObjectType } from "../dom/types";
 import { typeOf } from "../usedFunction/typeOf";
 import { refO } from "../reactive/refO";
+import { refA } from "./refA";
 
 enum PropsTypeRef {
   PropStatic = "PropStatic",
@@ -55,9 +56,13 @@ function checkExistParents(ar: Array<PropRef>) : Array<PropRef> {
   return nArr;
 }
 
-function ref(value: string | number | (() => any)) : RefProxy | RefOProxy {
+function ref(value: string | number | (() => any)) : RefProxy | RefOProxy | any {
   if (typeOf(value) === "object") {
     return refO(value);
+  }
+
+  if (Array.isArray(value)) {
+    return refA(value as Array<any>);
   }
 
   const object = {

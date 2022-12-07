@@ -3,5 +3,6 @@ export const message = {
   CALL_NODE_RETURN_NOT_A_OBJECT: "insert function code, return not a node orve",
   UNSUPPORTED_KEY_IN_OBJECT: "key is not supported",
   PROPS_NOT_A_NEED_TYPE: "props is not a object",
-  REFL_INSERT_NOT_A_PROXY: "ref want to be refL()"
+  REFL_INSERT_NOT_A_PROXY: "ref want to be refL()",
+  MISSING_TAG: "YOU MISS TAG"
 }

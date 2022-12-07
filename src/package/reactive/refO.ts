@@ -18,7 +18,9 @@ function refO(object: any) {
         if (target.$parent.length > 0) {
           target.$parent.forEach((item) => {
             if (item.type === ProxyType.Watch) {
-              item.value.updated(target, undefined);
+              const i = Object.assign({}, target);
+              delete i["$parent"];
+              item.value.updated(i, undefined);
             }
             if (item.type === ProxyType.RefO) {
               item.value.updated;

@@ -28,7 +28,10 @@ function isEqual(object1, object2) {
   }
 
   for (let i = 0; i < props1.length; i++) {
-    if (props1[i] === "node" || props1[i] === "keyNode" || props1[i] === "parent") continue;
+    if (
+      (props1[i] === "node" || props1[i] === "keyNode" || props1[i] === "parent") ||
+      (props2[i] === "node" || props2[i] === "keyNode" || props2[i] === "parent")
+    ) continue;
     const p = props1[i];
     const tp1 = typeOf(object1[p]);
     const tp2 = typeOf(object2[p]);

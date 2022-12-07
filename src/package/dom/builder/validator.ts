@@ -9,7 +9,11 @@ function isONode(workObj: object) {
     if (!keys.includes(key.toLowerCase())) {
       er(`"${key}" - ${m.UNSUPPORTED_KEY_IN_OBJECT}`);
     }
-  })
+  });
+
+  if (!workObj["tag"]) {
+    er(m.MISSING_TAG);
+  }
 
   if (workObj["props"] && typeOf(workObj["props"]) !== "object") {
     er(`${workObj["props"]} - ${m.PROPS_NOT_A_NEED_TYPE}`)
@@ -18,4 +22,22 @@ function isONode(workObj: object) {
   return true;
 }
 
-export { isONode };
+function isNodeBoolean(workObj: object) {
+  let checker = true;
+  Object.keys(workObj).forEach(key => {
+    if (!keys.includes(key.toLowerCase())) {
+      checker = false;
+    }
+  });
+
+  if (!workObj["tag"]) {
+    return false;
+  }
+
+  if (workObj["props"] && typeOf(workObj["props"]) !== "object") {
+    return false;
+  }
+  return checker;
+} 
+
+export { isONode, isNodeBoolean };
