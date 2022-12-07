@@ -3,12 +3,12 @@ import { Child, ChildType } from "../builder/children";
 import { mountedNode } from "./index";
 import { RefProxy } from "../../reactive/type";
 import { PropsTypeRef, ChildRef } from "../../reactive/ref";
-import { message as m }from "./error";
+import { message as m } from "./error";
 
-export const childF = function(
+export const childF = function (
   tag: HTMLElement,
-  nodes: Array<ONodeOrve | Child>
-) : Array<ONodeOrve | Child | Array<ONodeOrve | Child>> {
+  nodes: Array<ONodeOrve | Child>,
+): Array<ONodeOrve | Child | Array<ONodeOrve | Child>> {
   return nodes.map((item: ONodeOrve | Child) => {
     if (item === undefined) {
       console.warn("Mounted: " + m.UNDEFINED_IN_MOUNT);
@@ -20,8 +20,7 @@ export const childF = function(
         .parseFromString(item.value as string, "text/html")
         .getElementsByTagName("body")[0];
       item.node = element.firstChild;
-      if (tag !== null)
-        tag.appendChild(element.firstChild);
+      if (tag !== null) tag.appendChild(element.firstChild);
       return item;
     }
 
@@ -32,37 +31,39 @@ export const childF = function(
       }
 
       const element = document.createTextNode((item as Child).value.toString());
-      if (tag !== null)
-        tag.appendChild(element);
+      if (tag !== null) tag.appendChild(element);
       item.node = element;
       return item;
     }
 
     if (item.type === TypeNode.Component) {
-      return mountedNode.call(this, tag as HTMLElement, item as ONodeOrve) as ONodeOrve;
+      return mountedNode.call(
+        this,
+        tag as HTMLElement,
+        item as ONodeOrve,
+      ) as ONodeOrve;
     }
 
     if (item.type === ChildType.ReactiveStatic) {
-      const element = document.createTextNode((item.value as RefProxy).value as string);
+      const element = document.createTextNode(
+        (item.value as RefProxy).value as string,
+      );
       item.node = element;
-      if (tag !== null)
-        tag.appendChild(element);
+      if (tag !== null) tag.appendChild(element);
       (item.value as RefProxy).parent.push({
         type: PropsTypeRef.Child,
         node: element,
-        ONode: item.ONode
-      } as ChildRef)  
+        ONode: item.ONode,
+      } as ChildRef);
       return item;
     }
 
     if (item.type === ChildType.ReactiveComponent) {
-      const element = mountedNode.call(this, tag,  item.value);
-      (item as any).proxy.parent.push(
-        {
-          type: ChildType.ReactiveComponent,
-          ONode: element,
-        }
-      )
+      const element = mountedNode.call(this, tag, item.value);
+      (item as any).proxy.parent.push({
+        type: ChildType.ReactiveComponent,
+        ONode: element,
+      });
     }
 
     if (item.type === ChildType.ReactiveArray) {
@@ -72,15 +73,16 @@ export const childF = function(
         (item as any).proxy.render = items;
         return item;
       } else {
-        const comment = document.createComment(` array ${(item as any).keyNode} `);
+        const comment = document.createComment(
+          ` array ${(item as any).keyNode} `,
+        );
         (item as any).proxy.render = comment;
         (item as any).proxy.parentNode = (item as any).parent;
         (item as any).proxy.keyNode = (item as any).keyNode;
-        if (tag !== null)
-          tag.appendChild(comment);
+        if (tag !== null) tag.appendChild(comment);
         return item;
       }
     }
     return item;
-  })
-}
+  });
+};

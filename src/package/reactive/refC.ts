@@ -1,4 +1,4 @@
-import { ProxyType, RefCProxy  } from "./type";
+import { ProxyType, RefCProxy } from "./type";
 import { ChildType } from "../dom/builder/children";
 import { parser } from "../dom/builder/index";
 import { mountedNode } from "../dom/mount/index";
@@ -6,36 +6,38 @@ import { HookObject } from "../dom/types";
 import { HookObjectType } from "../dom/types";
 import { isEqual } from "../usedFunction/isEqual";
 
-function updatedHook(item: any, type : HookObjectType) {
+function updatedHook(item: any, type: HookObjectType) {
   if (item.hooks && item.hooks.updated) {
     item.hooks.updated({
       context: window.orve.context,
       oNode: item,
-      type
-    } as HookObject)
+      type,
+    } as HookObject);
   }
 }
 
-function checkExistParents(ar: any) : any {
-  const nArr : any = [];
-  ar.forEach((e : any) => {
-    if (e.type !== ChildType.ReactiveComponent) { nArr.push(e); return; }
-    if (document.body.contains(e.ONode.node))
+function checkExistParents(ar: any): any {
+  const nArr: any = [];
+  ar.forEach((e: any) => {
+    if (e.type !== ChildType.ReactiveComponent) {
       nArr.push(e);
-  })
+      return;
+    }
+    if (document.body.contains(e.ONode.node)) nArr.push(e);
+  });
 
   return nArr;
 }
 
-function refC(app : () => any | object | null = null) {
+function refC(app: () => any | object | null = null) {
   let block = app;
   if (app === null) {
-    block = () => ({ tag: "comment" , child: "refC" })
+    block = () => ({ tag: "comment", child: "refC" });
   }
 
   if (typeof block !== "function") {
-    block = () => block
-  };
+    block = () => block;
+  }
 
   const object = {
     parent: [],
@@ -60,16 +62,25 @@ function refC(app : () => any | object | null = null) {
           if (target.parent.length > 0) {
             let comp = value;
             if (comp === undefined || comp === "" || comp === null) {
-              comp = () => ({tag: "comment", child: "refC"});
+              comp = () => ({ tag: "comment", child: "refC" });
             }
             if (typeof comp !== "function") {
               comp = () => comp;
-            };
+            }
             target.parent = target.parent.map((item) => {
               if (item.type === ChildType.ReactiveComponent) {
-                const parsedItem = parser.call(window.orve.context, comp, item.ONode.parent.props, item.ONode.parent);
-                const element = mountedNode.call(window.orve.context, null, parsedItem);
-                if(!isEqual(element, item.ONode)) {
+                const parsedItem = parser.call(
+                  window.orve.context,
+                  comp,
+                  item.ONode.parent.props,
+                  item.ONode.parent,
+                );
+                const element = mountedNode.call(
+                  window.orve.context,
+                  null,
+                  parsedItem,
+                );
+                if (!isEqual(element, item.ONode)) {
                   item.ONode.node.replaceWith(element.node);
                   item.ONode = element;
                   updatedHook(item.ONode.parent, HookObjectType.Component);
@@ -97,8 +108,8 @@ function refC(app : () => any | object | null = null) {
     deleteProperty() {
       console.error("refC - You try to delete prop in ref");
       return false;
-    }
+    },
   });
 }
 
-export { refC }
+export { refC };

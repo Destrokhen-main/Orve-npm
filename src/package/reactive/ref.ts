@@ -1,4 +1,3 @@
-
 import { RefProxy, ProxyType, PropsStartType, RefOProxy } from "./type";
 import { ONodeOrve } from "../dom/types";
 import { HookObject } from "../dom/types";
@@ -10,20 +9,20 @@ import { refA } from "./refA";
 enum PropsTypeRef {
   PropStatic = "PropStatic",
   PropEvent = "PropEvent",
-  Child = "Child"
+  Child = "Child",
 }
 
 type PropRef = {
-  type: PropsTypeRef | ProxyType,
-  key: string,
-  ONode: ONodeOrve
-}
+  type: PropsTypeRef | ProxyType;
+  key: string;
+  ONode: ONodeOrve;
+};
 
 type ChildRef = {
-  type: PropsTypeRef | ProxyType,
-  node: HTMLElement | Text | ChildNode,
-  ONode: ONodeOrve
-}
+  type: PropsTypeRef | ProxyType;
+  node: HTMLElement | Text | ChildNode;
+  ONode: ONodeOrve;
+};
 
 // function retTypeRef(value: string | number | (() => any)): PropsStartType  {
 //   const tValue = typeof value;
@@ -34,29 +33,31 @@ type ChildRef = {
 //   }
 // }
 
-function updatedHook(item: any, type : HookObjectType) {
+function updatedHook(item: any, type: HookObjectType) {
   if (item.ONode.hooks && item.ONode.hooks.updated) {
     item.ONode.hooks.updated({
       context: window.orve.context,
       oNode: item.ONode,
-      type
-    } as HookObject)
+      type,
+    } as HookObject);
   }
 }
 
-function checkExistParents(ar: Array<PropRef>) : Array<PropRef> {
-  const nArr : Array<PropRef> = [];
+function checkExistParents(ar: Array<PropRef>): Array<PropRef> {
+  const nArr: Array<PropRef> = [];
 
-  ar.forEach((e : PropRef) => {
-    if (!(e.type in PropsTypeRef)) { nArr.push(e); return; }
-    if (document.body.contains(e.ONode.node))
+  ar.forEach((e: PropRef) => {
+    if (!(e.type in PropsTypeRef)) {
       nArr.push(e);
-  })
+      return;
+    }
+    if (document.body.contains(e.ONode.node)) nArr.push(e);
+  });
 
   return nArr;
 }
 
-function ref(value: string | number | (() => any)) : RefProxy | RefOProxy | any {
+function ref(value: string | number | (() => any)): RefProxy | RefOProxy | any {
   if (typeOf(value) === "object") {
     return refO(value);
   }
@@ -68,8 +69,8 @@ function ref(value: string | number | (() => any)) : RefProxy | RefOProxy | any 
   const object = {
     value,
     parent: [],
-    startType: PropsStartType.None
-  } as RefProxy
+    startType: PropsStartType.None,
+  } as RefProxy;
 
   return new Proxy<RefProxy>(object, {
     get(target, prop) {
@@ -80,13 +81,13 @@ function ref(value: string | number | (() => any)) : RefProxy | RefOProxy | any 
       }
       return undefined;
     },
-    set(target, prop, value){
+    set(target, prop, value) {
       if (prop in target) {
         if (prop === "value") {
           if (target.parent.length > 0) {
             let insertValue = value;
 
-            target.parent.forEach((item : PropRef | ChildRef) => {
+            target.parent.forEach((item: PropRef | ChildRef) => {
               if (item.type === PropsTypeRef.PropStatic) {
                 const node = item.ONode.node;
 
@@ -97,14 +98,20 @@ function ref(value: string | number | (() => any)) : RefProxy | RefOProxy | any 
                 if ((item as PropRef).key === "value") {
                   (node as HTMLInputElement).value = insertValue;
                 } else {
-                  (node as HTMLElement).setAttribute((item as PropRef).key, insertValue);
+                  (node as HTMLElement).setAttribute(
+                    (item as PropRef).key,
+                    insertValue,
+                  );
                 }
                 updatedHook(item, HookObjectType.Props);
                 return;
               }
               if (item.type === PropsTypeRef.PropEvent) {
                 const node = item.ONode.node;
-                node.removeEventListener((item as PropRef).key, target["value"] as () => any);
+                node.removeEventListener(
+                  (item as PropRef).key,
+                  target["value"] as () => any,
+                );
                 if (typeof value !== "function") {
                   console.error("insert not a function in eventlister");
                 } else {
@@ -140,7 +147,7 @@ function ref(value: string | number | (() => any)) : RefProxy | RefOProxy | any 
     deleteProperty() {
       console.error("ref - You try to delete prop in ref");
       return false;
-    }
+    },
   });
 }
 

@@ -1,7 +1,6 @@
-
 import { ProxyType, RefLProxy } from "./type";
 
-function refL() : RefLProxy {
+function refL(): RefLProxy {
   const object = {
     parent: [],
     value: null,
@@ -21,7 +20,7 @@ function refL() : RefLProxy {
                 item.value.updated;
                 return;
               }
-            })
+            });
           }
           target["value"] = value;
           return true;
@@ -40,8 +39,8 @@ function refL() : RefLProxy {
     deleteProperty() {
       console.error(`refL - you try to delete prop in refL`);
       return false;
-    } 
+    },
   });
 }
 
-export { refL }
+export { refL };

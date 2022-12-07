@@ -1,1 +1,1 @@
-export const message = {}
+export const message = {};

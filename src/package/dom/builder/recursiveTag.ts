@@ -1,7 +1,7 @@
 import { ONodeOrve, Props, ONode } from "../types";
 import { typeOf } from "../../usedFunction/typeOf";
-import er, { message as m} from "./error";
-import { isONode } from "../builder/validator"; 
+import er, { message as m } from "./error";
+import { isONode } from "../builder/validator";
 
 function recursiveTag(node: ONodeOrve) {
   let pr: Props = {};
@@ -21,7 +21,7 @@ function recursiveTag(node: ONodeOrve) {
     req = (node.tag as () => ONode).call(this);
   }
 
-  if(typeOf(req) !== "object") {
+  if (typeOf(req) !== "object") {
     er(m.CALL_NODE_RETURN_NOT_A_OBJECT);
   }
 
@@ -31,10 +31,10 @@ function recursiveTag(node: ONodeOrve) {
     return recursiveTag.call(this, req);
   }
 
-  if (node.hooks) req["hooks"] = node.hooks
+  if (node.hooks) req["hooks"] = node.hooks;
   if (node.ref) req["ref"] = node.ref;
-  
+
   return req;
 }
 
-export { recursiveTag }
+export { recursiveTag };

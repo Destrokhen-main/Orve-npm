@@ -6,41 +6,41 @@ enum ProxyType {
   RefC = "RefC",
   Watch = "Watch",
   RefO = "RefO",
-  RefA = "RefA"
+  RefA = "RefA",
 }
 
 enum PropsStartType {
   Static = "Static",
   Function = "Function",
-  None = "None"
+  None = "None",
 }
 
 type RefLProxy = {
-  parent: Array<any>,
-  value: HTMLElement | null,
-  type: ProxyType,
-  proxyType: ProxyType,
-} 
+  parent: Array<any>;
+  value: HTMLElement | null;
+  type: ProxyType;
+  proxyType: ProxyType;
+};
 
 type RefProxy = {
-  parent: Array<any>,
-  value: string | number | (() => any),
-  type: ProxyType,
-  proxyType: ProxyType,
-  startType: PropsStartType
-}
+  parent: Array<any>;
+  value: string | number | (() => any);
+  type: ProxyType;
+  proxyType: ProxyType;
+  startType: PropsStartType;
+};
 
 type RefCProxy = {
-  parent: Array<any>,
-  value: () => any,
-  type: ProxyType,
-  proxyType: ProxyType,
-}
+  parent: Array<any>;
+  value: () => any;
+  type: ProxyType;
+  proxyType: ProxyType;
+};
 
 type RefOProxy = {
-  $parent: Array<any>,
-  type: ProxyType,
-  proxyType: ProxyType
-}
+  $parent: Array<any>;
+  type: ProxyType;
+  proxyType: ProxyType;
+};
 
 export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy, RefOProxy };

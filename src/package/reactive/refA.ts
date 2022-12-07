@@ -1,35 +1,64 @@
-
-
 import e from "./error";
 
 import { ProxyType } from "./type";
 import { parseChildren } from "../dom/builder/children";
 import { childF } from "../dom/mount/child";
+import { HookObject } from "../dom/types";
+
+function updated(obj) {
+  if (obj.parentNode && obj.parentNode.hooks && obj.parentNode.hooks.updated) {
+    obj.parentNode.hooks.updated({
+      context: window.orve.context,
+      oNode: obj,
+    } as HookObject);
+  }
+}
 
 function newValueInsert(obj: Record<string, any>, value: any) {
-  const newItem = parseChildren.call(window.orve.context, [ value ], null, obj.parentNode, true);
+  const newItem = parseChildren.call(
+    window.orve.context,
+    [value],
+    null,
+    obj.parentNode,
+    true,
+  );
   const Item = childF.call(window.orve.context, null, newItem);
   if (obj.empty) {
     obj.render.replaceWith(Item[0].node);
     obj.render = Item;
     obj.empty = false;
+    updated(obj);
   } else {
     const element = obj.render[obj.render.length - 1].node;
     element.after(Item[0].node);
     obj.render.push(Item[0]);
+    updated(obj);
   }
 }
 
 function replaceValue(obj: Record<string, any>, prop: string, value: any) {
-  const newItem = parseChildren.call(window.orve.context, [ value ], null, obj.parentNode, true);
+  const newItem = parseChildren.call(
+    window.orve.context,
+    [value],
+    null,
+    obj.parentNode,
+    true,
+  );
   const Item = childF.call(window.orve.context, null, newItem);
   obj.render[prop].node.replaceWith(Item[0].node);
   obj.render[prop] = Item[0];
+  updated(obj);
 }
 
 function checkOutAndInput(obj) {
   if (obj.value.length > 0 && obj.value.length !== obj.render.length) {
-    const newItem = parseChildren.call(window.orve.context, [ obj.value ], null, obj.parentNode, true);
+    const newItem = parseChildren.call(
+      window.orve.context,
+      [obj.value],
+      null,
+      obj.parentNode,
+      true,
+    );
     const newRender = obj.render.map((ren, i) => {
       if (newItem[i] === undefined) {
         ren.node.remove();
@@ -38,24 +67,26 @@ function checkOutAndInput(obj) {
       return ren;
     });
     obj.render = newRender.filter((i) => i !== undefined);
+    updated(obj);
   } else if (obj.value.length === 0 && Array.isArray(obj.render)) {
     const element = document.createComment(` array ${obj.keyNode} `);
     obj.render[0].node.replaceWith(element);
     obj.render = element;
     obj.empty = true;
+    updated(obj);
   }
 }
 
 function refA(ar: Array<any>) {
   if (!Array.isArray(ar)) {
-    e("refA - need array")
+    e("refA - need array");
   }
   const object = {
     parent: [],
     value: null,
     render: null,
-    empty: null
-  }
+    empty: null,
+  };
 
   let checkAr = null;
   let mutationArray = false;
@@ -73,8 +104,12 @@ function refA(ar: Array<any>) {
     },
     set(target, prop, value) {
       const isNum = parseInt(prop as string, 10);
-      if (!Number.isNaN(isNum) && isNum < target.length && object.render !== null) {
-        replaceValue(object, (prop as string), value);
+      if (
+        !Number.isNaN(isNum) &&
+        isNum < target.length &&
+        object.render !== null
+      ) {
+        replaceValue(object, prop as string, value);
         if (mutationArray) {
           if (checkAr !== null) clearTimeout(checkAr);
           checkAr = setTimeout(() => {
@@ -82,11 +117,15 @@ function refA(ar: Array<any>) {
             mutationArray = false;
           }, 1);
         }
-      } else if (!Number.isNaN(isNum) && isNum === target.length && object.render !== null) {
+      } else if (
+        !Number.isNaN(isNum) &&
+        isNum === target.length &&
+        object.render !== null
+      ) {
         newValueInsert(object, value);
       }
       return Reflect.set(target, prop, value);
-    }
+    },
   });
 
   object["value"] = array;
@@ -94,7 +133,7 @@ function refA(ar: Array<any>) {
 
   return new Proxy(object, {
     get(target, prop) {
-      if (prop === "type") return ProxyType.Proxy
+      if (prop === "type") return ProxyType.Proxy;
       if (prop === "proxyType") return ProxyType.RefA;
       //console.log(prop);
       return Reflect.get(target, prop);
@@ -102,8 +141,8 @@ function refA(ar: Array<any>) {
     deleteProperty() {
       console.error("refA - You try to delete prop in ref");
       return false;
-    }
+    },
   });
 }
 
-export { refA }
+export { refA };

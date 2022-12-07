@@ -1,14 +1,12 @@
-
 import { RefOProxy } from "./type";
 import { ref } from "./ref";
 import { typeOf } from "../usedFunction/typeOf";
-import { ProxyType } from "../reactive/type" 
+import { ProxyType } from "../reactive/type";
 
 function refO(object: any) {
-
   const obj = {
     $parent: [],
-  } as RefOProxy
+  } as RefOProxy;
 
   const mainProxy = new Proxy<RefOProxy>(obj, {
     get(target, prop) {
@@ -25,11 +23,11 @@ function refO(object: any) {
             if (item.type === ProxyType.RefO) {
               item.value.updated;
             }
-          })
+          });
         }
       }
       if (prop in target) {
-        return target[prop]
+        return target[prop];
       }
       return undefined;
     },
@@ -40,8 +38,8 @@ function refO(object: any) {
           const r = ref(value);
           (r as any).parent.push({
             type: ProxyType.RefO,
-            value: mainProxy
-          })
+            value: mainProxy,
+          });
           target[prop] = r;
           return true;
         }
@@ -49,7 +47,7 @@ function refO(object: any) {
           const rO = refO(value);
           rO.$parent.push({
             type: ProxyType.RefO,
-            value: mainProxy
+            value: mainProxy,
           });
           target[prop] = rO;
           return true;
@@ -57,14 +55,14 @@ function refO(object: any) {
         if (type === "Proxy") {
           value.parent.push({
             type: ProxyType.RefO,
-            value: mainProxy
-          })
+            value: mainProxy,
+          });
           target[prop] = value;
           return true;
         }
       }
       return false;
-    }
+    },
   });
 
   Object.keys(object).forEach((key) => {
@@ -74,4 +72,4 @@ function refO(object: any) {
   return mainProxy;
 }
 
-export { refO }
+export { refO };

@@ -6,21 +6,21 @@ import { mount } from "./mount/index";
 // NOTE type
 
 type createApp = {
-  mount: (( _ : string) => void)
-}
+  mount: (_: string) => void;
+};
 
 type AppWithContext = {
-  App: () => unknown,
-}
+  App: () => unknown;
+};
 
 type Cons = {
-  DOM: ONodeOrve,
-  context: Record<string, any>
-}
+  DOM: ONodeOrve;
+  context: Record<string, any>;
+};
 
 declare global {
   interface Window {
-    orve: Cons
+    orve: Cons;
   }
 }
 
@@ -40,8 +40,7 @@ const createObjectContext = function (app: object): object {
   return Context;
 };
 
-
-// NOTE function 
+// NOTE function
 function createApp(app: AppWithContext | (() => unknown)): createApp {
   const type = typeof app;
 
@@ -66,22 +65,19 @@ function createApp(app: AppWithContext | (() => unknown)): createApp {
     // start build |app|
   }
 
-  if(type === "function" || type === "object") {
+  if (type === "function" || type === "object") {
     return {
-      mount: (query: string) => mount.bind(CONTEXT)(query)
-    }
+      mount: (query: string) => mount.bind(CONTEXT)(query),
+    };
   }
 
   er(m.UNSUPPORTED_TYPE_APP);
 }
 
 function context() {
-  return window.orve && window.orve.context !== null 
-          ? window.orve.context
-          : CONTEXT;
+  return window.orve && window.orve.context !== null
+    ? window.orve.context
+    : CONTEXT;
 }
 
-export {
-  createApp,
-  context
-}
+export { createApp, context };

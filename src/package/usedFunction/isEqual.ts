@@ -1,5 +1,4 @@
-
-import { typeOf } from './typeOf';
+import { typeOf } from "./typeOf";
 
 function isEqualArray(ar1, ar2) {
   if (ar1.length !== ar2.length) return false;
@@ -29,9 +28,14 @@ function isEqual(object1, object2) {
 
   for (let i = 0; i < props1.length; i++) {
     if (
-      (props1[i] === "node" || props1[i] === "keyNode" || props1[i] === "parent") ||
-      (props2[i] === "node" || props2[i] === "keyNode" || props2[i] === "parent")
-    ) continue;
+      props1[i] === "node" ||
+      props1[i] === "keyNode" ||
+      props1[i] === "parent" ||
+      props2[i] === "node" ||
+      props2[i] === "keyNode" ||
+      props2[i] === "parent"
+    )
+      continue;
     const p = props1[i];
     const tp1 = typeOf(object1[p]);
     const tp2 = typeOf(object2[p]);
@@ -49,6 +53,4 @@ function isEqual(object1, object2) {
   return true;
 }
 
-export {
-  isEqual
-}
+export { isEqual };

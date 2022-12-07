@@ -1,4 +1,4 @@
-import er, {message as m} from "./error";
+import er, { message as m } from "./error";
 import { ONodeOrve, HookObject, TypeNode } from "../types";
 import { propsF } from "./props";
 
@@ -8,10 +8,9 @@ import { Child } from "../builder/children";
 import { RefLProxy } from "../../reactive/type";
 import { ChildType } from "../builder/children";
 
-
 function mount(query: string): void {
   const tag: HTMLElement = document.querySelector(query);
-  const oNode : ONodeOrve = window.orve.DOM;
+  const oNode: ONodeOrve = window.orve.DOM;
 
   if (tag === null) {
     er(`${m.TAG_NOT_FOUND} "${query}"`);
@@ -20,22 +19,28 @@ function mount(query: string): void {
   window.orve.DOM = mountedNode.call(this, tag, oNode);
 }
 
-function createComment(app : HTMLElement | null, nodes: ONodeOrve) {
+function createComment(app: HTMLElement | null, nodes: ONodeOrve) {
   let text = "";
-  if ((nodes.child as any) !== undefined && (nodes.child as Array<() => ONodeOrve | string | number | object>).length > 0) {
-    text = (nodes.child as Array<any>).reduce((a : string, b : ONodeOrve) => {
+  if (
+    (nodes.child as any) !== undefined &&
+    (nodes.child as Array<() => ONodeOrve | string | number | object>).length >
+      0
+  ) {
+    text = (nodes.child as Array<any>).reduce((a: string, b: ONodeOrve) => {
       if ((b as any).type === ChildType.Static) {
-        return a += (b as any).value;
+        return (a += (b as any).value);
       }
       return a;
     }, "");
   }
 
-  const comment = document.createComment(` ${text.length > 0 ? text + " - " : ""}${nodes.keyNode}`);
+  const comment = document.createComment(
+    ` ${text.length > 0 ? text + " - " : ""}${nodes.keyNode}`,
+  );
   const object = {
     ...nodes,
     node: comment,
-    type: TypeNode.Comment
+    type: TypeNode.Comment,
   } as ONodeOrve;
 
   if (app === null) return object;
@@ -44,8 +49,10 @@ function createComment(app : HTMLElement | null, nodes: ONodeOrve) {
   return object;
 }
 
-
-function mountedNode(app: HTMLElement | null, nodes: ONodeOrve): ONodeOrve | HTMLElement {
+function mountedNode(
+  app: HTMLElement | null,
+  nodes: ONodeOrve,
+): ONodeOrve | HTMLElement {
   const { tag, props, child, ref, hooks } = nodes;
 
   if (typeof tag !== "string") {
@@ -67,8 +74,8 @@ function mountedNode(app: HTMLElement | null, nodes: ONodeOrve): ONodeOrve | HTM
 
     hooks.mounted({
       context: this,
-      oNode: sendObject
-    } as HookObject)
+      oNode: sendObject,
+    } as HookObject);
   }
 
   if (props && Object.keys(props).length > 0) {
@@ -85,8 +92,8 @@ function mountedNode(app: HTMLElement | null, nodes: ONodeOrve): ONodeOrve | HTM
 
   nodes["node"] = TAG;
 
-  if (app === null) return nodes
-  
+  if (app === null) return nodes;
+
   if (nodes.parent === null) {
     app.replaceWith(TAG);
   } else {
@@ -95,7 +102,4 @@ function mountedNode(app: HTMLElement | null, nodes: ONodeOrve): ONodeOrve | HTM
   return nodes;
 }
 
-export {
-  mount,
-  mountedNode
-}
+export { mount, mountedNode };
