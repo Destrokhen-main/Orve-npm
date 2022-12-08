@@ -63,6 +63,15 @@ function refO(object: any) {
       }
       return false;
     },
+    deleteProperty(target, prop) {
+      if (prop !== "$parent") {
+        delete target[prop];
+        return true;
+      } else {
+        console.error("refO - You try to delete $parent prop in refO");
+        return false;
+      }
+    }
   });
 
   Object.keys(object).forEach((key) => {
