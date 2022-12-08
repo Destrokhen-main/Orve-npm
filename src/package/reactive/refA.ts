@@ -14,6 +14,17 @@ function updated(obj: any) {
   }
 }
 
+function parentCall(obj: any) {
+  if (obj.parent.length > 0) {
+    obj.parent.forEach((item: any) => {
+      if (item.type === ProxyType.Watch) {
+        (item as any).value.updated(obj.value, undefined);
+        return;
+      }
+    });
+  }
+}
+
 function newValueInsert(obj: Record<string, any>, value: any) {
   const newItem = parseChildren.call(
     window.orve.context,
@@ -33,6 +44,7 @@ function newValueInsert(obj: Record<string, any>, value: any) {
     element.after(Item[0].node);
     obj.render.push(Item[0]);
     updated(obj);
+    parentCall(obj);
   }
 }
 
@@ -48,6 +60,7 @@ function replaceValue(obj: Record<string, any>, prop: string, value: any) {
   obj.render[prop].node.replaceWith(Item[0].node);
   obj.render[prop] = Item[0];
   updated(obj);
+  parentCall(obj);
 }
 
 function checkOutAndInput(obj) {
@@ -68,12 +81,14 @@ function checkOutAndInput(obj) {
     });
     obj.render = newRender.filter((i) => i !== undefined);
     updated(obj);
+    parentCall(obj);
   } else if (obj.value.length === 0 && Array.isArray(obj.render)) {
     const element = document.createComment(` array ${obj.keyNode} `);
     obj.render[0].node.replaceWith(element);
     obj.render = element;
     obj.empty = true;
     updated(obj);
+    parentCall(obj);
   }
 }
 
@@ -123,7 +138,10 @@ function refA(ar: Array<any>) {
         object.render !== null
       ) {
         newValueInsert(object, value);
+      } else if (!Number.isNaN(isNum) && object.render === null) {
+        parentCall(object);
       }
+
       return Reflect.set(target, prop, value);
     },
   });
@@ -135,7 +153,6 @@ function refA(ar: Array<any>) {
     get(target, prop) {
       if (prop === "type") return ProxyType.Proxy;
       if (prop === "proxyType") return ProxyType.RefA;
-      //console.log(prop);
       return Reflect.get(target, prop);
     },
     deleteProperty() {

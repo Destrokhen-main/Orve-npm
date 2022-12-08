@@ -2,6 +2,23 @@ import { ProxyType, RefLProxy, RefProxy, RefCProxy, RefOProxy } from "./type";
 import e from "./error";
 import { generationID } from "../usedFunction/keyGeneration";
 
+const startWatch = (object, typeProxy, dependencies) => {
+  if (!object.watch) {
+    if (typeProxy === ProxyType.RefO) {
+      (dependencies as RefOProxy).$parent.push({
+        type: ProxyType.Watch,
+        value: object,
+      });
+    } else {
+      (dependencies as any).parent.push({
+        type: ProxyType.Watch,
+        value: object,
+      });
+    }
+    object.watch = true;
+  }
+};
+
 function watch(
   func: () => void,
   dependencies: RefLProxy | RefProxy | RefCProxy | RefOProxy = null,
@@ -43,37 +60,9 @@ function watch(
       value: object,
     });
   }
+  //startWatch();
 
-  const startWatch = () => {
-    if (!object.watch) {
-      if (typeProxy === ProxyType.RefO) {
-        (dependencies as RefOProxy).$parent.push({
-          type: ProxyType.Watch,
-          value: object,
-        });
-      } else {
-        (dependencies as any).parent.push({
-          type: ProxyType.Watch,
-          value: object,
-        });
-      }
-      object.watch = true;
-    }
-  };
-  startWatch();
-
-  object["stop"] = () => {
-    if (object.watch) {
-      (dependencies as any).parent = (dependencies as any).parent.filter(
-        (i: any) => i.key !== undefined && i.key === object.key,
-      );
-      object.watch = false;
-    }
-  };
-
-  object["start"] = startWatch;
-
-  return new Proxy(object, {
+  const n =  new Proxy(object, {
     get(target, prop) {
       if (prop === "type") return ProxyType.Proxy;
       if (prop === "proxyType") return ProxyType.Watch;
@@ -93,6 +82,19 @@ function watch(
       return false;
     },
   });
+
+  n["stop"] = () => {
+    if (object.watch) {
+      (dependencies as any).parent = (dependencies as any).parent.filter(
+        (i: any) => i.key !== undefined && i.key === object.key,
+      );
+      object.watch = false;
+    }
+  };
+
+  n["start"] = () => startWatch(object, typeProxy, dependencies);
+
+  return n;
 }
 
 export { watch };
