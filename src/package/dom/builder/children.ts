@@ -12,6 +12,7 @@ enum ChildType {
   ReactiveStatic = "ReactiveStatic",
   ReactiveComponent = "ReactiveComponent",
   ReactiveArray = "ReactiveArray",
+  Effect = "Effect",
 }
 
 type Child = {
@@ -106,6 +107,16 @@ function parseChildren(
               true,
             ),
             proxy: item,
+            parent,
+            keyNode: generationID(8),
+          };
+        }
+
+        if (proxyType === ProxyType.Effect) {
+          return {
+            type: ChildType.Effect,
+            proxy: item,
+            value: null,
             parent,
             keyNode: generationID(8),
           };

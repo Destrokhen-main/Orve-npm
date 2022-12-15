@@ -10,6 +10,8 @@ enum PropsTypeRef {
   PropStatic = "PropStatic",
   PropEvent = "PropEvent",
   Child = "Child",
+  Custom = "Custom",
+  EffectStyle = "EffectStyle",
 }
 
 type PropRef = {
@@ -47,7 +49,7 @@ function checkExistParents(ar: Array<PropRef>): Array<PropRef> {
   const nArr: Array<PropRef> = [];
 
   ar.forEach((e: PropRef) => {
-    if (!(e.type in PropsTypeRef)) {
+    if (!(e.type in PropsTypeRef) || e.type === "Custom") {
       nArr.push(e);
       return;
     }
@@ -86,6 +88,8 @@ function ref(value: string | number | (() => any)): RefProxy | RefOProxy | any {
         if (prop === "value") {
           if (target.parent.length > 0) {
             let insertValue = value;
+            const lastValue = target[prop];
+            target[prop] = value;
 
             target.parent.forEach((item: PropRef | ChildRef) => {
               if (item.type === PropsTypeRef.PropStatic) {
@@ -110,7 +114,7 @@ function ref(value: string | number | (() => any)): RefProxy | RefOProxy | any {
                 const node = item.ONode.node;
                 node.removeEventListener(
                   (item as PropRef).key,
-                  target["value"] as () => any,
+                  lastValue as () => any,
                 );
                 if (typeof value !== "function") {
                   console.error("insert not a function in eventlister");
@@ -128,18 +132,23 @@ function ref(value: string | number | (() => any)): RefProxy | RefOProxy | any {
                 return;
               }
               if (item.type === ProxyType.Watch) {
-                (item as any).value.updated(value, target.value);
+                (item as any).value.updated(value, lastValue);
                 return;
               }
               if (item.type === ProxyType.RefO) {
                 (item as any).value.updated;
                 return;
               }
+              if (item.type === ProxyType.Effect) {
+                (item as any).value.updated();
+              }
+              if (item.type === "Custom") {
+                (item as any).value(target);
+              }
             });
             target.parent = checkExistParents(target.parent);
           }
         }
-        target[prop] = value;
         return true;
       }
       return false;

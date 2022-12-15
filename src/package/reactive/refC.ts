@@ -95,6 +95,13 @@ function refC(app: () => any | object | null = null) {
                 item.value.updated;
                 return item;
               }
+              if (item.type === ProxyType.Effect) {
+                (item as any).value.updated();
+              }
+              if (item.type === "Custom") {
+                item.value(target);
+                return item;
+              }
             });
 
             target.parent = checkExistParents(target.parent);

@@ -7,6 +7,7 @@ enum ProxyType {
   Watch = "Watch",
   RefO = "RefO",
   RefA = "RefA",
+  Effect = "Effect",
 }
 
 enum PropsStartType {

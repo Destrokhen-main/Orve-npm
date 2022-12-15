@@ -62,7 +62,7 @@ function watch(
   }
   //startWatch();
 
-  const n =  new Proxy(object, {
+  const n = new Proxy(object, {
     get(target, prop) {
       if (prop === "type") return ProxyType.Proxy;
       if (prop === "proxyType") return ProxyType.Watch;

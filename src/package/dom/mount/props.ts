@@ -1,10 +1,21 @@
 import * as reactToCSS from "react-style-object-to-css";
 import { ProxyType } from "../../reactive/type";
 import { PropsTypeRef, PropRef } from "../../reactive/ref";
+import e from "./error";
+
+import { typeOf } from "../../usedFunction/typeOf";
 
 type IMG = {
   default: string;
 };
+
+function checkerEffect(item) {
+  const call = (item as any).func();
+  if (call === undefined) {
+    e("Effect return undefined");
+  }
+  return call;
+}
 
 export const propsF = function (
   tag: HTMLElement,
@@ -32,7 +43,7 @@ export const propsF = function (
         typeof props[prop] === "object" &&
         (props[prop] as any).type === ProxyType.Proxy
       ) {
-        const type = (props[prop] as any).typeProxy;
+        const type = (props[prop] as any).proxyType;
         if (type === ProxyType.Ref) {
           tag.addEventListener(name, (props[prop] as any).value);
           (props[prop] as any).parent.push({
@@ -40,6 +51,26 @@ export const propsF = function (
             type: PropsTypeRef.PropEvent,
             ONode: this.ONode,
           } as PropRef);
+        }
+
+        if (type === ProxyType.Effect) {
+          const call = checkerEffect(props[prop]);
+
+          if (typeof call !== "function") {
+            e("Effect in event return not a function");
+          }
+
+          tag.addEventListener(name, call);
+
+          (props[prop] as any).value = call;
+
+          (props[prop] as any).parent.push({
+            key: name,
+            type: PropsTypeRef.PropEvent,
+            ONode: this.ONode,
+          });
+          return;
+          // TODO Написать логику
         }
         // NOTE EFFECT
       } else {
@@ -55,7 +86,7 @@ export const propsF = function (
         typeof props[prop] === "object" &&
         (props[prop] as any).type === ProxyType.Proxy
       ) {
-        const type = (props[prop] as any).typeProxy;
+        const type = (props[prop] as any).proxyType;
         if (type === ProxyType.Ref) {
           tag.setAttribute("style", (props[prop] as any).value);
           (props[prop] as any).parent.push({
@@ -64,11 +95,29 @@ export const propsF = function (
             ONode: this.ONode,
           } as PropRef);
         }
+
+        if (type === ProxyType.Effect) {
+          const call = checkerEffect(props[prop]);
+          let style = "";
+          if (typeof call === "string") {
+            style = call;
+          } else if (typeof call === "object") {
+            style = reactToCSS(call);
+          }
+
+          tag.setAttribute("style", style);
+          (props[prop] as any).value = style;
+          (props[prop] as any).parent.push({
+            key: prop,
+            type: PropsTypeRef.EffectStyle,
+            ONode: this.ONode,
+          } as PropRef);
+        }
       } else {
         // not a proxy
-        let style;
+        let style = "";
         if (typeof props[prop] === "string") {
-          style = props[prop];
+          style = props[prop] as string;
         } else {
           style = reactToCSS(props[prop]);
         }
@@ -85,7 +134,7 @@ export const propsF = function (
       (props[prop] as any).type === ProxyType.Proxy
     ) {
       const proxyType = (props[prop] as any).proxyType;
-      if (proxyType == ProxyType.Ref) {
+      if (proxyType === ProxyType.Ref) {
         let value = (props[prop] as any).value;
         if (typeof value === "function") {
           value = value();
@@ -100,6 +149,22 @@ export const propsF = function (
           type: PropsTypeRef.PropStatic,
           ONode: this.ONode,
         } as PropRef);
+      }
+      if (proxyType === ProxyType.Effect) {
+        const call = checkerEffect(props[prop]);
+
+        const type = typeOf(call);
+
+        if (type === "string" || type === "number") {
+          tag.setAttribute(prop, call);
+          (props[prop] as any).value = call;
+
+          (props[prop] as any).parent.push({
+            key: prop,
+            type: PropsTypeRef.PropStatic,
+            ONode: this.ONode,
+          });
+        }
       }
       return;
     }

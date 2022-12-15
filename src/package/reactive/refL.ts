@@ -20,6 +20,10 @@ function refL(): RefLProxy {
                 item.value.updated;
                 return;
               }
+              if (item.type === "Custom") {
+                item.value(target);
+                return;
+              }
             });
           }
           target["value"] = value;

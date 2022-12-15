@@ -14,12 +14,19 @@ function updated(obj: any) {
   }
 }
 
+// TODO check exist parent
 function parentCall(obj: any) {
   if (obj.parent.length > 0) {
     obj.parent.forEach((item: any) => {
       if (item.type === ProxyType.Watch) {
         (item as any).value.updated(obj.value, undefined);
         return;
+      }
+      if (item.type === "Custom") {
+        item.value(obj);
+      }
+      if (item.type === ProxyType.Effect) {
+        item.value.updated();
       }
     });
   }
@@ -34,7 +41,7 @@ function newValueInsert(obj: Record<string, any>, value: any) {
     true,
   );
   const Item = childF.call(window.orve.context, null, newItem);
-  if (obj.empty) {
+  if (!Array.isArray(obj.render)) {
     obj.render.replaceWith(Item[0].node);
     obj.render = Item;
     obj.empty = false;
@@ -64,7 +71,11 @@ function replaceValue(obj: Record<string, any>, prop: string, value: any) {
 }
 
 function checkOutAndInput(obj) {
-  if (obj.value.length > 0 && obj.value.length !== obj.render.length) {
+  if (
+    obj.value.length > 0 &&
+    Array.isArray(obj.render) &&
+    obj.value.length !== obj.render.length
+  ) {
     const newItem = parseChildren.call(
       window.orve.context,
       [obj.value],
@@ -132,12 +143,14 @@ function refA(ar: Array<any>) {
             mutationArray = false;
           }, 1);
         }
+        parentCall(object);
       } else if (
         !Number.isNaN(isNum) &&
         isNum === target.length &&
         object.render !== null
       ) {
         newValueInsert(object, value);
+        parentCall(object);
       } else if (!Number.isNaN(isNum) && object.render === null) {
         parentCall(object);
       }

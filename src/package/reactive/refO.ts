@@ -23,6 +23,13 @@ function refO(object: any) {
             if (item.type === ProxyType.RefO) {
               item.value.updated;
             }
+            if (item.type === ProxyType.Effect) {
+              (item as any).value.updated();
+            }
+            if (item.type === "Custom") {
+              item.value(target);
+              return;
+            }
           });
         }
       }
@@ -71,7 +78,7 @@ function refO(object: any) {
         console.error("refO - You try to delete $parent prop in refO");
         return false;
       }
-    }
+    },
   });
 
   Object.keys(object).forEach((key) => {
