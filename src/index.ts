@@ -8,6 +8,26 @@ import { refA } from "./package/reactive/refA";
 import { effect } from "./package/reactive/effect";
 import { Orve } from "./package/default";
 
-export { createApp, refL, ref, refC, watch, refO, refA, effect };
+export {
+  createApp,
+  refL,
+  ref,
+  refC,
+  watch,
+  refO,
+  refA,
+  effect,
+  Orve
+};
 
-export default Orve;
+export default {
+  ...Orve,
+  createApp,
+  refL,
+  ref,
+  refC,
+  watch,
+  refO,
+  refA,
+  effect
+};

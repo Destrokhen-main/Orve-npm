@@ -5,11 +5,15 @@ import { mountedNode } from "../dom/mount/index";
 import { HookObject } from "../dom/types";
 import { HookObjectType } from "../dom/types";
 import { isEqual } from "../usedFunction/isEqual";
+import { Orve } from "../default";
+import { typeOf } from "../usedFunction/typeOf";
+import { parseChildren } from "../dom/builder/children";
+import { childF } from "../dom/mount/child";
 
 function updatedHook(item: any, type: HookObjectType) {
-  if (item.hooks && item.hooks.updated) {
+  if (item.hooks && item.hooks?.updated !== undefined) {
     item.hooks.updated({
-      context: window.orve.context,
+      context: Orve.context,
       oNode: item,
       type,
     } as HookObject);
@@ -64,28 +68,39 @@ function refC(app: () => any | object | null = null) {
             if (comp === undefined || comp === "" || comp === null) {
               comp = () => ({ tag: "comment", child: "refC" });
             }
-            if (typeof comp !== "function") {
-              comp = () => comp;
-            }
+
+            const typeInsertBlock = typeOf(comp);
             target.parent = target.parent.map((item) => {
               if (item.type === ChildType.ReactiveComponent) {
-                const parsedItem = parser.call(
-                  window.orve.context,
-                  comp,
-                  item.ONode.parent.props,
-                  item.ONode.parent,
-                );
-                const element = mountedNode.call(
-                  window.orve.context,
-                  null,
-                  parsedItem,
-                );
-                if (!isEqual(element, item.ONode)) {
+                if (typeInsertBlock === "object" || typeInsertBlock === "function") {
+                  if (typeInsertBlock === "object") {
+                    comp = () => value;
+                  }
+                  const parsedItem = parser.call(
+                    Orve.context,
+                    comp,
+                    null,
+                    item.parent,
+                  );
+                  const element = mountedNode.call(
+                    Orve.context,
+                    null,
+                    parsedItem,
+                  );
+                  if (!isEqual(element, item.ONode)) {
+                    item.ONode.node.replaceWith(element.node);
+                    item.ONode = element;
+                    updatedHook(item.ONode.parent, HookObjectType.Component);
+                  }
+                  return item;
+                } else if (typeInsertBlock === "string" || typeInsertBlock === "number") {
+                  const parsedAr = parseChildren.call(Orve.context, [ value ], null, item.parent);
+                  const [ element ] = childF.call(Orve.context, null, parsedAr);
                   item.ONode.node.replaceWith(element.node);
                   item.ONode = element;
-                  updatedHook(item.ONode.parent, HookObjectType.Component);
+                  updatedHook(item.parent, HookObjectType.Component);
+                  return item;
                 }
-                return item;
               }
               if (item.type === ProxyType.Watch) {
                 item.value.updated(value, undefined);
@@ -97,6 +112,7 @@ function refC(app: () => any | object | null = null) {
               }
               if (item.type === ProxyType.Effect) {
                 (item as any).value.updated();
+                return item;
               }
               if (item.type === "Custom") {
                 item.value(target);

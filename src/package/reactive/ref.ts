@@ -5,6 +5,7 @@ import { HookObjectType } from "../dom/types";
 import { typeOf } from "../usedFunction/typeOf";
 import { refO } from "../reactive/refO";
 import { refA } from "./refA";
+import { Orve } from "../default";
 
 enum PropsTypeRef {
   PropStatic = "PropStatic",
@@ -39,7 +40,7 @@ type ChildRef = {
 function updatedHook(item: any, type: HookObjectType) {
   if (item.ONode.hooks && item.ONode.hooks.updated) {
     item.ONode.hooks.updated({
-      context: window.orve.context,
+      context: Orve,
       oNode: item.ONode,
       type,
     } as HookObject);

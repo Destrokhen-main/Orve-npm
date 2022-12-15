@@ -4,11 +4,12 @@ import { ProxyType } from "./type";
 import { parseChildren } from "../dom/builder/children";
 import { childF } from "../dom/mount/child";
 import { HookObject } from "../dom/types";
+import { Orve } from "../default";
 
 function updated(obj: any) {
   if (obj.parentNode && obj.parentNode.hooks && obj.parentNode.hooks.updated) {
     obj.parentNode.hooks.updated({
-      context: window.orve.context,
+      context: Orve.context,
       oNode: obj,
     } as HookObject);
   }
@@ -34,13 +35,13 @@ function parentCall(obj: any) {
 
 function newValueInsert(obj: Record<string, any>, value: any) {
   const newItem = parseChildren.call(
-    window.orve.context,
+    Orve.context,
     [value],
     null,
     obj.parentNode,
     true,
   );
-  const Item = childF.call(window.orve.context, null, newItem);
+  const Item = childF.call(Orve.context, null, newItem);
   if (!Array.isArray(obj.render)) {
     obj.render.replaceWith(Item[0].node);
     obj.render = Item;
@@ -57,13 +58,13 @@ function newValueInsert(obj: Record<string, any>, value: any) {
 
 function replaceValue(obj: Record<string, any>, prop: string, value: any) {
   const newItem = parseChildren.call(
-    window.orve.context,
+    Orve.context,
     [value],
     null,
     obj.parentNode,
     true,
   );
-  const Item = childF.call(window.orve.context, null, newItem);
+  const Item = childF.call(Orve.context, null, newItem);
   obj.render[prop].node.replaceWith(Item[0].node);
   obj.render[prop] = Item[0];
   updated(obj);
@@ -77,7 +78,7 @@ function checkOutAndInput(obj) {
     obj.value.length !== obj.render.length
   ) {
     const newItem = parseChildren.call(
-      window.orve.context,
+      Orve.context,
       [obj.value],
       null,
       obj.parentNode,

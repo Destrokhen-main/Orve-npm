@@ -8,18 +8,17 @@ import { Child } from "../builder/children";
 import { RefLProxy } from "../../reactive/type";
 import { ChildType } from "../builder/children";
 
-import { addedInOrve } from "../../default";
+import { Orve } from "../../default";
 
 function mount(query: string): void {
   const tag: HTMLElement = document.querySelector(query);
-  const oNode: ONodeOrve = window.orve.DOM;
+  const oNode: ONodeOrve = Orve.tree as ONodeOrve;
 
   if (tag === null) {
     er(`${m.TAG_NOT_FOUND} "${query}"`);
   }
 
-  window.orve.DOM = mountedNode.call(this, tag, oNode);
-  addedInOrve("tree", window.orve.DOM);
+  Orve.tree = mountedNode.call(this, tag, oNode);
 }
 
 function createComment(app: HTMLElement | null, nodes: ONodeOrve) {

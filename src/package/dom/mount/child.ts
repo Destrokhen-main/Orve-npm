@@ -63,6 +63,7 @@ export const childF = function (
       (item as any).proxy.parent.push({
         type: ChildType.ReactiveComponent,
         ONode: element,
+        parent: item.ONode
       });
     }
 
