@@ -8,6 +8,8 @@ import { Child } from "../builder/children";
 import { RefLProxy } from "../../reactive/type";
 import { ChildType } from "../builder/children";
 
+import { addedInOrve } from "../../default";
+
 function mount(query: string): void {
   const tag: HTMLElement = document.querySelector(query);
   const oNode: ONodeOrve = window.orve.DOM;
@@ -17,6 +19,7 @@ function mount(query: string): void {
   }
 
   window.orve.DOM = mountedNode.call(this, tag, oNode);
+  addedInOrve("tree", window.orve.DOM);
 }
 
 function createComment(app: HTMLElement | null, nodes: ONodeOrve) {

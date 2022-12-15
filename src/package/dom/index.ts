@@ -2,6 +2,7 @@ import er, { message as m } from "./error";
 import { parser } from "./builder/index";
 import { ONodeOrve } from "./types";
 import { mount } from "./mount/index";
+import { addedInOrve, Orve } from "../default";
 
 // NOTE type
 
@@ -54,8 +55,7 @@ function createApp(app: AppWithContext | (() => unknown)): createApp {
     const parsedContext = createObjectContext(context);
     window.orve.context = parsedContext;
     CONTEXT = parsedContext;
-    window.orve.DOM = parser.call(CONTEXT, App);
-    console.log(window.orve.DOM);
+    window.orve.DOM = parser.call(Orve, App);
     // start building |App|
   }
 
@@ -66,6 +66,8 @@ function createApp(app: AppWithContext | (() => unknown)): createApp {
   }
 
   if (type === "function" || type === "object") {
+    addedInOrve("context", CONTEXT);
+
     return {
       mount: (query: string) => mount.bind(CONTEXT)(query),
     };

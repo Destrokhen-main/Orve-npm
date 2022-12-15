@@ -6,5 +6,8 @@ import { watch } from "./package/reactive/watch";
 import { refO } from "./package/reactive/refO";
 import { refA } from "./package/reactive/refA";
 import { effect } from "./package/reactive/effect";
+import { Orve } from "./package/default";
 
 export { createApp, refL, ref, refC, watch, refO, refA, effect };
+
+export default Orve;
