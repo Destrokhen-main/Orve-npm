@@ -12,6 +12,7 @@ enum PropsTypeRef {
   Child = "Child",
   Custom = "Custom",
   EffectStyle = "EffectStyle",
+  EffectImg = "EffectImg"
 }
 
 type PropRef = {

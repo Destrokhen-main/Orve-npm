@@ -67,6 +67,15 @@ function updated() {
           item.ONode.node.setAttribute("style", style);
         }
       }
+
+      if (item.type === PropsTypeRef.EffectImg) {
+        if (typeof call === "string") {
+          item.ONode.node.setAttribute(item.key, call);
+        } else if (typeof call === "object") {
+          item.ONode.node.setAttribute(item.key, call.default as string);
+        }
+        this.value = call;
+      }
     });
   }
 }

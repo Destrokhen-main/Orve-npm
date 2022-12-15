@@ -28,11 +28,39 @@ export const propsF = function (
     if (prop === "src") {
       if (typeof props[prop] === "string") {
         tag.setAttribute(prop, props[prop] as string);
-      } else if (typeof props[prop] === "object") {
-        // can be proxy
-
-        // not a proxy
+      } else if (typeOf(props[prop]) === "object") {
         tag.setAttribute(prop, (props[prop] as IMG).default as string);
+      } else if ((typeOf(props[prop]) as string) === ProxyType.Proxy) {
+        const type = (props[prop] as any).proxyType;
+        if (type === ProxyType.Effect) {
+          const call = checkerEffect(props[prop]);
+          (props[prop] as any).value = call;
+
+          if (typeof call === "string") {
+            tag.setAttribute(prop, call);
+          } else if (typeof call === "object") {
+            tag.setAttribute(prop, call.default as string);
+          }
+
+          (props[prop] as any).parent.push({
+            key: prop,
+            type: PropsTypeRef.EffectImg,
+            ONode: this.ONode
+          });
+
+        }
+        if (type === ProxyType.Ref) {
+          let value = (props[prop] as any).value;
+          if (typeof value === "function") {
+            value = value();
+          }
+          (props[prop] as any).parent.push({
+            key: prop,
+            type: PropsTypeRef.PropStatic,
+            ONode: this.ONode,
+          } as PropRef);
+          tag.setAttribute(prop, value)
+        }
       }
       return;
     }
