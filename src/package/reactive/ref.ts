@@ -147,6 +147,8 @@ function ref(value: string | number | (() => any)): RefProxy | RefOProxy | any {
               }
             });
             target.parent = checkExistParents(target.parent);
+          } else {
+            target[prop] = value;
           }
         }
         return true;
