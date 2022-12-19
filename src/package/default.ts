@@ -6,12 +6,12 @@ const Orve: Record<string, unknown> = {
       console.error(`Error: \n "${obj}" not a plugin`);
       return;
     }
-    if (obj.install) {
+    if (obj.setup) {
       if (obj.settings?.sendProjectOrve === true) {
-        obj.install({...this, refL, ref, refC, watch, refO, refA, effect });
+        obj.setup({...this, refL, ref, refC, watch, refO, refA, effect });
         return;
       }
-      obj.install(this);
+      obj.setup(this);
     } else {
       Object.keys(obj).forEach((i) => {
         this.context[i] = obj[i];
@@ -28,6 +28,16 @@ const addedInOrve = (key: string, value:unknown) => {
   } else {
     Orve[key] = value;
   }
+}
+
+declare global {
+  interface Window {
+    Orve: Record<string, unknown>;
+  }
+}
+
+if (window !== undefined) {
+  window.Orve = Orve;
 }
 
 export {

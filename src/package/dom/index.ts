@@ -39,12 +39,12 @@ function createApp(app: AppWithContext | (() => unknown)): createApp {
       Orve.context[key] = parsedContext[key];
     })
 
-    Orve.tree = parser.call(Orve, App);
+    Orve.tree = parser.call(Orve.context, App);
     // start building |App|
   }
 
   if (type === "function") {
-    Orve.tree = parser.call(Orve, app);
+    Orve.tree = parser.call(Orve.context, app);
   }
 
   if (type === "function" || type === "object") {

@@ -63,12 +63,11 @@ function refC(app: () => any | object | null = null) {
     set(target, prop, value) {
       if (prop in target) {
         if (prop === "value") {
+          let comp = value;
+          if (comp === undefined || comp === "" || comp === null) {
+            comp = () => ({ tag: "comment", child: "refC" });
+          }
           if (target.parent.length > 0) {
-            let comp = value;
-            if (comp === undefined || comp === "" || comp === null) {
-              comp = () => ({ tag: "comment", child: "refC" });
-            }
-
             const typeInsertBlock = typeOf(comp);
             target.parent = target.parent.map((item) => {
               if (item.type === ChildType.ReactiveComponent) {
@@ -121,6 +120,9 @@ function refC(app: () => any | object | null = null) {
             });
 
             target.parent = checkExistParents(target.parent);
+            target["value"] = comp;
+          } else {
+            target["value"] = comp;
           }
         }
 
