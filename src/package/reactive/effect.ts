@@ -1,7 +1,7 @@
 /*
-[ ] - string | number   - prop 
+[X] - string | number   - prop 
 [ ] - object            - prop
-[ ] - function          - prop event
+[X] - function          - prop event
 [ ] - proxy (st|num)    - prop
 [ ] - proxy (object)    - prop | style
 [ ] - string | number   - child

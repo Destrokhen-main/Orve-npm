@@ -27,7 +27,7 @@ function recursiveTag(node: ONodeOrve) {
 
   isONode(req);
 
-  if (typeof req === "function") {
+  if (typeof req.tag === "function") {
     return recursiveTag.call(this, req);
   }
 

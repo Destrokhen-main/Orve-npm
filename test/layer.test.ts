@@ -9,7 +9,7 @@ const layer = function({children, ...props}) {
   }
 }
 
-const mainComponent: any = function() {
+const mainComponent = function() {
   return {
     tag: layer,
     props: {
@@ -25,15 +25,15 @@ let body = document.body;
 
 describe("Layer test - 1", () => {
   test("createApp", () => {
-    App = createApp({App: mainComponent});
+    App = createApp(mainComponent);
   })
   test("mounted component", () => {
     body.innerHTML = "<div id='app'></div>"
     App.mount("#app");
-    expect(body.querySelector("div")?.querySelector("div")?.childNodes.length).not.toBe(0);
+    expect(body.querySelector("div")?.childNodes.length).not.toBe(0);
   })
   test("find mounted component", () => {
-    const comp = body.querySelector("#app")?.querySelector("div");
+    const comp = body.querySelector("div");
     expect(comp?.getAttribute("id")).toBe("id");
     expect(comp?.getAttribute("class")).toBe("class");
     expect(comp?.innerHTML).toContain("children");
@@ -72,12 +72,12 @@ const mainComponent1: any = function() {
 describe("Layer in layer", () => {
   test("created and mounted", () => {
     body.innerHTML = "<div id='app'></div>";
-    const app = createApp({App: mainComponent1})
+    const app = createApp(mainComponent1)
     app.mount("#app");
-    expect(body.querySelector("#app")?.childNodes.length).not.toBe(0);
+    expect(body.childNodes.length).not.toBe(0);
   })
   test("check component", () => {
-    const comp = body.querySelector("#app")?.querySelector("div");
+    const comp = body.querySelector("div");
     expect(comp?.getAttribute("id")).toBe("id");
     expect(comp?.getAttribute("class")).toBe("class");
     expect(comp?.innerHTML).toContain("children");
