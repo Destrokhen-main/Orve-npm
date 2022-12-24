@@ -24,11 +24,11 @@ describe("Ref string child", () => {
     app.mount("#app");
   })
   test("Check first draw", () => {
-    expect(body.querySelector("#app")?.querySelector("div")?.innerHTML).toBe("123");
+    expect(body.querySelector("div")?.innerHTML).toBe("123");
   })
   test("Click and check text", () => {
-    body.querySelector("#app")?.querySelector("div")?.click();
-    expect(body.querySelector("#app")?.querySelector("div")?.innerHTML).toBe("1234");
+    body.querySelector("div")?.click();
+    expect(body.querySelector("div")?.innerHTML).toBe("1234");
   })
 })
 
@@ -54,11 +54,11 @@ describe("Ref number child", () => {
     app.mount("#app");
   })
   test("Check first draw", () => {
-    expect(body.querySelector("#app")?.querySelector("div")?.innerHTML).toBe("1");
+    expect(body.querySelector("div")?.innerHTML).toBe("1");
   })
   test("Click and check text", () => {
-    body.querySelector("#app")?.querySelector("div")?.click();
-    expect(body.querySelector("#app")?.querySelector("div")?.innerHTML).toBe("2");
+    body.querySelector("div")?.click();
+    expect(body.querySelector("div")?.innerHTML).toBe("2");
   })
 })
 
@@ -86,13 +86,13 @@ describe("Ref string, number props", () => {
     app.mount("#app");
   })
   test("Check first draw", () => {
-    expect(body.querySelector("#app")?.querySelector("div")?.innerHTML).toBe("text");
-    expect(body.querySelector("#app")?.querySelector("div")?.getAttribute("class")).toBe("1");
-    expect(body.querySelector("#app")?.querySelector("div")?.getAttribute("atr")).toBe("1");
+    expect(body.querySelector("div")?.innerHTML).toBe("text");
+    expect(body.querySelector("div")?.getAttribute("class")).toBe("1");
+    expect(body.querySelector("div")?.getAttribute("atr")).toBe("1");
   })
   test("Click and check text", () => {
-    body.querySelector("#app")?.querySelector("div")?.click();
-    expect(body.querySelector("#app")?.querySelector("div")?.getAttribute("class")).toBe("2");
-    expect(body.querySelector("#app")?.querySelector("div")?.getAttribute("atr")).toBe("2");
+    body.querySelector("div")?.click();
+    expect(body.querySelector("div")?.getAttribute("class")).toBe("2");
+    expect(body.querySelector("div")?.getAttribute("atr")).toBe("2");
   })
 });
