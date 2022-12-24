@@ -34,7 +34,6 @@ function parser(
 
   // check if node have all need key
   isONode(workObj);
-  console.log(workObj);
 
   if (typeof workObj.tag === "function") {
     workObj = recursiveTag.call(this, workObj);
