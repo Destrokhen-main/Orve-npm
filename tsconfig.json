@@ -2,8 +2,12 @@
   "compilerOptions": {
     "outDir": "./built",
     "allowJs": false,
-    "target": "es5",
-    "sourceMap": true
+    "target": "es2016",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "sourceMap": false,
+    "strict": false,
+    "esModuleInterop": true
   },
   "include": ["./src/**/*"],
   "exclude": [

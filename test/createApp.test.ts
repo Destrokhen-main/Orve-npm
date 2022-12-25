@@ -8,9 +8,7 @@ const component = function () {
     props: {
       id: "key",
       class: "class",
-      style: {
-        display: "flex"
-      }
+      style: "display: flex"
     },
     child: [
       "hello"
