@@ -5,6 +5,8 @@ import { ProxyType, RefProxy } from "../../reactive/type";
 import { RefCProxy } from "../../reactive/type";
 import { isNodeBoolean } from "./validator";
 import { generationID } from "../../usedFunction/keyGeneration";
+import { checkerEffect } from "../mount/props";
+import { ref } from "../../reactive/ref";
 
 enum ChildType {
   HTML = "HTML",
@@ -113,13 +115,27 @@ function parseChildren(
         }
 
         if (proxyType === ProxyType.Effect) {
-          return {
-            type: ChildType.Effect,
-            proxy: item,
-            value: null,
-            parent,
-            keyNode: generationID(8),
-          };
+          const call = checkerEffect(item);
+
+          if (Array.isArray(call)) {
+            const c = ref(call);
+            const [ res ] = parseChildren.call(this, [ c ], props, parent);
+            return {
+              type: ChildType.Effect,
+              proxy: item,
+              value: res,
+              typeChanges: "RefA"
+            }
+          }
+          //const [ res ] = parseChildren.call(this, [ call ], props, parent);
+
+          // return {
+          //   type: ChildType.Effect,
+          //   proxy: item,
+          //   value: res,
+          //   parent,
+          //   keyNode: generationID(8),
+          // };
         }
       }
     });

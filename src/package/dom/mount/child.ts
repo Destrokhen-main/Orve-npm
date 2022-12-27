@@ -84,6 +84,17 @@ export const childF = function (
         return item;
       }
     }
+
+    if (item.type === ChildType.Effect) {
+      const [ node ] = childF.call(this, tag, [ item.value ]);
+      (item as any).proxy.parent.push({
+        type: "EffectChild",
+        proxy: item,
+        value: node,
+        typeChanges: (item as any).typeChanges,
+        parent: (item as any).parent
+      });
+    }
     return item;
   });
 };

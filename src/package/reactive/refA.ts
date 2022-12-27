@@ -65,6 +65,7 @@ function replaceValue(obj: Record<string, any>, prop: string, value: any) {
     true,
   );
   const Item = childF.call(Orve.context, null, newItem);
+  console.log(prop);
   obj.render[prop].node.replaceWith(Item[0].node);
   obj.render[prop] = Item[0];
   updated(obj);

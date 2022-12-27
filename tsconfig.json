@@ -7,7 +7,10 @@
     "moduleResolution": "node",
     "sourceMap": false,
     "strict": false,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "newLine": "LF",
+    "removeComments": false,
+    "resolveJsonModule": true
   },
   "include": ["./src/**/*"],
   "exclude": [

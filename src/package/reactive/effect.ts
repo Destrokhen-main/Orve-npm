@@ -2,9 +2,9 @@
 [X] - string | number   - prop 
 [ ] - object            - prop
 [X] - function          - prop event
-[ ] - proxy (st|num)    - prop
-[ ] - proxy (object)    - prop | style
-[ ] - string | number   - child
+[X] - proxy (st|num)    - prop
+[X] - proxy (object)    - prop | style
+[X] - string | number   - child
 [ ] - proxy (st|num)    - child
 [ ] - proxy (array)     - child
 
@@ -29,6 +29,10 @@ import { ProxyType } from "./type";
 import { typeOf } from "../usedFunction/typeOf";
 import { PropsTypeRef } from "../reactive/ref";
 import * as reactToCSS from "react-style-object-to-css";
+import { Orve } from "../default";
+import { parseChildren } from "../dom/builder/children";
+import { childF } from "../dom/mount/child";
+import { isEqual } from "../usedFunction/isEqual";
 
 function updated() {
   if (this.parent.length > 0) {
@@ -75,6 +79,39 @@ function updated() {
           item.ONode.node.setAttribute(item.key, call.default as string);
         }
         this.value = call;
+      }
+
+      if (item.type === PropsTypeRef.EffectChild) {
+        if (item.typeChanges === "RefA") {
+          // console.log(item);
+          // call -> []
+          // call -> [] > value
+          // call -> [] < value
+          // console.log(call);
+          // if (call.length === 0) {
+          //   item.value.proxy.value.splice(0, item.value.proxy.value.length - 1);
+          // }
+          /*
+            ar = [node1, node2]
+            call = [node3, node2, node4]
+
+            node1 != node3
+
+            item.value[0] = node3;
+
+            item.value,push(node4);
+          */
+        }
+        // if (this.value === null || this.value.toString() !== call.toString()) {
+        //   const parseCall = parseChildren.call(Orve.context,  Array.isArray(call) ? call : [ call ] , null, item.parent)
+        //   const node = childF(null, parseCall);
+        //   console.log(node);
+        //   console.log(item.value);
+        //   //item.value.node.replaceWith((node as any).node);
+
+        //   // item.value = node;
+        //   this.value = call;
+        // }
       }
     });
   }

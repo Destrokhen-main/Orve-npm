@@ -7,6 +7,7 @@ import { refO } from "./package/reactive/refO";
 import { refA } from "./package/reactive/refA";
 import { effect } from "./package/reactive/effect";
 import { Orve } from "./package/default";
+import { Node, Fragment } from "./package/jsx";
 
 export {
   createApp,
@@ -17,7 +18,9 @@ export {
   refO,
   refA,
   effect,
-  Orve
+  Orve,
+  Node,
+  Fragment
 };
 
 export default {
@@ -29,5 +32,7 @@ export default {
   watch,
   refO,
   refA,
-  effect
+  effect,
+  Node,
+  Fragment
 };

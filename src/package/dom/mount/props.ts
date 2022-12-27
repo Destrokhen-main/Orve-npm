@@ -64,9 +64,13 @@ export const propsF = function (
       }
       return;
     }
-
-    if (prop.startsWith("@")) {
-      const name = prop.replace("@", "").trim();
+    if (prop.startsWith("@") || prop.startsWith("on")) {
+      let name;
+      if (prop.startsWith("@")) {
+        name = prop.replace("@", "").toLowerCase().trim();
+      } else {
+        name = prop.replace("on", "").toLowerCase().trim();
+      }
       if (
         typeof props[prop] === "object" &&
         (props[prop] as any).type === ProxyType.Proxy
@@ -202,3 +206,5 @@ export const propsF = function (
     tag.setAttribute(prop, props[prop] as string);
   });
 };
+
+export { checkerEffect };

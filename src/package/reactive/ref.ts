@@ -13,7 +13,8 @@ enum PropsTypeRef {
   Child = "Child",
   Custom = "Custom",
   EffectStyle = "EffectStyle",
-  EffectImg = "EffectImg"
+  EffectImg = "EffectImg",
+  EffectChild = "EffectChild"
 }
 
 type PropRef = {
@@ -61,7 +62,7 @@ function checkExistParents(ar: Array<PropRef>): Array<PropRef> {
   return nArr;
 }
 
-function ref(value: string | number | (() => any)): RefProxy | RefOProxy | any {
+function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy | any {
   if (typeOf(value) === "object") {
     return refO(value);
   }
