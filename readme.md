@@ -36,6 +36,18 @@ function() {
 }
 ```
 
+or this (jsx)
+```
+function() {
+    return (
+        <div id="key" class="comp">
+            <p>This is ORVE</p>
+            <p>object-reactive library</p>
+        </div>
+    )
+}
+```
+
 `do this`
 
 ```
