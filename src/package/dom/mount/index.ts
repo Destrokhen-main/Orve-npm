@@ -75,7 +75,7 @@ function mountedNode(
     delete sendObject["hooks"];
 
     hooks.mounted({
-      context: this,
+      context: Orve.context,
       oNode: sendObject,
     } as HookObject);
   }

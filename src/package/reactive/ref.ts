@@ -41,7 +41,7 @@ type ChildRef = {
 function updatedHook(item: any, type: HookObjectType) {
   if (item.ONode.hooks && item.ONode.hooks.updated) {
     item.ONode.hooks.updated({
-      context: Orve,
+      context: Orve.context,
       oNode: item.ONode,
       type,
     } as HookObject);
