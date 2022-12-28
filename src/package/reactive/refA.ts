@@ -52,7 +52,6 @@ function newValueInsert(obj: Record<string, any>, value: any) {
     element.after(Item[0].node);
     obj.render.push(Item[0]);
     updated(obj);
-    parentCall(obj);
   }
 }
 
@@ -65,11 +64,9 @@ function replaceValue(obj: Record<string, any>, prop: string, value: any) {
     true,
   );
   const Item = childF.call(Orve.context, null, newItem);
-  console.log(prop);
   obj.render[prop].node.replaceWith(Item[0].node);
   obj.render[prop] = Item[0];
   updated(obj);
-  parentCall(obj);
 }
 
 function checkOutAndInput(obj) {
@@ -145,19 +142,17 @@ function refA(ar: Array<any>) {
             mutationArray = false;
           }, 1);
         }
-        parentCall(object);
       } else if (
         !Number.isNaN(isNum) &&
         isNum === target.length &&
         object.render !== null
       ) {
         newValueInsert(object, value);
-        parentCall(object);
-      } else if (!Number.isNaN(isNum) && object.render === null) {
-        parentCall(object);
       }
 
-      return Reflect.set(target, prop, value);
+      const s = Reflect.set(target, prop, value);
+      parentCall(object);
+      return s;
     },
   });
 
