@@ -29,10 +29,6 @@ import { ProxyType } from "./type";
 import { typeOf } from "../usedFunction/typeOf";
 import { PropsTypeRef } from "../reactive/ref";
 import * as reactToCSS from "react-style-object-to-css";
-import { Orve } from "../default";
-import { parseChildren } from "../dom/builder/children";
-import { childF } from "../dom/mount/child";
-import { isEqual } from "../usedFunction/isEqual";
 
 function updated() {
   if (this.parent.length > 0) {
@@ -69,6 +65,7 @@ function updated() {
 
         if (style.length > 0 && this.value !== style) {
           item.ONode.node.setAttribute("style", style);
+          this.value = style;
         }
       }
 
