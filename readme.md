@@ -9,7 +9,7 @@ npm i orve
 
 <a href="https://github.com/Destrokhen-main/simple-reactive-cli" target="_blank">Webpack project</a>
 
-<a href="https://github.com/Destrokhen-main/Simple-Reactive-doc" target="_blank">Documentation</a> OR <a href="https://destrokhen-main.github.io" target="_blank">Site (written with orve)</a>
+<a href="https://github.com/Destrokhen-main/Simple-Reactive-doc" target="_blank">Documentation (*Outdated version, many things missing*)</a> OR <a href="https://destrokhen-main.github.io" target="_blank">Site (written with orve) </a>
 
 If you contribute something to the project, I will be very grateful to you.))
 
