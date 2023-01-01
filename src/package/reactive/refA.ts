@@ -190,6 +190,33 @@ function refA(ar: Array<any>) {
       if (prop === "proxyType") return ProxyType.RefA;
       return Reflect.get(target, prop);
     },
+    set(target, prop, value) {
+      if (prop === "value") {
+        if (target["value"].length === 0) {
+          value.forEach((e) => {
+            target["value"].push(e);
+          });
+          return true;
+        } else {
+          if (value.length > target["value"].length) {
+            value.forEach((e, i) => {
+              if (target["value"][i] !== undefined) {
+                target["value"][i] = e;
+              } else {
+                target["value"].push(e);
+              }
+            });
+          } else if (value.length < target["value"].length) {
+            target["value"].splice(0, target["value"].length);
+            value.forEach((e) => {
+              target["value"].push(e);
+            });
+          }
+          return true;
+        }
+      }
+      return Reflect.set(target, prop, value);
+    },
     deleteProperty() {
       console.error("refA - You try to delete prop in ref");
       return false;
