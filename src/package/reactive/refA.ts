@@ -90,12 +90,14 @@ function checkOutAndInput(obj) {
     let val = obj.value;
 
     if (obj.renderFunction !== null) {
-      val = obj.renderFunction(val);
+      if (Array.isArray(val)) {
+        val = val.map(obj.renderFunction);
+      }
     }
 
     const newItem = parseChildren.call(
       Orve.context,
-      [val],
+      val,
       null,
       obj.parentNode,
       true,
