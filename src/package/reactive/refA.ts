@@ -26,7 +26,7 @@ function parentCall(obj: any) {
       if (item.type === "Custom") {
         item.value(obj);
       }
-      if (item.type === ProxyType.Effect) {
+      if (item.type === ProxyType.Effect || item.type === ProxyType.Oif) {
         item.value.updated();
       }
     });
@@ -34,9 +34,15 @@ function parentCall(obj: any) {
 }
 
 function newValueInsert(obj: Record<string, any>, value: any) {
+  let val = value;
+
+  if (obj.renderFunction !== null) {
+    val = obj.renderFunction(val);
+  }
+
   const newItem = parseChildren.call(
     Orve.context,
-    [value],
+    [val],
     null,
     obj.parentNode,
     true,
@@ -56,9 +62,15 @@ function newValueInsert(obj: Record<string, any>, value: any) {
 }
 
 function replaceValue(obj: Record<string, any>, prop: string, value: any) {
+  let val = value;
+
+  if (obj.renderFunction !== null) {
+    val = obj.renderFunction(value);
+  }
+
   const newItem = parseChildren.call(
     Orve.context,
-    [value],
+    [val],
     null,
     obj.parentNode,
     true,
@@ -75,9 +87,15 @@ function checkOutAndInput(obj) {
     Array.isArray(obj.render) &&
     obj.value.length !== obj.render.length
   ) {
+    let val = obj.value;
+
+    if (obj.renderFunction !== null) {
+      val = obj.renderFunction(val);
+    }
+
     const newItem = parseChildren.call(
       Orve.context,
-      [obj.value],
+      [val],
       null,
       obj.parentNode,
       true,
@@ -91,14 +109,12 @@ function checkOutAndInput(obj) {
     });
     obj.render = newRender.filter((i) => i !== undefined);
     updated(obj);
-    parentCall(obj);
   } else if (obj.value.length === 0 && Array.isArray(obj.render)) {
     const element = document.createComment(` array ${obj.keyNode} `);
     obj.render[0].node.replaceWith(element);
     obj.render = element;
     obj.empty = true;
     updated(obj);
-    parentCall(obj);
   }
 }
 
@@ -111,6 +127,13 @@ function refA(ar: Array<any>) {
     value: null,
     render: null,
     empty: null,
+    renderFunction: null,
+    forList: function(func = null){
+      if (func !== null) {
+        this.renderFunction = func;
+      }
+      return this;
+    } 
   };
 
   let checkAr = null;

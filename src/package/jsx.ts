@@ -25,7 +25,6 @@ const Node = function(tag:string | (() => typeTag), props: Record<string, unknow
   if (child.length > 0) {
     TAG.child = child;
   }
-  console.log(TAG);
   return TAG
 }
 

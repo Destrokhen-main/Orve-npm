@@ -15,6 +15,7 @@ enum ChildType {
   ReactiveComponent = "ReactiveComponent",
   ReactiveArray = "ReactiveArray",
   Effect = "Effect",
+  Oif = "Oif"
 }
 
 type Child = {
@@ -99,11 +100,17 @@ function parseChildren(
         }
 
         if (proxyType === ProxyType.RefA) {
+          let list = (item as any).value;
+
+          if ((item as any).renderFunction !== null) {
+            list = list.map((item as any).renderFunction);
+          }
+
           return {
             type: ChildType.ReactiveArray,
             value: parseChildren.call(
               this,
-              (item as any).value,
+              list,
               props,
               parent,
               true,
@@ -136,6 +143,16 @@ function parseChildren(
           //   parent,
           //   keyNode: generationID(8),
           // };
+        }
+
+        if (proxyType === ProxyType.Oif) {
+          (item as any).parentNode = parent;
+          return {
+            type: ChildType.Oif,
+            value: item,
+            parent,
+            keyNode: generationID(8)
+          }
         }
       }
     });

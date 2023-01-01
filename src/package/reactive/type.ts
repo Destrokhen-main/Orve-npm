@@ -8,6 +8,7 @@ enum ProxyType {
   RefO = "RefO",
   RefA = "RefA",
   Effect = "Effect",
+  Oif = "Oif"
 }
 
 enum PropsStartType {

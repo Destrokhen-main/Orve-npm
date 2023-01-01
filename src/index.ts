@@ -6,6 +6,7 @@ import { watch } from "./package/reactive/watch";
 import { refO } from "./package/reactive/refO";
 import { refA } from "./package/reactive/refA";
 import { effect } from "./package/reactive/effect";
+import { oif } from "./package/reactive/oif"; 
 import { Orve } from "./package/default";
 import { Node, Fragment } from "./package/jsx";
 
@@ -20,7 +21,8 @@ export {
   effect,
   Orve,
   Node,
-  Fragment
+  Fragment,
+  oif
 };
 
 export default {
@@ -34,5 +36,6 @@ export default {
   refA,
   effect,
   Node,
-  Fragment
+  Fragment,
+  oif
 };

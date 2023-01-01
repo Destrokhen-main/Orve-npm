@@ -23,7 +23,7 @@ function refO(object: any) {
             if (item.type === ProxyType.RefO) {
               item.value.updated;
             }
-            if (item.type === ProxyType.Effect) {
+            if (item.type === ProxyType.Effect || item.type === ProxyType.Oif) {
               (item as any).value.updated();
             }
             if (item.type === "Custom") {

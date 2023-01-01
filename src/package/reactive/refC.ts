@@ -109,7 +109,7 @@ function refC(app: () => any | object | null = null) {
                 item.value.updated;
                 return item;
               }
-              if (item.type === ProxyType.Effect) {
+              if (item.type === ProxyType.Effect || item.type === ProxyType.Oif) {
                 (item as any).value.updated();
                 return item;
               }

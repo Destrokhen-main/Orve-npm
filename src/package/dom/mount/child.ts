@@ -4,6 +4,7 @@ import { mountedNode } from "./index";
 import { RefProxy } from "../../reactive/type";
 import { PropsTypeRef, ChildRef } from "../../reactive/ref";
 import { message as m } from "./error";
+import { parseChildren } from "../builder/children";
 
 export const childF = function (
   tag: HTMLElement,
@@ -94,6 +95,44 @@ export const childF = function (
         typeChanges: (item as any).typeChanges,
         parent: (item as any).parent
       });
+      return item;
+    }
+
+    if (item.type === ChildType.Oif) {
+      const call = (item.value as any).rule();
+      if (typeof call !== "boolean") {
+        return undefined;
+      }
+      (item.value as any).lastCall = call;
+      if (call) {
+        const pr = parseChildren.call(this, [ (item.value as any).block1 ], null, (item as any).parent);
+        const [ block ] = childF.call(this, tag, pr);
+        (item.value as any).node = block.node;
+      } else {
+        if((item.value as any).block2 !== null) {
+          const pr = parseChildren.call(this, [ (item.value as any).block2 ], null, (item as any).parent);
+          const [ block ] = childF.call(this, tag, pr);
+          (item.value as any).node = block.node;
+        } else {
+          const comment = document.createComment(
+            ` if ${(item as any).keyNode} `,
+          );
+          (item.value as any).node = comment;
+          if (tag !== null) tag.appendChild(comment);
+          return item;
+        }
+      }
+
+      // if (call) {
+      //   const [ block1 ] = childF.call(this, tag, [ (item.value as any).block1 ]);
+      //   //item.value.
+      // } else {
+      //   if ((item.value as any).block2 !== null) {
+      //     const [ block2 ] = childF.call(this, tag, [ (item.value as any).block2 ]);
+      //   } else {
+
+      //   }
+      // }
     }
     return item;
   });

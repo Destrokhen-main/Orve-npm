@@ -142,7 +142,7 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
                 (item as any).value.updated;
                 return;
               }
-              if (item.type === ProxyType.Effect) {
+              if (item.type === ProxyType.Effect || item.type === ProxyType.Oif) {
                 (item as any).value.updated();
               }
               if (item.type === "Custom") {
