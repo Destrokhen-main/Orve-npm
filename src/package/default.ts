@@ -1,5 +1,3 @@
-import { refL, ref, refC, watch, refO, refA, effect } from "../index";
-
 const Orve: Record<string, unknown> = {
   use: function(obj) {
     if (!obj) {
@@ -7,10 +5,6 @@ const Orve: Record<string, unknown> = {
       return;
     }
     if (obj.setup) {
-      if (obj.settings?.sendProjectOrve === true) {
-        obj.setup({...this, refL, ref, refC, watch, refO, refA, effect });
-        return;
-      }
       obj.setup(this);
     } else {
       Object.keys(obj).forEach((i) => {

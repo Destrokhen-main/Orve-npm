@@ -26,9 +26,12 @@ export const childF = function (
     }
 
     if (item.type === ChildType.Static) {
-      const r = /&#+[0-9]+;/gm;
+      const r = /(&#(\d+);)/g;
       if (r.test((item as Child).value.toString())) {
-        console.warn(`${m.INSERT_HTML_IN_STATIC} <span>${item.value}</span>`);
+        // TODO Возможно плохой вариант.
+        (item as Child).value = (item as Child).value.toString().replace(/(&#(\d+);)/g, function(a, b, charCode) {
+          return String.fromCharCode(charCode);
+        });
       }
 
       const element = document.createTextNode((item as Child).value.toString());
