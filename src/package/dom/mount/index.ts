@@ -51,11 +51,19 @@ function createComment(app: HTMLElement | null, nodes: ONodeOrve) {
   return object;
 }
 
+
+function createFragment(app: HTMLElement | null, nodes: ONodeOrve) {
+  const child = childF(app, (nodes as any).child);
+  nodes.child = child;
+  return nodes;
+}
+
 function mountedNode(
   app: HTMLElement | null,
   nodes: ONodeOrve,
 ): ONodeOrve | HTMLElement {
   const { tag, props, child, ref, hooks } = nodes;
+  //console.log(nodes);
 
   if (typeof tag !== "string") {
     er(m.TAG_NOT_A_STRING);
@@ -64,6 +72,10 @@ function mountedNode(
   if ((tag as string).trim() === "comment") {
     // if user add comment
     return createComment(app, nodes);
+  }
+
+  if ((tag as string).trim() === "fragment") {
+    return createFragment(app, nodes);
   }
 
   const TAG = document.createElement((tag as string).trim().toLowerCase());

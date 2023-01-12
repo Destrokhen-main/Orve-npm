@@ -28,8 +28,11 @@ const Node = function(tag:string | (() => typeTag), props: Record<string, unknow
   return TAG
 }
 
-const Fragment = function() {
-  return "fragment"
+const Fragment = function(tag:Record<string, unknown>) {
+  return {
+    tag: "fragment",
+    child: tag ? tag.children : []
+  }
 }
 
 export { Node, Fragment }
