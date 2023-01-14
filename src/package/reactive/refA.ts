@@ -1,3 +1,10 @@
+// FIXME REF A - 2 
+/*
+ [ ] - фрагменты плохо работают
+ [ ] - проверка на существующих родителей (parentCall)
+*/
+
+
 import e from "./error";
 
 import { ProxyType } from "./type";
@@ -5,6 +12,7 @@ import { parseChildren } from "../dom/builder/children";
 import { childF } from "../dom/mount/child";
 import { HookObject } from "../dom/types";
 import { Orve } from "../default";
+// import { mountedNode } from "../dom/mount/index";
 
 function updated(obj: any) {
   if (obj.parentNode && obj.parentNode.hooks && obj.parentNode.hooks.updated) {
@@ -15,7 +23,6 @@ function updated(obj: any) {
   }
 }
 
-// TODO check exist parent
 function parentCall(obj: any) {
   if (obj.parent.length > 0) {
     obj.parent.forEach((item: any) => {
@@ -42,22 +49,27 @@ function newValueInsert(obj: Record<string, any>, value: any) {
 
   const newItem = parseChildren.call(
     Orve.context,
-    [val],
+    Array.isArray(val) ? val : [val],
     null,
     obj.parentNode,
     true,
   );
-  const Item = childF.call(Orve.context, null, newItem);
-  if (!Array.isArray(obj.render)) {
-    obj.render.replaceWith(Item[0].node);
-    obj.render = Item;
-    obj.empty = false;
-    updated(obj);
+  
+  if (newItem[0].tag === "fragment") {
+    //const node = mountedNode(obj.parentNode.node, newItem[0]);
   } else {
-    const element = obj.render[obj.render.length - 1].node;
-    element.after(Item[0].node);
-    obj.render.push(Item[0]);
-    updated(obj);
+    const Item = childF.call(Orve.context, null, newItem);
+    if (!Array.isArray(obj.render)) {
+      obj.render.replaceWith(Item[0].node);
+      obj.render = Item;
+      obj.empty = false;
+      updated(obj);
+    } else {
+      const element = obj.render[obj.render.length - 1].node;
+      element.after(Item[0].node);
+      obj.render.push(Item[0]);
+      updated(obj);
+    }
   }
 }
 
@@ -70,7 +82,7 @@ function replaceValue(obj: Record<string, any>, prop: string, value: any) {
 
   const newItem = parseChildren.call(
     Orve.context,
-    [val],
+    Array.isArray(val) ? val : [val],
     null,
     obj.parentNode,
     true,

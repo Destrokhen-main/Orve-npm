@@ -5,21 +5,32 @@ type typeTag = {
   child?: Array<typeTag>
 }
 
+// TODO
+/*
+  [ ] PROPS TYPE
+*/
+
 const Node = function(tag:string | (() => typeTag), props: Record<string, unknown> | null, ...child : any) {
   const TAG: typeTag = {tag};
 
   if (props !== null) {
     const finalProps = {};
     Object.keys(props).forEach((key) => {
-      if (["o-hooks", "o-ref", "o-key"].includes(key)) {
+      if (["o-hooks", "o-ref", "o-key", "o-props"].includes(key)) {
         const k = key.replace("o-", "").trim().toLowerCase();
-        TAG[k] = props[key];
+        if (key !== "o-props")
+          TAG[k] = props[key];
       } else {
         finalProps[key] = props[key];
       }
     })
 
-    TAG.props = finalProps;
+    if (TAG.props !== undefined) {
+      TAG.props = {...finalProps, ...TAG.props};
+    } else {
+      TAG.props = finalProps;
+    }
+    
   }
 
   if (child.length > 0) {
