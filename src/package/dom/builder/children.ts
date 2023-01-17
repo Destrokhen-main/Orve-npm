@@ -6,7 +6,6 @@ import { RefCProxy } from "../../reactive/type";
 import { isNodeBoolean } from "./validator";
 import { generationID } from "../../usedFunction/keyGeneration";
 import { checkerEffect } from "../mount/props";
-import { ref } from "../../reactive/ref";
 
 enum ChildType {
   HTML = "HTML",
