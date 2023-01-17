@@ -1,10 +1,41 @@
-import { createApp, context } from "./core/index";
-import { ref } from "./core/reactive/index";
-import { watch } from "./core/watch/index";
-import { refC } from "./core/reactiveComponent/index";
-import { effect } from "./core/effect/index";
-import { refO } from "./core/refO/index";
-import { refL } from "./core/ref-link/index";
-import { refA } from "./core/refA/index";
+import { createApp } from "./package/dom/index";
+import { refL } from "./package/reactive/refL";
+import { ref } from "./package/reactive/ref";
+import { refC } from "./package/reactive/refC";
+import { watch } from "./package/reactive/watch";
+import { refO } from "./package/reactive/refO";
+import { refA } from "./package/reactive/refA";
+import { effect } from "./package/reactive/effect";
+import { oif } from "./package/reactive/oif"; 
+import { Orve } from "./package/default";
+import { Node, Fragment } from "./package/jsx";
 
-export { createApp, ref, refC, watch, effect, context, refO, refL, refA };
+export {
+  createApp,
+  refL,
+  ref,
+  refC,
+  watch,
+  refO,
+  refA,
+  effect,
+  Orve,
+  Node,
+  Fragment,
+  oif
+};
+
+export default {
+  ...Orve,
+  createApp,
+  refL,
+  ref,
+  refC,
+  watch,
+  refO,
+  refA,
+  effect,
+  Node,
+  Fragment,
+  oif
+};

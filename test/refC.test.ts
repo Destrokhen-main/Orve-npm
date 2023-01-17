@@ -2,9 +2,7 @@
 import {describe, expect, test} from '@jest/globals';
 import { createApp, refC } from "../src/index";
 
-const body = document.body;
-document.body.innerHTML = `<div id="app"></div>`
-const div = document.body.querySelector("#app");
+document.body.innerHTML = `<div id="app"></div>`;
 
 describe("refC test", () => {
   test("created and mounted app", () => {
@@ -50,9 +48,11 @@ describe("refC test", () => {
     }
     const app = createApp({App: component});
     app.mount("#app");
+    const div = document.querySelector("div");
     expect(div?.querySelector("#comp")?.innerHTML).toMatch(/comp-1/);
   })
   test("click and check rewrite", () => {
+    const div = document.querySelector("div");
     const el : any = div?.querySelector("#btn");
     expect(el).not.toBe(null);
     if (el) {

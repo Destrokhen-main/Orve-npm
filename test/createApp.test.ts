@@ -8,9 +8,7 @@ const component = function () {
     props: {
       id: "key",
       class: "class",
-      style: {
-        display: "flex"
-      }
+      style: "display: flex"
     },
     child: [
       "hello"
@@ -24,7 +22,7 @@ let workDiv: any = null;
 
 describe("CreateApp function and mounted", () => {
   test("CreateApp step", () => {
-    app = createApp({App: component});
+    app = createApp(component);
     expect(app).not.toBeUndefined();
   })
   test("Mounted step", () => {
@@ -33,7 +31,7 @@ describe("CreateApp function and mounted", () => {
     expect(body.querySelector("div")?.childNodes.length).not.toBe(0);
   })
   test("Find created element", () => {
-    workDiv = body.querySelector("#app")?.querySelector("div");
+    workDiv = body.querySelector("div");
 
     expect(workDiv?.getAttribute("id")).toBe("key");
     expect(workDiv?.getAttribute("class")).toBe("class");

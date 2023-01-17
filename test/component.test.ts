@@ -1,5 +1,5 @@
 import {describe, expect, test} from '@jest/globals';
-import { builder } from "../src/core/builder";
+import { parser } from "../src/package/dom/builder/index";
 
 const comp = function() {
   return {
@@ -15,11 +15,25 @@ const comp1 : any = () => {
   }
 }
 
+function t(object) {
+  expect(object["tag"]).not.toBeUndefined();
+  expect(object["type"]).toBe("Component");
+  expect(Array.isArray(object["child"])).toBe(true);
+
+  if (Array.isArray(object["child"])) {
+    expect(object["child"][0]["type"]).toBe("Static");
+    expect(object["child"][0]["value"]).not.toBeUndefined();
+    expect(object["child"][0]["value"]).toBe("hello");
+  }
+}
+
 describe('Hello Component without mounted', () => {
   test('build comp-1', () => {
-    expect(builder(comp)).toStrictEqual({ tag: 'div', child: [ { type: 0, value: 'hello' } ], type: 2 });
+    const object = parser(comp);
+    t(object);
   });
   test('build comp-2', () => {
-    expect(builder(comp1)).toStrictEqual({ tag: 'div', child: [ { type: 0, value: 'hello' } ], type: 2 });
+    const object = parser(comp1);
+    t(object);
   });
 });
