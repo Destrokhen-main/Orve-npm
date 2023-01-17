@@ -29,6 +29,8 @@ import { ProxyType } from "./type";
 import { typeOf } from "../usedFunction/typeOf";
 import { PropsTypeRef } from "../reactive/ref";
 import * as reactToCSS from "react-style-object-to-css";
+import { parseChildren } from "../dom/builder/children";
+import { childF } from "../dom/mount/child";
 
 function updated() {
   if (this.parent.length > 0) {
@@ -79,36 +81,14 @@ function updated() {
       }
 
       if (item.type === PropsTypeRef.EffectChild) {
-        if (item.typeChanges === "RefA") {
-          // console.log(item);
-          // call -> []
-          // call -> [] > value
-          // call -> [] < value
-          // console.log(call);
-          // if (call.length === 0) {
-          //   item.value.proxy.value.splice(0, item.value.proxy.value.length - 1);
-          // }
-          /*
-            ar = [node1, node2]
-            call = [node3, node2, node4]
+        if (this.value === null || this.value.toString() !== call.toString()) {
+          const parseCall = parseChildren.call(null,  Array.isArray(call) ? call : [ call ] , null, item.parent)
+          const [ node ] = childF(null, parseCall);
+          item.value.node.replaceWith((node as any).node);
 
-            node1 != node3
-
-            item.value[0] = node3;
-
-            item.value,push(node4);
-          */
+          item.value = node;
+          this.value = call;
         }
-        // if (this.value === null || this.value.toString() !== call.toString()) {
-        //   const parseCall = parseChildren.call(Orve.context,  Array.isArray(call) ? call : [ call ] , null, item.parent)
-        //   const node = childF(null, parseCall);
-        //   console.log(node);
-        //   console.log(item.value);
-        //   //item.value.node.replaceWith((node as any).node);
-
-        //   // item.value = node;
-        //   this.value = call;
-        // }
       }
     });
   }
