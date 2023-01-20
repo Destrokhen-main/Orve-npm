@@ -106,6 +106,8 @@ function checkOutAndInput(obj) {
     if (obj.renderFunction !== null) {
       if (Array.isArray(val)) {
         val = val.map(obj.renderFunction);
+      } else {
+        console.log("asd");
       }
     }
 
@@ -145,8 +147,10 @@ function refA(ar: Array<any>) {
     empty: null,
     renderFunction: null,
     forList: function(func = null){
-      if (func !== null) {
+      if (func !== null && typeof func === "function") {
         this.renderFunction = func;
+      } else {
+        console.warn("* forList need function *");
       }
       return this;
     } 
@@ -156,7 +160,6 @@ function refA(ar: Array<any>) {
   let mutationArray = false;
   const array = new Proxy(ar, {
     get(target, prop, r) {
-      const v = Reflect.get(target, prop, r);
       if (prop === "constructor") {
         mutationArray = true;
         setTimeout(() => {
@@ -164,6 +167,7 @@ function refA(ar: Array<any>) {
           mutationArray = false;
         }, 5);
       }
+      const v = Reflect.get(target, prop, r);
       return v;
     },
     set(target, prop, value) {
