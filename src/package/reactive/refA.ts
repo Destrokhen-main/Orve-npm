@@ -45,7 +45,8 @@ function newValueInsert(obj: Record<string, any>, value: any) {
   let val = value;
 
   if (obj.renderFunction !== null) {
-    val = obj.renderFunction(val);
+    const index = obj.value === null || obj.value.length === 0 ? 0: obj.value.length;
+    val = obj.renderFunction(val, index);
   }
 
   const newItem = parseChildren.call(
