@@ -79,7 +79,7 @@ function replaceValue(obj: Record<string, any>, prop: string, value: any) {
   let val = value;
 
   if (obj.renderFunction !== null) {
-    val = obj.renderFunction(value);
+    val = obj.renderFunction(value, prop);
   }
 
   const newItem = parseChildren.call(
