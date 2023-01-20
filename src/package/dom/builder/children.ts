@@ -53,6 +53,13 @@ function parseChildren(
           value: item,
         } as Child;
       }
+      
+      if (typeNode === "null" || typeNode === "undefined") {
+        return {
+          type: ChildType.Static,
+          value: "" + item,
+        }
+      }
 
       // NOTE static string or nubmer
       if (typeNode === "string" || typeNode === "number") {

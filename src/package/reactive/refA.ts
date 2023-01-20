@@ -1,7 +1,8 @@
-// FIXME REF A - 2 
+// FIXME REF A - 3
 /*
  [ ] - фрагменты плохо работают
  [ ] - проверка на существующих родителей (parentCall)
+ [ ] - constructor
 */
 
 
@@ -44,7 +45,8 @@ function newValueInsert(obj: Record<string, any>, value: any) {
   let val = value;
 
   if (obj.renderFunction !== null) {
-    val = obj.renderFunction(val);
+    const index = obj.value === null || obj.value.length === 0 ? 0: obj.value.length;
+    val = obj.renderFunction(val, index);
   }
 
   const newItem = parseChildren.call(
@@ -77,7 +79,7 @@ function replaceValue(obj: Record<string, any>, prop: string, value: any) {
   let val = value;
 
   if (obj.renderFunction !== null) {
-    val = obj.renderFunction(value);
+    val = obj.renderFunction(value, prop);
   }
 
   const newItem = parseChildren.call(
@@ -104,6 +106,8 @@ function checkOutAndInput(obj) {
     if (obj.renderFunction !== null) {
       if (Array.isArray(val)) {
         val = val.map(obj.renderFunction);
+      } else {
+        console.log("asd");
       }
     }
 
@@ -143,8 +147,10 @@ function refA(ar: Array<any>) {
     empty: null,
     renderFunction: null,
     forList: function(func = null){
-      if (func !== null) {
+      if (func !== null && typeof func === "function") {
         this.renderFunction = func;
+      } else {
+        console.warn("* forList need function *");
       }
       return this;
     } 
@@ -154,7 +160,6 @@ function refA(ar: Array<any>) {
   let mutationArray = false;
   const array = new Proxy(ar, {
     get(target, prop, r) {
-      const v = Reflect.get(target, prop, r);
       if (prop === "constructor") {
         mutationArray = true;
         setTimeout(() => {
@@ -162,6 +167,7 @@ function refA(ar: Array<any>) {
           mutationArray = false;
         }, 5);
       }
+      const v = Reflect.get(target, prop, r);
       return v;
     },
     set(target, prop, value) {
