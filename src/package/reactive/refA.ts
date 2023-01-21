@@ -1,11 +1,3 @@
-// FIXME REF A - 3
-/*
- [ ] - фрагменты плохо работают
- [ ] - проверка на существующих родителей (parentCall)
- [ ] - constructor
-*/
-
-
 import e from "./error";
 
 import { ProxyType } from "./type";
