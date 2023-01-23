@@ -21,7 +21,6 @@ function updated() {
   } else {
     if (call !== this.lastCall) {
       const block = call ? this.block1 : this.block2;
-
       if (block !== null) {
         const bl =  parseChildren.call(Orve.context, [ block ], null, this.parentNode);
         const [ mount ] = childF(null, bl);
@@ -34,6 +33,8 @@ function updated() {
         this.node.replaceWith(comment);
         this.node = comment;
       }
+
+      this.lastCall = call;
     }
   }
 }
@@ -101,7 +102,6 @@ function oif(rule : (() => boolean), dependencies: any[], block1: any, block2: a
       }
     });
   }
-
   return proxy;
 }
 
