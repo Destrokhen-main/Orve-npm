@@ -34,6 +34,8 @@ function updated() {
         this.node.replaceWith(comment);
         this.node = comment;
       }
+
+      this.lastCall = call;
     }
   }
 }
