@@ -1,5 +1,3 @@
-// TODO [ ] - isProxy with null 
-
 import { ProxyType } from "../reactive/type";
 
 const isProxy = function (obj: any) {

@@ -5,11 +5,6 @@ type typeTag = {
   child?: Array<typeTag>
 }
 
-// TODO
-/*
-  [ ] PROPS TYPE
-*/
-
 const Node = function(tag:string | (() => typeTag), props: Record<string, unknown> | null, ...child : any) {
   const TAG: typeTag = {tag};
 
