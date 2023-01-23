@@ -81,6 +81,7 @@ function updated() {
       }
 
       if (item.type === PropsTypeRef.EffectChild) {
+        console.log("s", this.value, call);
         if (this.value === null || this.value.toString() !== call.toString()) {
           const parseCall = parseChildren.call(null,  Array.isArray(call) ? call : [ call ] , null, item.parent)
           const [ node ] = childF(null, parseCall);
@@ -91,7 +92,19 @@ function updated() {
         }
       }
     });
+
+    checkParent(this);
   }
+}
+
+function checkParent(item = null) {
+  const i = item === null ? this : item;
+
+  i.parent = i.parent.filter((e) => {
+    if (document.body.contains(e.value.node)) {
+      return true;
+    }
+  })
 }
 
 function effect(func: () => any, dependencies: Array<any>) {
@@ -106,6 +119,7 @@ function effect(func: () => any, dependencies: Array<any>) {
     parent: [],
     typeOutPut: null,
     updated,
+    checkParent
   };
 
   const proxy = new Proxy(object, {
@@ -144,7 +158,6 @@ function effect(func: () => any, dependencies: Array<any>) {
       }
     });
   }
-
   return proxy;
 }
 

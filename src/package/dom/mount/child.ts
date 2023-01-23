@@ -91,6 +91,8 @@ export const childF = function (
 
     if (item.type === ChildType.Effect) {
       const [ node ] = childF.call(this, tag, [ item.value ]);
+      if ((item as any).proxy.parent.length !== 0)
+        (item as any).proxy.checkParent();
       (item as any).proxy.parent.push({
         type: "EffectChild",
         proxy: item,
