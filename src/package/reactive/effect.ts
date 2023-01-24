@@ -101,9 +101,17 @@ function checkParent(item = null) {
 
   if (i.parent.length > 0) {
     i.parent = i.parent.filter((e) => {
-      if (document.body.contains(e.value.node)) {
-        return true;
+      if (e.type === PropsTypeRef.EffectChild) {
+        if (document.body.contains(e.value.node)) {
+          return true;
+        }
+      } else if (PropsTypeRef[e.type] !== null) {
+        if (document.body.contains(e.ONode.node)) {
+          return true;
+        }
       }
+
+
     })
   }
 }
