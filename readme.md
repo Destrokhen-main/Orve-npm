@@ -58,3 +58,57 @@ function() {
 ```
 
 ### that's not all, to learn more, read the documentation
+
+
+
+#### usage
+
+```
+import { ref, createApp } from "orve";
+
+function Component() {
+  const r = ref(0);
+
+  return {
+    tag: "div",
+    child: [
+      {
+        tag: "p",
+        child: r
+      },
+      {
+        tag: "button",
+        props: {
+          "@click": () => { r.value += 1 }
+        },
+        child: "Click"
+      }
+    ]
+  }
+}
+
+createApp(Component).mount("#app");
+```
+
+`OR`
+
+```
+import orve , { ref, createApp } from "orve";
+
+function Component() {
+  const r = ref(0);
+
+  return (
+        <div>
+            <p>{r}</p>
+            <button
+                onClick={() => { r.value += 1; }}
+            >
+                Click
+            </button>
+        </div>
+    )
+}
+
+createApp(Component).mount("#app");
+```
