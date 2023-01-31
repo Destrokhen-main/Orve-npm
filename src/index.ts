@@ -26,15 +26,6 @@ export {
 
 export default {
   ...Orve,
-  createApp,
-  refL,
-  ref,
-  refC,
-  watch,
-  refO,
-  refA,
-  effect,
   Node,
   Fragment,
-  oif
 };
