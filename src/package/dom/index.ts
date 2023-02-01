@@ -28,6 +28,21 @@ const createObjectContext = function (app: object): object {
   return Context;
 };
 
+function unmounted(tag) {
+  if (tag.hooks !== undefined && tag.hooks.unmounted!== undefined) {
+    tag.hooks.unmounted({
+      context: Orve.Context,
+      oNode: tag
+    });
+  }
+
+  if (tag.child !== undefined && tag.child.length > 0) {
+    tag.child.forEach((e : any) => {
+      unmounted(e);
+    });
+  }
+}
+
 // NOTE function
 function createApp(app: AppWithContext | (() => unknown)): createApp {
   const type = typeof app;
@@ -45,6 +60,12 @@ function createApp(app: AppWithContext | (() => unknown)): createApp {
 
   if (type === "function") {
     Orve.tree = parser.call(Orve.context, app);
+  }
+
+  if (window !==undefined) {
+    window.onbeforeunload = function() {
+      unmounted(Orve.tree);
+    }
   }
 
   if (type === "function" || type === "object") {
