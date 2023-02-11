@@ -62,10 +62,12 @@ function createApp(app: AppWithContext | (() => unknown)): createApp {
     Orve.tree = parser.call(Orve.context, app);
   }
 
-  if (window !==undefined) {
+  if (window !== undefined) {
     window.onbeforeunload = function() {
       unmounted(Orve.tree);
     }
+  } else {
+    // TODO надо подумтаь что тут делать.
   }
 
   if (type === "function" || type === "object") {

@@ -44,8 +44,13 @@ function parser(
     node: null,
     keyNode: generationID(16),
     type: TypeNode.Component,
-    parent: parent ? parent : null,
+    parent: parent ? parent : null, 
   };
+
+  if (newNode.html) {
+    newNode.child = [
+      `<div>${newNode.html}</div>`];
+  }
 
   // NOTE work with CHILD
   if (newNode.child) {
