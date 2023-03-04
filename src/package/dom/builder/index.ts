@@ -48,8 +48,7 @@ function parser(
   };
 
   if (newNode.html) {
-    newNode.child = [
-      `<div>${newNode.html}</div>`];
+    newNode.child = [newNode.html];
   }
 
   // NOTE work with CHILD

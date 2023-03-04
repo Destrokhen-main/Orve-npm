@@ -25,6 +25,17 @@ export const childF = function (
       return item;
     }
 
+    if (item.type === ChildType.HTMLPROP) {
+      const element = new DOMParser()
+        .parseFromString(item.value as string, "text/html")
+        .getElementsByTagName("body")[0]
+      
+      for (let i = 0; i !== element.childNodes.length; i++) {
+        tag.appendChild(element.childNodes[i].cloneNode(true));
+      }
+      return undefined;
+    }
+
     if (item.type === ChildType.Static) {
       const r = /(&#(\d+);)/g;
       if (r.test((item as Child).value.toString())) {
