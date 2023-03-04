@@ -11,7 +11,7 @@ const Node = function(tag:string | (() => typeTag), props: Record<string, unknow
   if (props !== null) {
     const finalProps = {};
     Object.keys(props).forEach((key) => {
-      if (["o-hooks", "o-ref", "o-key", "o-props"].includes(key)) {
+      if (["o-hooks", "o-ref", "o-key", "o-props", "o-html"].includes(key)) {
         const k = key.replace("o-", "").trim().toLowerCase();
         if (key !== "o-props")
           TAG[k] = props[key];

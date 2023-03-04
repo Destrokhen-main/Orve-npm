@@ -1,7 +1,7 @@
 import er, { message as m } from "./error";
 import { typeOf } from "../../usedFunction/typeOf";
 
-const keys = ["tag", "props", "child", "hooks", "key", "ref"];
+const keys = ["tag", "props", "child", "hooks", "key", "ref", "html"];
 
 function isONode(workObj: object) {
   Object.keys(workObj).forEach((key) => {
