@@ -91,6 +91,28 @@ function updated() {
         }
       }
     });
+
+    checkParent(this);
+  }
+}
+
+function checkParent(item = null) {
+  const i = item === null ? this : item;
+
+  if (i.parent.length > 0) {
+    i.parent = i.parent.filter((e) => {
+      if (e.type === PropsTypeRef.EffectChild) {
+        if (document.body.contains(e.value.node)) {
+          return true;
+        }
+      } else if (PropsTypeRef[e.type] !== null) {
+        if (document.body.contains(e.ONode.node)) {
+          return true;
+        }
+      }
+
+
+    })
   }
 }
 
@@ -106,6 +128,7 @@ function effect(func: () => any, dependencies: Array<any>) {
     parent: [],
     typeOutPut: null,
     updated,
+    checkParent
   };
 
   const proxy = new Proxy(object, {
@@ -144,7 +167,6 @@ function effect(func: () => any, dependencies: Array<any>) {
       }
     });
   }
-
   return proxy;
 }
 

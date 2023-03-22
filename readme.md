@@ -7,9 +7,9 @@ Library for creating reactive SPA applications. Trying to take the best from rea
 npm i orve
 ```
 
-<a href="https://github.com/Destrokhen-main/simple-reactive-cli" target="_blank">Webpack project</a>
+<a target="_blank" href="https://github.com/Destrokhen-main/simple-reactive-cli" target="_blank">Webpack project</a>
 
-<a href="https://github.com/Destrokhen-main/Simple-Reactive-doc" target="_blank">Documentation (*Outdated version, many things missing*)</a> OR <a href="https://destrokhen-main.github.io" target="_blank">Site (written with orve) </a>
+<a target="_blank" href="https://github.com/Destrokhen-main/orve-doc" target="_blank">Documentation</a> OR <a href="https://destrokhen-main.github.io" target="_blank">Site (written with orve)</a>
 
 If you contribute something to the project, I will be very grateful to you.))
 
@@ -58,3 +58,57 @@ function() {
 ```
 
 ### that's not all, to learn more, read the documentation
+
+
+
+## usage
+
+```
+import { ref, createApp } from "orve";
+
+function Component() {
+  const r = ref(0);
+
+  return {
+    tag: "div",
+    child: [
+      {
+        tag: "p",
+        child: r
+      },
+      {
+        tag: "button",
+        props: {
+          "@click": () => { r.value += 1 }
+        },
+        child: "Click"
+      }
+    ]
+  }
+}
+
+createApp(Component).mount("#app");
+```
+
+`OR`
+
+```
+import orve , { ref, createApp } from "orve";
+
+function Component() {
+  const r = ref(0);
+
+  return (
+        <div>
+            <p>{r}</p>
+            <button
+                onClick={() => { r.value += 1; }}
+            >
+                Click
+            </button>
+        </div>
+    )
+}
+
+createApp(Component).mount("#app");
+```

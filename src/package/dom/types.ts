@@ -25,6 +25,7 @@ type ONodeOrve = {
   keyNode: string;
   node: null | HTMLElement | Comment;
   parent: ONodeOrve | null;
+  html?: string
 };
 
 enum HookObjectType {

@@ -14,7 +14,8 @@ enum ChildType {
   ReactiveComponent = "ReactiveComponent",
   ReactiveArray = "ReactiveArray",
   Effect = "Effect",
-  Oif = "Oif"
+  Oif = "Oif",
+  HTMLPROP = "HTMLPROP"
 }
 
 type Child = {
@@ -42,6 +43,13 @@ function parseChildren(
     return ar.map((item: ONode | string | number | object) => {
       const typeNode = typeOf(item);
       // NOTE if html code
+      if (parent !== null && parent.html) {
+        return {
+          type: ChildType.HTMLPROP,
+          value: item,
+        } as Child
+      }
+
       if (
         typeof item === "string" &&
         item.includes("<") &&
@@ -52,6 +60,13 @@ function parseChildren(
           type: ChildType.HTML,
           value: item,
         } as Child;
+      }
+      
+      if (typeNode === "null" || typeNode === "undefined") {
+        return {
+          type: ChildType.Static,
+          value: "" + item,
+        }
       }
 
       // NOTE static string or nubmer

@@ -33,6 +33,21 @@ function checkExistParents(ar: any): any {
   return nArr;
 }
 
+function unmountedDep(tag) {
+  if (tag.hooks && tag.hooks?.unmounted !== undefined) {
+    tag.hooks.unmounted({
+      context: Orve.context,
+      oNode: tag,
+    } as HookObject);
+  }
+
+  if (tag.child !== undefined && tag.child.length > 0) {
+    tag.child.forEach((e: any) => {
+      unmountedDep(e);
+    });
+  }
+}
+
 function refC(app: () => any | object | null = null) {
   let block = app;
   if (app === null) {
@@ -75,6 +90,8 @@ function refC(app: () => any | object | null = null) {
                   if (typeInsertBlock === "object") {
                     comp = () => value;
                   }
+
+                  unmountedDep(item.ONode);
                   const parsedItem = parser.call(
                     Orve.context,
                     comp,
@@ -93,6 +110,7 @@ function refC(app: () => any | object | null = null) {
                   }
                   return item;
                 } else if (typeInsertBlock === "string" || typeInsertBlock === "number") {
+                  unmountedDep(target);
                   const parsedAr = parseChildren.call(Orve.context, [ value ], null, item.parent);
                   const [ element ] = childF.call(Orve.context, null, parsedAr);
                   item.ONode.node.replaceWith(element.node);

@@ -1,6 +1,6 @@
 {
   "name": "orve",
-  "version": "0.21.3",
+  "version": "0.22.6",
   "description": "Оbject reactive library. mix of react and vue",
   "main": "built/index.js",
   "scripts": {
@@ -34,8 +34,7 @@
     "url": "https://github.com/Destrokhen-main/Simple-Reactive-npm/issues"
   },
   "dependencies": {
-    "react-style-object-to-css": "^1.1.2",
-    "root-require": "^0.3.1"
+    "react-style-object-to-css": "^1.1.2"
   },
   "devDependencies": {
     "@jest/globals": "^29.3.1",

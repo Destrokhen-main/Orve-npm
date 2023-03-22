@@ -9,7 +9,6 @@ import { effect } from "./package/reactive/effect";
 import { oif } from "./package/reactive/oif"; 
 import { Orve } from "./package/default";
 import { Node, Fragment } from "./package/jsx";
-
 export {
   createApp,
   refL,
@@ -27,15 +26,6 @@ export {
 
 export default {
   ...Orve,
-  createApp,
-  refL,
-  ref,
-  refC,
-  watch,
-  refO,
-  refA,
-  effect,
   Node,
   Fragment,
-  oif
 };

@@ -2,6 +2,7 @@ import { RefOProxy } from "./type";
 import { ref } from "./ref";
 import { typeOf } from "../usedFunction/typeOf";
 import { ProxyType } from "../reactive/type";
+import { refA } from "./refA";
 
 function updated(target) {
   if (target.$parent.length > 0) {
@@ -29,7 +30,6 @@ function refO(object: any) {
   const obj = {
     $parent: [],
   } as RefOProxy;
-
   const mainProxy = new Proxy<RefOProxy>(obj, {
     get(target, prop) {
       if (prop === "type") return ProxyType.Proxy;
@@ -54,6 +54,15 @@ function refO(object: any) {
           });
           target[prop] = r;
           updated(target);
+          return true;
+        }
+        if (type === "array") {
+          const arr = refA(value);
+          arr.parent.push({
+            type: ProxyType.RefO,
+            value: mainProxy
+          });
+          target[prop] = arr;
           return true;
         }
         if (type === "object") {

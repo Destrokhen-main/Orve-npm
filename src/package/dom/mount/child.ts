@@ -25,6 +25,17 @@ export const childF = function (
       return item;
     }
 
+    if (item.type === ChildType.HTMLPROP) {
+      const element = new DOMParser()
+        .parseFromString(item.value as string, "text/html")
+        .getElementsByTagName("body")[0]
+      
+      for (let i = 0; i !== element.childNodes.length; i++) {
+        tag.appendChild(element.childNodes[i].cloneNode(true));
+      }
+      return undefined;
+    }
+
     if (item.type === ChildType.Static) {
       const r = /(&#(\d+);)/g;
       if (r.test((item as Child).value.toString())) {
@@ -91,6 +102,8 @@ export const childF = function (
 
     if (item.type === ChildType.Effect) {
       const [ node ] = childF.call(this, tag, [ item.value ]);
+      
+      (item as any).proxy.checkParent();
       (item as any).proxy.parent.push({
         type: "EffectChild",
         proxy: item,
