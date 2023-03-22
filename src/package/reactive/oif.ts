@@ -17,7 +17,7 @@ import { Orve } from "../default";
 function updated() {
   const call = this.rule();
   if (typeof call !== "boolean") {
-    console.error("ASD");
+    console.error("rule return not a boolean");
   } else {
     if (call !== this.lastCall) {
       const block = call ? this.block1 : this.block2;
@@ -42,17 +42,17 @@ function updated() {
 function oif(rule : (() => boolean), dependencies: any[], block1: any, block2: any | null = null) {
   //
   if (typeof rule !== "function") {
-    console.error("!!!!!! ");
+    console.error("first argument need to be a function");
     return;
   }
 
   if (block1 === undefined || block1 === null) {
-    console.error("!!!!!!!!!");
+    console.error("positive block not specified");
     return;
   }
 
   if (!Array.isArray(dependencies)) {
-    console.error("!!!!!!")
+    console.error("dependencies not a array")
   }
 
   const object = {
@@ -85,7 +85,7 @@ function oif(rule : (() => boolean), dependencies: any[], block1: any, block2: a
     dependencies.forEach((e) => {
       const type = e.type;
       if (type !== ProxyType.Proxy) {
-        console.error("asdasdasd");
+        console.error(`${e} - dependencie not Orve proxy`);
       }
       const typeProxy = e.proxyType;
 
