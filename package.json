@@ -1,6 +1,6 @@
 {
   "name": "orve",
-  "version": "0.22.7",
+  "version": "0.22.8",
   "description": "Оbject reactive library. mix of react and vue",
   "main": "built/index.js",
   "scripts": {
