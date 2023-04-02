@@ -1,6 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import * as reactToCSS from "react-style-object-to-css";
+import reactToCSS from 'style-object-to-css-string';
 import { ProxyType } from "../../reactive/type";
 import { PropsTypeRef, PropRef } from "../../reactive/ref";
 import e from "./error";

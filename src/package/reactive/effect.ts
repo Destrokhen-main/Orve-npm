@@ -29,9 +29,7 @@ import { ProxyType } from "./type";
 import { typeOf } from "../usedFunction/typeOf";
 import { PropsTypeRef } from "../reactive/ref";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import * as reactToCSS from "react-style-object-to-css";
+import reactToCSS from 'style-object-to-css-string';
 
 import { parseChildren } from "../dom/builder/children";
 import { childF } from "../dom/mount/child";
