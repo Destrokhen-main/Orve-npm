@@ -34,7 +34,7 @@
     "url": "https://github.com/Destrokhen-main/Simple-Reactive-npm/issues"
   },
   "dependencies": {
-    "react-style-object-to-css": "^1.1.2"
+    "style-object-to-css-string": "^1.0.1"
   },
   "devDependencies": {
     "@jest/globals": "^29.5.0",
