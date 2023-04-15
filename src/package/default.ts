@@ -1,14 +1,25 @@
-const Orve: Record<string, unknown> = {
-  use: function(obj) {
-    if (!obj) {
+declare global {
+  interface Window {
+    Orve: Record<string, any>;
+  }
+}
+
+export interface Plugin {
+  setup: (obj: any) => void; 
+}
+
+const Orve: Record<string, any> = {
+  use: function(obj?: Plugin) {
+    if (obj === undefined) {
       console.error(`Error: \n "${obj}" not a plugin`);
       return;
     }
+
     if (obj.setup) {
       obj.setup(this);
     } else {
       Object.keys(obj).forEach((i) => {
-        this.context[i] = obj[i];
+        this.context[i] = (obj as Record<string, any>)[i];
       })
     }
   },
@@ -21,12 +32,6 @@ const addedInOrve = (key: string, value:unknown) => {
     Orve[key] = Object.assign(Orve[key], value)
   } else {
     Orve[key] = value;
-  }
-}
-
-declare global {
-  interface Window {
-    Orve: Record<string, unknown>;
   }
 }
 

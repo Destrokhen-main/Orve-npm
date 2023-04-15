@@ -6,11 +6,12 @@
     "module": "esnext",
     "moduleResolution": "node",
     "sourceMap": false,
-    "strict": false,
+    "strict": true,
     "esModuleInterop": true,
     "newLine": "LF",
     "removeComments": false,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "noImplicitThis": false
   },
   "include": ["./src/**/*"],
   "exclude": [
