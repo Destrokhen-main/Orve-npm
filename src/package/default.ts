@@ -39,7 +39,12 @@ if (window !== undefined) {
   window.Orve = Orve;
 }
 
+function context() {
+  return Orve;
+}
+
 export {
   addedInOrve,
-  Orve
+  Orve,
+  context
 };

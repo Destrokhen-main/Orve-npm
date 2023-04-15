@@ -1,10 +1,15 @@
 export type ArgProps = Record<string, any>;
 
+
+export interface HooksContext {
+  context: Record<string, any>,
+  oNode: any
+}
 export interface Hooks {
-  created: () => void,
-  mounted: () => void,
-  updated: () => void,
-  unmounted: () => void
+  created: (arg: HooksContext) => void,
+  mounted: (arg: HooksContext) => void,
+  updated: (arg: HooksContext) => void,
+  unmounted: (arg: HooksContext) => void
 }
 
 export type TagType = string | ((arg?: ArgProps) => any);

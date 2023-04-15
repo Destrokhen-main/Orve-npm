@@ -2,85 +2,50 @@ import er, { message as m } from "./error";
 import { parser } from "./builder/index";
 import { mount } from "./mount/index";
 import { Orve } from "../default";
+import { createObjectContext } from "./helperBuilder";
+import { unmounted } from "./unmounted";
 
 // NOTE type
 
-type createApp = {
-  mount: (_: string) => void;
+interface createApp {
+  mount: (root: string) => void;
 };
 
-type AppWithContext = {
-  App: () => unknown;
-};
-
-// NOTE plugin's
-const createObjectContext = function (app: object): object {
-  const Context: Record<string, unknown> = {};
-  Object.keys(app).forEach((e) => {
-    Object.keys(app[e]).forEach((l) => {
-      if (l.startsWith("$")) {
-        Context[l] = app[e][l];
-      } else {
-        Context[`$${l}`] = app[e][l];
-      }
-    });
-  });
-  return Context;
-};
-
-function unmounted(tag) {
-  if (tag.hooks !== undefined && tag.hooks.unmounted!== undefined) {
-    tag.hooks.unmounted({
-      context: Orve.Context,
-      oNode: tag
-    });
-  }
-
-  if (tag.child !== undefined && tag.child.length > 0) {
-    tag.child.forEach((e : any) => {
-      unmounted(e);
-    });
-  }
+interface App {
+  App: () => unknown
 }
 
-// NOTE function
-function createApp(app: AppWithContext | (() => unknown)): createApp {
+function createApp(app: App | (() => unknown)): createApp | undefined {
   const type = typeof app;
 
   if (type === "object") {
-    const { App, ...context } = app as AppWithContext;
+    const { App, ...context } = app as App;
     const parsedContext = createObjectContext(context);
-    Object.keys(parsedContext).forEach((key) => {
-      Orve.context[key] = parsedContext[key];
-    })
+    if (Object.keys(parsedContext).length > 0) {
+      Object.keys(parsedContext).forEach((key) => {
+        Orve.context[key] = parsedContext[key];
+      })
+    }
 
+    // start building app
     Orve.tree = parser.call(Orve.context, App);
-    // start building |App|
-  }
-
-  if (type === "function") {
-    Orve.tree = parser.call(Orve.context, app);
+  } else if (type === "function") {
+    Orve.tree = parser.call(Orve.context, app as () => unknown);
   }
 
   if (window !== undefined) {
     window.onbeforeunload = function() {
       unmounted(Orve.tree);
     }
-  } else {
-    // TODO надо подумтаь что тут делать.
   }
 
   if (type === "function" || type === "object") {
     return {
-      mount: (query: string) => mount.bind(Orve)(query),
+      mount: (root: string) => mount.bind(Orve)(root),
     };
   }
 
   er(m.UNSUPPORTED_TYPE_APP);
 }
 
-function context() {
-  return Orve;
-}
-
-export { createApp, context };
+export { createApp };
