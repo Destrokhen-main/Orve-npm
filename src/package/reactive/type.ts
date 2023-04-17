@@ -17,32 +17,29 @@ enum PropsStartType {
   None = "None",
 }
 
-type RefLProxy = {
+interface Proxy {
+  type: ProxyType;
+  proxyType: ProxyType;
+}
+
+interface RefLProxy extends Proxy {
   parent: Array<any>;
   value: HTMLElement | null;
-  type: ProxyType;
-  proxyType: ProxyType;
 };
 
-type RefProxy = {
+interface RefProxy extends Proxy {
   parent: Array<any>;
   value: string | number | (() => any);
-  type: ProxyType;
-  proxyType: ProxyType;
   startType: PropsStartType;
 };
 
-type RefCProxy = {
+interface RefCProxy extends Proxy {
   parent: Array<any>;
   value: () => any;
-  type: ProxyType;
-  proxyType: ProxyType;
 };
 
-type RefOProxy = {
+interface RefOProxy extends Proxy {
   $parent: Array<any>;
-  type: ProxyType;
-  proxyType: ProxyType;
 };
 
-export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy, RefOProxy };
+export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy, RefOProxy, Proxy };

@@ -20,7 +20,7 @@ function createApp(app: App | (() => unknown)): createApp | undefined {
 
   if (type === "object") {
     const { App, ...context } = app as App;
-    const parsedContext = createObjectContext(context);
+    const parsedContext: Record<string, any> = createObjectContext(context);
     if (Object.keys(parsedContext).length > 0) {
       Object.keys(parsedContext).forEach((key) => {
         Orve.context[key] = parsedContext[key];
@@ -41,7 +41,7 @@ function createApp(app: App | (() => unknown)): createApp | undefined {
 
   if (type === "function" || type === "object") {
     return {
-      mount: (root: string) => mount.bind(Orve)(root),
+      mount: (root: string) => mount(root),
     };
   }
 

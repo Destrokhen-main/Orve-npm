@@ -1,20 +1,24 @@
 import reactToCSS from 'style-object-to-css-string';
-import { ProxyType } from "../../reactive/type";
+import { ProxyType, Proxy } from "../../reactive/type";
 import { PropsTypeRef, PropRef } from "../../reactive/ref";
 import e from "./error";
 
 import { typeOf } from "../../usedFunction/typeOf";
 
-type IMG = {
+interface IMG {
   default: string;
 };
 
-function checkerEffect(item) {
-  const call = (item as any).func();
-  if (call === undefined) {
-    e("Effect return undefined");
+function checkerEffect(item: Record<string, any>) {
+  if (item.func !== undefined) {
+    const call = item.func();
+    if (call === undefined) {
+      e("Effect return undefined");
+    }
+    return call;
+  } else {
+    e(`${item} not a effect`);
   }
-  return call;
 }
 
 export const propsF = function (
@@ -27,13 +31,13 @@ export const propsF = function (
   Object.keys(props).forEach((prop: string) => {
     if (prop === "src") {
       if (typeof props[prop] === "string") {
-        tag.setAttribute(prop, props[prop] as string);
-      } else if (typeOf(props[prop]) === "object") {
-        tag.setAttribute(prop, (props[prop] as IMG).default as string);
-      } else if ((typeOf(props[prop]) as string) === ProxyType.Proxy) {
-        const type = (props[prop] as any).proxyType;
+        tag.setAttribute(prop, String(props[prop]));
+      } else if (typeOf(props[prop]) === "object" && (props[prop] as Record<string, any>).default !== undefined) {
+        tag.setAttribute(prop, String((props[prop] as IMG).default));
+      } else if (typeOf(props[prop]) === ProxyType.Proxy) {
+        const type = (props[prop] as Proxy).proxyType;
         if (type === ProxyType.Effect) {
-          const call = checkerEffect(props[prop]);
+          const call = checkerEffect(props[prop] as Record<string, any>);
           (props[prop] as any).value = call;
 
           if (typeof call === "string") {
@@ -86,7 +90,7 @@ export const propsF = function (
         }
 
         if (type === ProxyType.Effect) {
-          const call = checkerEffect(props[prop]);
+          const call = checkerEffect(props[prop] as Record<string, any>);
 
           if (typeof call !== "function") {
             e("Effect in event return not a function");
@@ -129,7 +133,7 @@ export const propsF = function (
         }
 
         if (type === ProxyType.Effect) {
-          const call = checkerEffect(props[prop]);
+          const call = checkerEffect(props[prop] as Record<string, any>);
           let style = "";
           if (typeof call === "string") {
             style = call;
@@ -183,7 +187,7 @@ export const propsF = function (
         } as PropRef);
       }
       if (proxyType === ProxyType.Effect) {
-        const call = checkerEffect(props[prop]);
+        const call = checkerEffect(props[prop] as Record<string, any>);
 
         const type = typeOf(call);
 

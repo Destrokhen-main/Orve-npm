@@ -7,7 +7,7 @@ import { message as m } from "./error";
 import { parseChildren } from "../builder/children";
 
 export const childF = function (
-  tag: HTMLElement,
+  tag: HTMLElement | null,
   nodes: Array<ONodeOrve | Child>,
 ): Array<ONodeOrve | Child | Array<ONodeOrve | Child>> {
   return nodes.map((item: ONodeOrve | Child) => {

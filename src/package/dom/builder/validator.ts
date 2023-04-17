@@ -1,41 +1,42 @@
 import er, { message as m } from "./error";
 import { typeOf } from "../../usedFunction/typeOf";
 
-const keys = ["tag", "props", "child", "hooks", "key", "ref", "html"];
+const KEYS = ["tag", "props", "child", "hooks", "key", "ref", "html"];
 
-function isONode(workObj: object) {
-  Object.keys(workObj).forEach((key) => {
-    if (!keys.includes(key.toLowerCase())) {
-      er(`"${key}" - ${m.UNSUPPORTED_KEY_IN_OBJECT}`);
-    }
-  });
-
-  if (!workObj["tag"]) {
+function isONode(node: Record<string, any>) {
+  if (!node["tag"]) {
     er(m.MISSING_TAG);
   }
 
-  if (workObj["props"] && typeOf(workObj["props"]) !== "object") {
-    er(`${workObj["props"]} - ${m.PROPS_NOT_A_NEED_TYPE}`);
+  Object.keys(node).forEach((key) => {
+    if (!KEYS.includes(key.toLowerCase())) {
+      er(`${String(node).substring(0, 50)}... "${key}" - ${m.UNSUPPORTED_KEY_IN_OBJECT}`);
+    }
+  });
+
+  if (node["props"] && typeOf(node["props"]) !== "object") {
+    er(`${String(node).substring(0, 50)}... ${node["props"]} - ${m.PROPS_NOT_A_NEED_TYPE}`);
   }
 
   return true;
 }
 
-function isNodeBoolean(workObj: object) {
+function isNodeBoolean(node: Record<string, any>) {
+  if (!node["tag"]) {
+    return false;
+  }
+
+  if (node["props"] && typeOf(node["props"]) !== "object") {
+    return false;
+  }
+
   let checker = true;
-  Object.keys(workObj).forEach((key) => {
-    if (!keys.includes(key.toLowerCase())) {
+  Object.keys(node).forEach((key) => {
+    if (!KEYS.includes(key.toLowerCase())) {
       checker = false;
     }
   });
 
-  if (!workObj["tag"]) {
-    return false;
-  }
-
-  if (workObj["props"] && typeOf(workObj["props"]) !== "object") {
-    return false;
-  }
   return checker;
 }
 
