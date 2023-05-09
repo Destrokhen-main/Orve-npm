@@ -1,6 +1,7 @@
 import reactToCSS from 'style-object-to-css-string';
-import { ProxyType, Proxy } from "../../reactive/type";
+import { ProxyType, Proxy, RefProxy } from "../../reactive/type";
 import { PropsTypeRef, PropRef } from "../../reactive/ref";
+import { Effect } from '../../reactive/effect';
 import e from "./error";
 
 import { typeOf } from "../../usedFunction/typeOf";
@@ -9,7 +10,7 @@ interface IMG {
   default: string;
 };
 
-function checkerEffect(item: Record<string, any>) {
+function checkerEffect(item: Effect)  {
   if (item.func !== undefined) {
     const call = item.func();
     if (call === undefined) {
@@ -37,33 +38,41 @@ export const propsF = function (
       } else if (typeOf(props[prop]) === ProxyType.Proxy) {
         const type = (props[prop] as Proxy).proxyType;
         if (type === ProxyType.Effect) {
-          const call = checkerEffect(props[prop] as Record<string, any>);
-          (props[prop] as any).value = call;
+          const effect: Effect = props[prop] as Effect;
+
+          const call = checkerEffect(effect);
+          effect.value = call;
 
           if (typeof call === "string") {
             tag.setAttribute(prop, call);
           } else if (typeof call === "object") {
-            tag.setAttribute(prop, call.default as string);
+            tag.setAttribute(prop, String(call.default));
           }
 
-          (props[prop] as any).parent.push({
+          effect.parent.push({
             key: prop,
             type: PropsTypeRef.EffectImg,
             ONode: this.ONode
           });
-
         }
         if (type === ProxyType.Ref) {
-          let value = (props[prop] as any).value;
+          let value: string | number | (() => any) | null = (props[prop] as RefProxy).value;
           if (typeof value === "function") {
-            value = value();
+            try {
+              value = value.call(this.context);
+            } catch(error) {
+              console.error(`${value} - return error`);
+              value = null;
+            }
           }
-          (props[prop] as any).parent.push({
-            key: prop,
-            type: PropsTypeRef.PropStatic,
-            ONode: this.ONode,
-          } as PropRef);
-          tag.setAttribute(prop, value)
+          if (value !== null) {
+            (props[prop] as RefProxy).parent.push({
+              key: prop,
+              type: PropsTypeRef.PropStatic,
+              ONode: this.ONode,
+            });
+            tag.setAttribute(prop, String(value))
+          }
         }
       }
       return;
@@ -90,7 +99,7 @@ export const propsF = function (
         }
 
         if (type === ProxyType.Effect) {
-          const call = checkerEffect(props[prop] as Record<string, any>);
+          const call = checkerEffect(props[prop] as Effect);
 
           if (typeof call !== "function") {
             e("Effect in event return not a function");
@@ -133,7 +142,7 @@ export const propsF = function (
         }
 
         if (type === ProxyType.Effect) {
-          const call = checkerEffect(props[prop] as Record<string, any>);
+          const call = checkerEffect(props[prop] as Effect);
           let style = "";
           if (typeof call === "string") {
             style = call;
@@ -187,7 +196,7 @@ export const propsF = function (
         } as PropRef);
       }
       if (proxyType === ProxyType.Effect) {
-        const call = checkerEffect(props[prop] as Record<string, any>);
+        const call = checkerEffect(props[prop] as Effect);
 
         const type = typeOf(call);
 

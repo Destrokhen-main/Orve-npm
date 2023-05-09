@@ -4,9 +4,9 @@ import { typeOf } from "../usedFunction/typeOf";
 import { ProxyType } from "../reactive/type";
 import { refA } from "./refA";
 
-function updated(target) {
+function updated(target: Record<string, any>) {
   if (target.$parent.length > 0) {
-    target.$parent.forEach((item) => {
+    target.$parent.forEach((item: any) => {
       if (item.type === ProxyType.Watch) {
         const i = Object.assign({}, target);
         delete i["$parent"];
@@ -27,13 +27,13 @@ function updated(target) {
 }
 
 function refO(object: any) {
-  const obj = {
+  const obj : RefOProxy = {
     $parent: [],
-  } as RefOProxy;
+    type: ProxyType.Proxy,
+    proxyType: ProxyType.RefO
+  };
   const mainProxy = new Proxy<RefOProxy>(obj, {
-    get(target, prop) {
-      if (prop === "type") return ProxyType.Proxy;
-      if (prop === "proxyType") return ProxyType.RefO;
+    get(target: Record<string, any>, prop: string) {
       if (prop === "updated") {
         updated(target);
       }
@@ -42,7 +42,7 @@ function refO(object: any) {
       }
       return undefined;
     },
-    set(target, prop, value) {
+    set(target: Record<string, any>, prop: string, value: any) {
       if (!(prop in target)) {
         // TODO при присвоение, может потерять $parent
         const type = typeOf(value);
@@ -90,7 +90,7 @@ function refO(object: any) {
       }
       return false;
     },
-    deleteProperty(target, prop) {
+    deleteProperty(target: Record<string, any>, prop: string) {
       if (prop !== "$parent") {
         delete target[prop];
         return true;
@@ -101,8 +101,8 @@ function refO(object: any) {
     },
   });
 
-  Object.keys(object).forEach((key) => {
-    mainProxy[key] = object[key];
+  Object.keys(object).forEach((key: string) => {
+    (mainProxy as any)[key] = object[key];
   });
 
   return mainProxy;

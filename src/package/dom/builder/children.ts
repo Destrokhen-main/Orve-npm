@@ -6,6 +6,7 @@ import { RefCProxy } from "../../reactive/type";
 import { isNodeBoolean } from "./validator";
 import { generationID } from "../../usedFunction/keyGeneration";
 import { checkerEffect } from "../mount/props";
+import { Effect } from "../../reactive/effect";
 
 enum ChildType {
   HTML = "HTML",
@@ -140,7 +141,7 @@ function parseChildren(
         }
 
         if (proxyType === ProxyType.Effect) {
-          const call = checkerEffect(item as Record<string, any>);
+          const call = checkerEffect(item as Effect);
 
           const [ res ] = parseChildren.call(this, [ call ], props, parent);
           return {

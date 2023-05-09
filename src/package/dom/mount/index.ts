@@ -1,11 +1,9 @@
 import er, { message as m } from "./error";
-import { HookObject, ONode, TypeNode } from "../types";
+import { ONode, TypeNode } from "../types";
 import { propsF } from "./props";
 
 import { childF } from "./child";
 import { Child } from "../builder/children";
-
-import { RefLProxy } from "../../reactive/type";
 import { ChildType } from "../builder/children";
 
 import { Orve } from "../../default";

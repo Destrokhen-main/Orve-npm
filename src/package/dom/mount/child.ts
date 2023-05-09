@@ -1,4 +1,4 @@
-import { ONodeOrve, TypeNode } from "../types";
+import { ONode, TypeNode } from "../types";
 import { Child, ChildType } from "../builder/children";
 import { mountedNode } from "./index";
 import { RefProxy } from "../../reactive/type";
@@ -8,21 +8,23 @@ import { parseChildren } from "../builder/children";
 
 export const childF = function (
   tag: HTMLElement | null,
-  nodes: Array<ONodeOrve | Child>,
-): Array<ONodeOrve | Child | Array<ONodeOrve | Child>> {
-  return nodes.map((item: ONodeOrve | Child) => {
+  nodes: Array<ONode | Child>,
+): any {
+  return nodes.map((item: ONode | Child) => {
     if (item === undefined) {
       console.warn("Mounted: " + m.UNDEFINED_IN_MOUNT);
       return undefined;
     }
 
     if (item.type === ChildType.HTML) {
-      const element = new DOMParser()
-        .parseFromString(item.value as string, "text/html")
-        .getElementsByTagName("body")[0];
-      item.node = element.firstChild;
-      if (tag !== null) tag.appendChild(element.firstChild);
-      return item;
+      if (item.value !== null) {
+        const element = new DOMParser()
+          .parseFromString(item.value as string, "text/html")
+          .getElementsByTagName("body")[0];
+        (item as any).node = element.firstChild;
+        if (tag !== null) tag.appendChild(element.firstChild as HTMLElement);
+        return item;
+      }
     }
 
     if (item.type === ChildType.HTMLPROP) {
@@ -30,10 +32,13 @@ export const childF = function (
         .parseFromString(item.value as string, "text/html")
         .getElementsByTagName("body")[0]
       
-      for (let i = 0; i !== element.childNodes.length; i++) {
-        tag.appendChild(element.childNodes[i].cloneNode(true));
-      }
-      return undefined;
+      if (tag !== null) {
+        for (let i = 0; i !== element.childNodes.length; i++) {
+          tag.appendChild(element.childNodes[i].cloneNode(true));
+        }
+        return undefined;
+      } else 
+        return undefined;
     }
 
     if (item.type === ChildType.Static) {
@@ -55,8 +60,8 @@ export const childF = function (
       return mountedNode.call(
         this,
         tag as HTMLElement,
-        item as ONodeOrve,
-      ) as ONodeOrve;
+        item as ONode,
+      ) as ONode;
     }
 
     if (item.type === ChildType.ReactiveStatic) {
@@ -74,7 +79,7 @@ export const childF = function (
     }
 
     if (item.type === ChildType.ReactiveComponent) {
-      const element = mountedNode.call(this, tag, item.value);
+      const element = mountedNode.call(this, tag, (item as any).value);
       (item as any).proxy.parent.push({
         type: ChildType.ReactiveComponent,
         ONode: element,
@@ -84,7 +89,7 @@ export const childF = function (
 
     if (item.type === ChildType.ReactiveArray) {
       if ((item.value as any).length !== 0) {
-        const items = childF.call(this, tag, item.value);
+        const items = childF.call(this, tag, (item as any).value);
         item.value = items;
         (item as any).proxy.render = items;
         return item;
@@ -101,7 +106,7 @@ export const childF = function (
     }
 
     if (item.type === ChildType.Effect) {
-      const [ node ] = childF.call(this, tag, [ item.value ]);
+      const [ node ] = childF.call(this, tag, [ (item as any).value ]);
       
       (item as any).proxy.checkParent();
       (item as any).proxy.parent.push({

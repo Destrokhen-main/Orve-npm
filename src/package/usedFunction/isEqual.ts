@@ -1,6 +1,6 @@
 import { typeOf } from "./typeOf";
 
-function isEqualArray(ar1, ar2) {
+function isEqualArray(ar1: any, ar2: any) {
   if (ar1.length !== ar2.length) return false;
 
   for (let i = 0; i < ar1.length; i++) {
@@ -19,7 +19,7 @@ function isEqualArray(ar1, ar2) {
   return true;
 }
 
-function isEqual(object1, object2) {
+function isEqual(object1: any, object2: any) {
   const props1 = Object.getOwnPropertyNames(object1);
   const props2 = Object.getOwnPropertyNames(object2);
   if (props1.length !== props2.length) {

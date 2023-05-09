@@ -7,6 +7,16 @@ import { HookObject } from "../dom/types";
 import { Orve } from "../default";
 // import { mountedNode } from "../dom/mount/index";
 
+
+interface RefA{
+  parent: any[],
+  value: any,
+  render: any,
+  empty: boolean,
+  renderFunction: (() => any) | null,
+  forList: () => this
+}
+
 function updated(obj: any) {
   if (obj.parentNode && obj.parentNode.hooks && obj.parentNode.hooks.updated) {
     obj.parentNode.hooks.updated({
@@ -87,7 +97,7 @@ function replaceValue(obj: Record<string, any>, prop: string, value: any) {
   updated(obj);
 }
 
-function checkOutAndInput(obj) {
+function checkOutAndInput(obj: Record<string, any>) {
   if (
     obj.value.length > 0 &&
     Array.isArray(obj.render) &&
@@ -110,14 +120,14 @@ function checkOutAndInput(obj) {
       obj.parentNode,
       true,
     );
-    const newRender = obj.render.map((ren, i) => {
+    const newRender = obj.render.map((ren: Record<string, any>, i: number) => {
       if (newItem[i] === undefined) {
         ren.node.remove();
         return undefined;
       }
       return ren;
     });
-    obj.render = newRender.filter((i) => i !== undefined);
+    obj.render = newRender.filter((i: any) => i !== undefined);
     updated(obj);
   } else if (obj.value.length === 0 && Array.isArray(obj.render)) {
     const element = document.createComment(` array ${obj.keyNode} `);
@@ -132,11 +142,11 @@ function refA(ar: Array<any>) {
   if (!Array.isArray(ar)) {
     e("refA - need array");
   }
-  const object = {
+  const object: RefA = {
     parent: [],
     value: null,
     render: null,
-    empty: null,
+    empty: true,
     renderFunction: null,
     forList: function(func = null){
       if (func !== null && typeof func === "function") {
@@ -148,7 +158,7 @@ function refA(ar: Array<any>) {
     } 
   };
 
-  let checkAr = null;
+  let checkAr: any = null;
   let mutationArray = false;
   const array = new Proxy(ar, {
     get(target, prop, r) {
@@ -203,13 +213,13 @@ function refA(ar: Array<any>) {
     set(target, prop, value) {
       if (prop === "value") {
         if (target["value"].length === 0) {
-          value.forEach((e) => {
+          value.forEach((e : any) => {
             target["value"].push(e);
           });
           return true;
         } else {
           if (value.length > target["value"].length) {
-            value.forEach((e, i) => {
+            value.forEach((e: any, i: number) => {
               if (target["value"][i] !== undefined) {
                 target["value"][i] = e;
               } else {
@@ -218,7 +228,7 @@ function refA(ar: Array<any>) {
             });
           } else if (value.length < target["value"].length) {
             target["value"].splice(0, target["value"].length);
-            value.forEach((e) => {
+            value.forEach((e: any) => {
               target["value"].push(e);
             });
           }

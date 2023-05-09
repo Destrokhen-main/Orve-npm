@@ -1,7 +1,7 @@
 import { message } from "./erMessage";
 
 class error extends Error {
-  constructor(message) {
+  constructor(message: string) {
     super(message);
     this.name = "orve - reactive";
   }
