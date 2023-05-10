@@ -18,7 +18,7 @@ function recursiveTag(node: Node) : Node {
   if (Object.keys(pr).length > 0) {
     req = (node.tag as (args?: Record<string, any>) => any).call(this, pr);
   } else {
-    req = (node.tag as (args?: Record<string, any>) => any).call(this);
+    req = (node.tag as (args?: Record<string, any>) => any).call(this, {});
   }
 
   if (typeOf(req) !== "object") {
