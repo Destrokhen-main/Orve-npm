@@ -41,7 +41,7 @@ function parseChildren(
 ) {
   if (ar.length > 0) {
     if (isHaveAnyArray(ar)) ar = ar.flat(1);
-    return ar.map((item: unknown) : any => {
+    return ar.map((item: any): any => {
       const typeNode = typeOf(item);
 
       // NOTE if html code
@@ -119,10 +119,10 @@ function parseChildren(
         }
 
         if (proxyType === ProxyType.RefA) {
-          let list = (item as any).value;
+          let list: any[] = item.value;
 
-          if ((item as any).renderFunction !== null) {
-            list = list.map((item as any).renderFunction);
+          if (item.renderFunction !== null) {
+            list = list.map(item.renderFunction);
           }
 
           return {

@@ -42,4 +42,15 @@ interface RefOProxy extends Proxy {
   $parent: Array<any>;
 };
 
-export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy, RefOProxy, Proxy };
+interface RefAProxy extends Proxy {
+  parent: any[],
+  value: any,
+  render: any,
+  empty: boolean,
+  renderFunction: ((item?: any, index?: number) => any) | null,
+  forList: () => this,
+  parentNode: Record<string, any> | null,
+  keyNode: string
+}
+
+export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy, RefOProxy, Proxy, RefAProxy };

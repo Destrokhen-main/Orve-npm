@@ -92,6 +92,7 @@ export const childF = function (
         const items = childF.call(this, tag, (item as any).value);
         item.value = items;
         (item as any).proxy.render = items;
+        (item as any).proxy.parentNode = (item as any).parent;
         return item;
       } else {
         const comment = document.createComment(
