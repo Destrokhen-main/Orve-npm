@@ -270,6 +270,10 @@ function refA(ar: Array<any>) {
   return new Proxy(object, {
     set(t: RefAProxy, p: string, v: any) {
       if (p === "value") {
+        if (!Array.isArray(v)) {
+          console.error("refA wanted array");
+          return false;
+        }
         t.value = createReactiveArray(v, t);
         const render = t.render;
         if (render !== null && Array.isArray(render) && render.length > 0) {
