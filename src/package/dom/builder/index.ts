@@ -53,10 +53,11 @@ function parser(
   const typeNode = typeOf(Node);
 
   if (typeNode !== "object") {
-    er(`component: ${String(component).substring(0, 50)}... \n${m.CALL_NODE_RETURN_NOT_A_OBJECT}`);
+    console.warn(`component: ${String(component).substring(0, 50)}... \n${m.CALL_NODE_RETURN_NOT_A_OBJECT}`);
+    return undefined;
   }
 
-  let node: Node = Node as Node;
+  let node: Node | undefined = Node as Node;
 
   if (node.child && !Array.isArray(node.child)) {
     node["child"] = [ node.child ];
@@ -67,6 +68,10 @@ function parser(
 
   if (typeof node.tag === "function") {
     node = recursiveTag.call(this, node);
+  }
+
+  if (node === undefined) {
+    return undefined;
   }
 
   const oNode: ONode = {

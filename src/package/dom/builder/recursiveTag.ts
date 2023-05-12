@@ -1,9 +1,9 @@
 import { typeOf } from "../../usedFunction/typeOf";
-import er, { message as m } from "./error";
+import { message as m } from "./error";
 import { isONode } from "../builder/validator";
 import { Node } from "../../jsx";
 
-function recursiveTag(node: Node) : Node {
+function recursiveTag(node: Node) : Node | undefined {
   let pr: Record<string, any> = {};
 
   if (node.props) {
@@ -22,7 +22,8 @@ function recursiveTag(node: Node) : Node {
   }
 
   if (typeOf(req) !== "object") {
-    er(m.CALL_NODE_RETURN_NOT_A_OBJECT);
+    console.warn(`component: ${String(JSON.stringify(node)).substring(0, 50)}... \n${m.CALL_NODE_RETURN_NOT_A_OBJECT}`);
+    return undefined;
   }
 
   isONode(req);
