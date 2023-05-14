@@ -98,6 +98,7 @@ function refC(app: (() => any) | null = null) {
                     null,
                     item.parent,
                   );
+                  if (parsedItem === undefined) return;
                   const element: any = mountedNode.call(
                     Orve.context,
                     null,

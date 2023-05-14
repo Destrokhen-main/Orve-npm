@@ -3,7 +3,7 @@ import { ref } from "./ref";
 import { typeOf } from "../usedFunction/typeOf";
 import { ProxyType } from "../reactive/type";
 import { refA } from "./refA";
-import { ReactiveParams } from "./type";
+//import { ReactiveParams } from "./type";
 
 function updated(target: Record<string, any>) {
   if (target.$parent.length > 0) {
