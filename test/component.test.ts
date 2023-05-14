@@ -15,7 +15,7 @@ const comp1 : any = () => {
   }
 }
 
-function t(object) {
+function t(object: any) {
   expect(object["tag"]).not.toBeUndefined();
   expect(object["type"]).toBe("Component");
   expect(Array.isArray(object["child"])).toBe(true);
