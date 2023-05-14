@@ -134,14 +134,16 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
             // eslint-disable-next-line prefer-rest-params
             const args = arguments;
 
-            const newArgs = [];
+            if (object.render !== null) {
+              const newArgs = [];
 
-            for(let i = 0; i !== args.length; i++) {
-              newArgs.push(args[i]);
-            }
+              for(let i = 0; i !== args.length; i++) {
+                newArgs.push(args[i]);
+              }
 
-            for (let i = 0; i !== newArgs.length; i++) {
-              insertInArrayNewValue(object, t.length + i, newArgs[i]);
+              for (let i = 0; i !== newArgs.length; i++) {
+                insertInArrayNewValue(object, t.length + i, newArgs[i]);
+              }
             }
             updated(object);
             return Array.prototype[p].apply(t, args);
@@ -172,44 +174,46 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
           return function (...args: number[]) {
             const deletedIndex = [];
 
-            for(let i = args[0]; i !== args[0] + args[1]; i++) {
-              deletedIndex.push(i);
-            }
-            if (deletedIndex.length > 0 && object.render !== null && object.render.length !== 0) {
-              deletedIndex.forEach((e) => {
-                if (object.render[e] !== undefined) {
-                  if (object.render.length === 1) {
-                    const comment = document.createComment(
-                      ` array ${object.keyNode} `,
-                    );
-                    object.render[0].node.replaceWith(comment);
-                    object.render = comment;
-                  } else {
-                    object.render[e].type = "DELETED";
-                  }
-                }
-              });
-              
-              if (Array.isArray(object.render)) {
-                let newRender: any = [];
-                const lastIndex = object.render.length - 1;
-
-                object.render.forEach((e, i) => {
-                  if (e.type !== "DELETED") {
-                    newRender.push(e);
-                  } else if (i === lastIndex && newRender.length === 0) {
-                    const comment = document.createComment(
-                      ` array ${object.keyNode} `,
-                    );
-                    e.node.replaceWith(comment);
-                    newRender = comment;
-                    object.empty = true;
-                  } else {
-                    e.node.remove();
+            if (object.render !== null) {
+              for(let i = args[0]; i !== args[0] + args[1]; i++) {
+                deletedIndex.push(i);
+              }
+              if (deletedIndex.length > 0 && object.render !== null && object.render.length !== 0) {
+                deletedIndex.forEach((e) => {
+                  if (object.render[e] !== undefined) {
+                    if (object.render.length === 1) {
+                      const comment = document.createComment(
+                        ` array ${object.keyNode} `,
+                      );
+                      object.render[0].node.replaceWith(comment);
+                      object.render = comment;
+                    } else {
+                      object.render[e].type = "DELETED";
+                    }
                   }
                 });
+                
+                if (Array.isArray(object.render)) {
+                  let newRender: any = [];
+                  const lastIndex = object.render.length - 1;
 
-                object.render = newRender;
+                  object.render.forEach((e, i) => {
+                    if (e.type !== "DELETED") {
+                      newRender.push(e);
+                    } else if (i === lastIndex && newRender.length === 0) {
+                      const comment = document.createComment(
+                        ` array ${object.keyNode} `,
+                      );
+                      e.node.replaceWith(comment);
+                      newRender = comment;
+                      object.empty = true;
+                    } else {
+                      e.node.remove();
+                    }
+                  });
+
+                  object.render = newRender;
+                }
               }
             }
 
@@ -227,10 +231,12 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
       const s = Reflect.set(t, p, v);
       const num = parseInt(p, 10);
 
-      if (!Number.isNaN(num) && Array.isArray(object.render) && num < object.render.length) {
-        replaceArrayValue(object, num, v);
-      } else if (!Number.isNaN(num)) {
-        insertInArrayNewValue(object, num, v);
+      if (object.render !== null) {
+        if (!Number.isNaN(num) && Array.isArray(object.render) && num < object.render.length) {
+          replaceArrayValue(object, num, v);
+        } else if (!Number.isNaN(num)) {
+          insertInArrayNewValue(object, num, v);
+        }
       }
       updated(object);
       parentCall(object);

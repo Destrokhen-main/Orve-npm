@@ -21,7 +21,7 @@ describe("Ref string child", () => {
       }
     }
     const app = createApp({App: component});
-    app.mount("#app");
+    app?.mount("#app");
   })
   test("Check first draw", () => {
     expect(body.querySelector("div")?.innerHTML).toBe("123");
@@ -51,7 +51,7 @@ describe("Ref number child", () => {
       }
     }
     const app = createApp({App: component});
-    app.mount("#app");
+    app?.mount("#app");
   })
   test("Check first draw", () => {
     expect(body.querySelector("div")?.innerHTML).toBe("1");
@@ -83,7 +83,7 @@ describe("Ref string, number props", () => {
       }
     }
     const app = createApp({App: component});
-    app.mount("#app");
+    app?.mount("#app");
   })
   test("Check first draw", () => {
     expect(body.querySelector("div")?.innerHTML).toBe("text");

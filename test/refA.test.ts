@@ -12,19 +12,23 @@ function comp() {
       "class": "my-block",
       "@click": () => {r.value[0] = {id:2};}
     },
-    child: r.forList((e, i) => {
+    child: r.forList((e: any, i: number) => {
       // console.log(e, i);
+      return {
+        tag: "div",
+        child: e.id
+      }
     })
   }
 }
 
 describe("test refA", () => {
   test('should first', () => {
-    const one = ref(new Array(3).fill(0).map((e, i) => ({id: i +1, v: null})));
+    const one = ref(new Array(3).fill(0).map((e: any, i) => ({id: i +1, v: null})));
     const second = ref([]);
 
-    one.forList((e) => { return { tag: "div", child: e.id } });
-    second.forList((e) => e);
+    one.forList((e: Record<string, any>) => { return { tag: "div", child: e.id } });
+    second.forList((e: any) => e);
 
     one.value[0] = { id:1, v: 1 };
     second.value.push(one.value.slice(0));
@@ -40,7 +44,7 @@ describe("test refA", () => {
 
   test("check forList", () => {
     document.body.innerHTML = `<div id = "app"></div>`;
-    createApp(comp).mount("#app");
+    createApp(comp)?.mount("#app");
     (document.body.querySelector(".my-block") as any).click();
   })
 })

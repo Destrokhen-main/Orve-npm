@@ -14,7 +14,7 @@ document.body.innerHTML = `<div id="app"></div>`
 describe("Check o-html prop", () => {
   test("create-app", () => {
     const app = createApp(component);
-    app.mount("#app");
+    app?.mount("#app");
     expect(document.querySelector("div")?.innerHTML).toBe("test123");
   })
 })
