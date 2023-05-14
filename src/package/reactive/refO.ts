@@ -3,6 +3,7 @@ import { ref } from "./ref";
 import { typeOf } from "../usedFunction/typeOf";
 import { ProxyType } from "../reactive/type";
 import { refA } from "./refA";
+import { ReactiveParams } from "./type";
 
 function updated(target: Record<string, any>) {
   if (target.$parent.length > 0) {
@@ -26,64 +27,93 @@ function updated(target: Record<string, any>) {
   }
 }
 
+function createReactiveObjectByProp(prop: string, value: any, mainProxy: RefOProxy) {
+  const type = typeOf(value);
+  if (type === "string" || type === "number") {
+    const r = ref(value);
+    (r as any).parent.push({
+      type: ProxyType.RefO,
+      value: mainProxy,
+    });
+    return r;
+  }
+
+  if (type === "array") {
+    const arr = refA(value);
+    arr.parent.push({
+      type: ProxyType.RefO,
+      value: mainProxy
+    });
+    return arr;
+  } 
+
+  if (type === "object") {
+    const rO = refO(value);
+    rO.$parent.push({
+      type: ProxyType.RefO,
+      value: mainProxy,
+    });
+    return rO;
+  }
+
+  if (type === "Proxy") {
+    return type;
+  }
+}
+
 function refO(object: any) {
   const obj : RefOProxy = {
     $parent: [],
-    type: ProxyType.Proxy,
-    proxyType: ProxyType.RefO
+    $reactiveParams: []
   };
-  const mainProxy = new Proxy<RefOProxy>(obj, {
+
+  const mainProxy: any = new Proxy<RefOProxy>(obj, {
     get(target: Record<string, any>, prop: string) {
+      if (prop === "type") return ProxyType.Proxy;
+      if (prop === "proxyType") return ProxyType.RefO;
       if (prop === "updated") {
         updated(target);
       }
       if (prop in target) {
         return target[prop];
       }
+      if (!(prop in target)) {
+        return undefined;
+        // target.$reactiveParams.push({
+        //   node: null,
+        //   nameValue: prop
+        // } as ReactiveParams);
+        // return {
+        //   tag: "comment",
+        //   $refOParams: {
+        //     proxy: mainProxy,
+        //     prop
+        //   },
+        //   child: `refO ${prop}`
+        // };
+      }
       return undefined;
     },
     set(target: Record<string, any>, prop: string, value: any) {
       if (!(prop in target)) {
         // TODO при присвоение, может потерять $parent
-        const type = typeOf(value);
-        if (type === "string" || type === "number") {
-          const r = ref(value);
-          (r as any).parent.push({
-            type: ProxyType.RefO,
-            value: mainProxy,
-          });
-          target[prop] = r;
-          updated(target);
-          return true;
-        }
-        if (type === "array") {
-          const arr = refA(value);
-          arr.parent.push({
-            type: ProxyType.RefO,
-            value: mainProxy
-          });
-          target[prop] = arr;
-          return true;
-        }
-        if (type === "object") {
-          const rO = refO(value);
-          rO.$parent.push({
-            type: ProxyType.RefO,
-            value: mainProxy,
-          });
-          target[prop] = rO;
-          return true;
-        }
-        if (type === "Proxy") {
+        // const indexEmtyObject = target.$reactiveParams.findIndex((e: ReactiveParams) => e.nameValue === prop);
+
+        const v = createReactiveObjectByProp(prop, value, mainProxy);
+        if (v === "Proxy") {
           value.parent.push({
             type: ProxyType.RefO,
             value: mainProxy,
           });
           target[prop] = value;
           return true;
+        } else {
+          target[prop] = v;
+          updated(target);
+          return true;
         }
       } else {
-        if (prop !== "$parent") {
+        if (!["$parent", "$type", "$proxyType"].includes(prop)) {
           target[prop].value = value;
           return true;
         }
@@ -91,11 +121,11 @@ function refO(object: any) {
       return false;
     },
     deleteProperty(target: Record<string, any>, prop: string) {
-      if (prop !== "$parent") {
+      if (!["$parent", "$type", "$proxyType"].includes(prop)) {
         delete target[prop];
         return true;
       } else {
-        console.error("refO - You try to delete $parent prop in refO");
+        console.error("refO - You try to delete [$parent | $type | $proxyType] prop in refO");
         return false;
       }
     },

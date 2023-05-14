@@ -17,22 +17,22 @@ function updated(obj: any) {
   }
 }
 
-// function parentCall(obj: any) {
-//   if (obj.parent.length > 0) {
-//     obj.parent.forEach((item: any) => {
-//       if (item.type === ProxyType.Watch) {
-//         (item as any).value.updated(obj.value, undefined);
-//         return;
-//       }
-//       if (item.type === "Custom") {
-//         item.value(obj);
-//       }
-//       if (item.type === ProxyType.Effect || item.type === ProxyType.Oif) {
-//         item.value.updated();
-//       }
-//     });
-//   }
-// }
+function parentCall(obj: RefAProxy) {
+  if (obj.parent.length > 0) {
+    obj.parent.forEach((item: any) => {
+      if (item.type === ProxyType.Watch) {
+        (item as any).value.updated(obj.value, undefined);
+        return;
+      }
+      if (item.type === "Custom") {
+        item.value(obj);
+      }
+      if (item.type === ProxyType.Effect || item.type === ProxyType.Oif) {
+        item.value.updated();
+      }
+    });
+  }
+}
 
 function renderHelper(t: RefAProxy, p: number, v: any) {
   let replaceValue = v;
@@ -218,6 +218,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
             return el;
           }
         }
+        parentCall(object);
         return val.bind(t);
       }
       return Reflect.get(t, p);
@@ -232,6 +233,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
         insertInArrayNewValue(object, num, v);
       }
       updated(object);
+      parentCall(object);
       return s;
     }
   });

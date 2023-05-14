@@ -19,7 +19,7 @@ function mount(query: string): void {
   Orve.tree = mountedNode.call(Orve.context, tag, oNode);
 }
 
-function createComment(app: HTMLElement | null, nodes: ONode ): ONode {
+function createComment(app: HTMLElement | null, nodes: ONode | any ): ONode {
   let text = "";
   if (nodes.child !== undefined && Array.isArray(nodes.child) && nodes.child.length > 0) {
     text = nodes.child.reduce((a: string, b: any) => {
@@ -38,6 +38,14 @@ function createComment(app: HTMLElement | null, nodes: ONode ): ONode {
     node: comment,
     type: TypeNode.Comment,
   } as ONode;
+
+  if (nodes["$refOParams"] !== undefined) {
+    const prop = nodes["$refOParams"].prop;
+    const indexF = nodes["$refOParams"].proxy.$reactiveParams.findIndex((x: Record<string, any>) => x.nameValue === prop);
+    if (indexF !== -1) {
+      nodes["$refOParams"].proxy.$reactiveParams[indexF].node = comment;
+    }
+  }
 
   if (app === null) return object;
 

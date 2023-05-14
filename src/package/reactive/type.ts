@@ -38,8 +38,15 @@ interface RefCProxy extends Proxy {
   value: () => any;
 };
 
-interface RefOProxy extends Proxy {
+
+type ReactiveParams = {
+  node: Comment | null,
+  nameValue: string
+};
+
+interface RefOProxy {
   $parent: Array<any>;
+  $reactiveParams: Array<ReactiveParams>;
 };
 
 interface RefAProxy extends Proxy {
@@ -53,4 +60,4 @@ interface RefAProxy extends Proxy {
   keyNode: string
 }
 
-export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy, RefOProxy, Proxy, RefAProxy };
+export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy, RefOProxy, Proxy, RefAProxy, ReactiveParams };
