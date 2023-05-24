@@ -1,120 +1,42 @@
-import {describe, expect, test} from '@jest/globals';
-import { parser } from "../src/package/dom/builder/index";
-import orve from "../src/index";
+import { beforeAll, describe, expect, test} from '@jest/globals';
+import { Node, createApp } from "../src/index";
+import { afterEach, beforeEach } from 'node:test';
 
-const comp = function() {
-  return {
-    tag: "div",
-    child: ["hello"]
+const Components = [
+  () => {
+    return (
+      Node("div", { id: "block" }, "Hello world")
+    )
+  },
+  () => {
+    return (
+      Node("div", { id: "block" }, Node("div", {}, "Hello ", "world"))
+    )
   }
-} as any
+];
 
-const comp1 : any = () => {
-  return {
-    tag: "div",
-    child: "hello"
-  }
-}
+describe("create app with function jsx", () => {
+  test("hello world", () => {
+    document.body.innerHTML = "<div id='app'></div>";
+    createApp(Components[0])?.mount("#app");
 
-function t(object: any) {
-  expect(object["tag"]).not.toBeUndefined();
-  expect(object["type"]).toBe("Component");
-  expect(Array.isArray(object["child"])).toBe(true);
+    const item = document.getElementById("block");
 
-  if (Array.isArray(object["child"])) {
-    expect(object["child"][0]["type"]).toBe("Static");
-    expect(object["child"][0]["value"]).not.toBeUndefined();
-    expect(object["child"][0]["value"]).toBe("hello");
-  }
-}
-
-describe('Hello Component without mounted', () => {
-  test('build comp-1', () => {
-    const object = parser(comp);
-    t(object);
-  });
-  test('build comp-2', () => {
-    const object = parser(comp1);
-    t(object);
-  });
-});
-
-
-// Check parse app with Layer 
-const Component1 = function() {
-  return {
-    tag: Layer,
-    child: ["Hello"]
-  }
-}
-
-const Layer = function({ children }: { children: any }) {
-  return {
-    tag: "div",
-    child: [
-      children,
-      "World"
-    ]
-  }
-}
-// ------
-
-
-// check parse app with Layer and Props
-
-function Layer1({ children, classes } : { children: any, classes: any }) {
-  return {
-    tag: "div",
-    props: {
-      class: classes
-    },
-    child: [
-      children[0] + " 1"
-    ]
-  }
-}
-
-function Component2() {
-  return {
-    tag: Layer1,
-    props: {
-      id: 123,
-      classes: "test"
-    },
-    child: "test"
-  }
-}
-
-// -----
-
-
-describe('Component with layer', () => {
-  test("Check parse app with Layer", () => {
-    const app = parser(Component1);
-
-    expect(Array.isArray(app?.child)).toBe(true);
-
-    expect(app?.child.length).toBe(2);
-
-    app?.child.forEach((e: any) => {
-      expect(e.type).toBe("Static");
-    });
-
-    expect(app?.child[0].value).toBe("Hello");
-    expect(app?.child[1].value).toBe("World");
+    expect(item).toBeDefined();
+    expect(item?.innerHTML).toBe("Hello world");
   })
 
-  test("check parse app with Layer and Props", () => {
-    const app = parser(Component2);
+  test("hello world with 2 div element", () => {
+    document.body.innerHTML = "<div id='app'></div>";
+    createApp(Components[1])?.mount("#app");
 
-    expect(app?.props).toBeDefined();
-    expect(app?.props?.class).toBeDefined();
-    expect(app?.props?.class).toBe("test");
+    const item = document.getElementById("block");
 
-    expect(app?.child).toBeDefined();
+    expect(item).toBeDefined();
 
-    expect(app?.child.length).toBe(1);
+    const divInner = item?.firstElementChild;
 
-    expect(app?.child[0].value).toBe("test 1");
+    expect(divInner).toBeDefined();
+    expect(divInner?.innerHTML).toBe("Hello world")
   })
-});
+})
