@@ -1,8 +1,9 @@
-import { ProxyType, RefLProxy, RefProxy, RefCProxy, RefOProxy } from "./type";
+import { ProxyType, RefOProxy } from "./type";
 import e from "./error";
 import { generationID } from "../usedFunction/keyGeneration";
+import { Proxy } from "./type";
 
-const startWatch = (object, typeProxy, dependencies) => {
+const startWatch = (object: Watch, typeProxy: ProxyType, dependencies: any) => {
   if (!object.watch) {
     if (typeProxy === ProxyType.RefO) {
       (dependencies as RefOProxy).$parent.push({
@@ -19,11 +20,19 @@ const startWatch = (object, typeProxy, dependencies) => {
   }
 };
 
+interface Watch extends Proxy {
+  key: string,
+  parent: any[],
+  watch: boolean,
+  value: (n: any, o: any) => void,
+  updated: (n: any, o: any) => void
+}
+
 function watch(
   func: () => void,
-  dependencies: RefLProxy | RefProxy | RefCProxy | RefOProxy = null,
+  dependencies: any = null,
 ) {
-  const object = {
+  const object: Watch = {
     key: generationID(8),
     parent: dependencies,
     watch: false,
@@ -31,6 +40,8 @@ function watch(
     updated: function (n: any, o: any) {
       this.value(n, o);
     },
+    type: ProxyType.Proxy,
+    proxyType: ProxyType.Watch,
   };
 
   if (dependencies === null) {
@@ -63,19 +74,21 @@ function watch(
   //startWatch();
 
   const n = new Proxy(object, {
-    get(target, prop) {
+    get(target: Watch, prop: keyof Watch | string) {
       if (prop === "type") return ProxyType.Proxy;
       if (prop === "proxyType") return ProxyType.Watch;
       if (prop in target) {
-        return target[prop];
+        return target[prop as keyof Watch];
       }
       return undefined;
     },
-    set(target, prop, value) {
+    set(target: Watch | any, prop: keyof Watch | string, value: any) {
       if (prop in target) {
-        target[prop] = value;
+        target[prop as keyof Watch] = value;
+        return true;
+      } else {
+        return false;
       }
-      return true;
     },
     deleteProperty() {
       console.error("Watch - You try to delete prop in ref");

@@ -1,43 +1,65 @@
-type typeTag = {
-  tag: string | (() => typeTag),
-  hooks?: Record<string, () => void>,
-  props?: Record<string, unknown> | null,
-  child?: Array<typeTag>
+export type ArgProps = Record<string, any>;
+
+
+export interface HooksContext {
+  context: Record<string, any>,
+  oNode: any
+}
+export interface Hooks {
+  created: (arg: HooksContext) => void,
+  mounted: (arg: HooksContext) => void,
+  updated: (arg: HooksContext) => void,
+  unmounted: (arg: HooksContext) => void
 }
 
-const Node = function(tag:string | (() => typeTag), props: Record<string, unknown> | null, ...child : any) {
-  const TAG: typeTag = {tag};
+export type TagType = string | ((arg?: ArgProps) => any);
 
-  if (props !== null) {
-    const finalProps = {};
-    Object.keys(props).forEach((key) => {
-      if (["o-hooks", "o-ref", "o-key", "o-props", "o-html"].includes(key)) {
-        const k = key.replace("o-", "").trim().toLowerCase();
-        if (key !== "o-props")
-          TAG[k] = props[key];
+export interface Node {
+  tag: TagType,
+  child?: any | any[],
+  props?: Record<string, any>,
+  ref?: any,
+  hooks?: Hooks,
+  html?: string
+}
+
+const O_KEY = ["o-hooks", "o-ref", "o-key", "o-html"];
+
+const Node = function(tag: TagType, props: Record<string, any> | null = null, ...child : any): Node {
+  const TAG: Node = { tag };
+
+  // parse props
+  if (props !== null && typeof props === "object") {
+    const PropsToTag: Record<string, any> = {};
+
+    const propsKeys = Object.keys(props);
+
+    propsKeys.forEach((prop) => {
+      if (O_KEY.includes(prop)) {
+        const parseKey: keyof Node = prop.toLowerCase().replace("o-", "") as keyof Node;
+        
+        TAG[parseKey] = props[prop];
       } else {
-        finalProps[key] = props[key];
+        PropsToTag[prop] = props[prop];
       }
     })
 
-    if (TAG.props !== undefined) {
-      TAG.props = {...finalProps, ...TAG.props};
-    } else {
-      TAG.props = finalProps;
+    if (Object.keys(propsKeys).length > 0) {
+      TAG.props = PropsToTag;
     }
-    
   }
 
+  // work with children
   if (child.length > 0) {
     TAG.child = child;
   }
   return TAG
 }
 
-const Fragment = function(tag:Record<string, unknown>) {
+const Fragment = function(tag: { children?: any | any[] } ): Node {
   return {
     tag: "fragment",
-    child: tag ? tag.children : []
+    child: tag !== undefined && tag.children !== undefined ? tag.children : []
   }
 }
 

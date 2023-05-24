@@ -1,5 +1,5 @@
 import { RefProxy, ProxyType, PropsStartType, RefOProxy } from "./type";
-import { ONodeOrve } from "../dom/types";
+import { ONode } from "../dom/types";
 import { HookObject } from "../dom/types";
 import { HookObjectType } from "../dom/types";
 import { typeOf } from "../usedFunction/typeOf";
@@ -20,13 +20,13 @@ enum PropsTypeRef {
 type PropRef = {
   type: PropsTypeRef | ProxyType;
   key: string;
-  ONode: ONodeOrve;
+  ONode: ONode;
 };
 
 type ChildRef = {
   type: PropsTypeRef | ProxyType;
   node: HTMLElement | Text | ChildNode;
-  ONode: ONodeOrve;
+  ONode: ONode;
 };
 
 // function retTypeRef(value: string | number | (() => any)): PropsStartType  {
@@ -68,21 +68,21 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
   }
 
   if (Array.isArray(value)) {
-    return refA(value as Array<any>);
+    return refA(value as any[]);
   }
 
-  const object = {
+  const object: RefProxy= {
     value,
     parent: [],
     startType: PropsStartType.None,
-  } as RefProxy;
+    type: ProxyType.Proxy,
+    proxyType: ProxyType.Ref
+  };
 
   return new Proxy<RefProxy>(object, {
-    get(target, prop) {
-      if (prop === "type") return ProxyType.Proxy;
-      if (prop === "proxyType") return ProxyType.Ref;
+    get(target: RefProxy, prop: keyof RefProxy | string) {
       if (prop in target) {
-        return target[prop];
+        return target[prop as keyof RefProxy];
       }
       return undefined;
     },
@@ -114,22 +114,24 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
                 return;
               }
               if (item.type === PropsTypeRef.PropEvent) {
-                const node = item.ONode.node;
-                node.removeEventListener(
-                  (item as PropRef).key,
-                  lastValue as () => any,
-                );
+                const node: HTMLElement = item.ONode.node as HTMLElement;
+                const key = (item as PropRef).key;
                 if (typeof value !== "function") {
                   console.error("insert not a function in eventlister");
                 } else {
-                  node.addEventListener((item as PropRef).key, value);
+                  node.removeEventListener(
+                    key,
+                    lastValue as () => any,
+                  );
+                  node.addEventListener(key, value);
+                  updatedHook(item, HookObjectType.Props);
                 }
-                updatedHook(item, HookObjectType.Props);
                 return;
               }
               if (item.type === PropsTypeRef.Child) {
-                if ((item as ChildRef).node.nodeType === 3) {
-                  (item as ChildRef).node.nodeValue = value;
+                const childRef = item as ChildRef;
+                if (childRef.node.nodeType === 3) {
+                  childRef.node.nodeValue = value;
                   updatedHook(item, HookObjectType.Child);
                 }
                 return;

@@ -1,10 +1,12 @@
 import { ProxyType, RefLProxy } from "./type";
 
 function refL(): RefLProxy {
-  const object = {
+  const object: RefLProxy  = {
     parent: [],
     value: null,
-  } as RefLProxy;
+    type: ProxyType.Proxy,
+    proxyType: ProxyType.RefL
+  }
 
   return new Proxy<RefLProxy>(object, {
     set(target, prop, value) {
@@ -32,9 +34,7 @@ function refL(): RefLProxy {
       }
       return false;
     },
-    get(target, prop) {
-      if (prop === "type") return ProxyType.Proxy;
-      if (prop === "proxyType") return ProxyType.RefL;
+    get(target: RefLProxy, prop: keyof RefLProxy) {
       if (prop in target) {
         return target[prop];
       }

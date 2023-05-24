@@ -7,8 +7,9 @@ import { refO } from "./package/reactive/refO";
 import { refA } from "./package/reactive/refA";
 import { effect } from "./package/reactive/effect";
 import { oif } from "./package/reactive/oif"; 
-import { Orve } from "./package/default";
+import { Orve, context } from "./package/default";
 import { Node, Fragment } from "./package/jsx";
+import { createAppRoot } from "./package/dom/root";
 export {
   createApp,
   refL,
@@ -21,11 +22,15 @@ export {
   Orve,
   Node,
   Fragment,
-  oif
+  oif,
+  context,
+  createAppRoot
 };
 
 export default {
+  createApp,
   ...Orve,
   Node,
   Fragment,
+  createAppRoot
 };

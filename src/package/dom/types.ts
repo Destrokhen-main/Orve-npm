@@ -1,32 +1,11 @@
-type ONode = {
-  tag: string | (() => ONode);
-  props?: Record<string, any>;
-  child?:
-    | Array<() => ONode | string | number | object>
-    | string
-    | number
-    | object;
-  hooks?: Hooks;
-  keyNode: string;
-  ref?: object;
-};
+import { Node } from "../jsx";
 
-type ONodeOrve = {
-  tag: string | (() => ONode);
-  props?: Record<string, any>;
-  child?:
-    | Array<() => ONodeOrve | string | number | object>
-    | string
-    | number
-    | object;
-  hooks?: Hooks;
-  ref?: object;
+interface ONode extends Node {
   type: TypeNode;
   keyNode: string;
   node: null | HTMLElement | Comment;
-  parent: ONodeOrve | null;
-  html?: string
-};
+  parent: ONode | null;
+}
 
 enum HookObjectType {
   Child = "Child",
@@ -36,15 +15,8 @@ enum HookObjectType {
 
 type HookObject = {
   context: Record<string, any>;
-  oNode: ONodeOrve;
+  oNode: ONode;
   type?: HookObjectType;
-};
-
-type Hooks = {
-  created?: (_: HookObject) => void;
-  mounted?: (_: HookObject) => void;
-  updated?: (_: HookObject) => void;
-  unmounted?: () => void;
 };
 
 enum TypeNode {
@@ -54,10 +26,10 @@ enum TypeNode {
 
 type Props = {
   children?:
-    | Array<() => ONodeOrve | string | number | object>
+    | Array<() => ONode | string | number | object>
     | string
     | number
     | object;
 };
 
-export { ONode, ONodeOrve, TypeNode, Props, HookObject, HookObjectType };
+export { ONode, TypeNode, Props, HookObject, HookObjectType };

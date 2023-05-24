@@ -1,11 +1,13 @@
-import { ONode, Props, ONodeOrve } from "../types";
+import { ONode, Props } from "../types";
 import { typeOf } from "../../usedFunction/typeOf";
 import { parser } from "./index";
-import { ProxyType, RefProxy } from "../../reactive/type";
+import { ProxyType, RefProxy, Proxy } from "../../reactive/type";
 import { RefCProxy } from "../../reactive/type";
 import { isNodeBoolean } from "./validator";
 import { generationID } from "../../usedFunction/keyGeneration";
 import { checkerEffect } from "../mount/props";
+import { Effect } from "../../reactive/effect";
+
 
 enum ChildType {
   HTML = "HTML",
@@ -22,10 +24,10 @@ type Child = {
   type: ChildType;
   value: string | number | RefProxy;
   node: HTMLElement | Text | ChildNode;
-  ONode?: ONodeOrve;
+  ONode?: ONode;
 };
 
-function isHaveAnyArray(ar: Array<() => ONode | string | number | object>) {
+function isHaveAnyArray(ar: Array<() => any>) {
   for (let i = 0; i !== ar.length; i++) {
     if (Array.isArray(ar[i])) return true;
   }
@@ -33,23 +35,25 @@ function isHaveAnyArray(ar: Array<() => ONode | string | number | object>) {
 }
 
 function parseChildren(
-  ar: Array<() => ONode | string | number | object>,
-  props: Props = null,
-  parent: ONodeOrve = null,
+  ar: Array<() => any>,
+  props: Props | null = null,
+  parent: ONode | null = null,
   isArray = false,
 ) {
   if (ar.length > 0) {
     if (isHaveAnyArray(ar)) ar = ar.flat(1);
-    return ar.map((item: ONode | string | number | object) => {
+    return ar.map((item: any): any => {
       const typeNode = typeOf(item);
+
       // NOTE if html code
       if (parent !== null && parent.html) {
         return {
           type: ChildType.HTMLPROP,
           value: item,
-        } as Child
+        }
       }
-
+      
+      // NOTE NEED REGEXP
       if (
         typeof item === "string" &&
         item.includes("<") &&
@@ -59,13 +63,13 @@ function parseChildren(
         return {
           type: ChildType.HTML,
           value: item,
-        } as Child;
+        };
       }
       
-      if (typeNode === "null" || typeNode === "undefined") {
+      if (typeNode === "null" || typeNode === "undefined" || typeNode === "boolean") {
         return {
           type: ChildType.Static,
-          value: "" + item,
+          value: String(item),
         }
       }
 
@@ -73,26 +77,28 @@ function parseChildren(
       if (typeNode === "string" || typeNode === "number") {
         return {
           type: ChildType.Static,
-          value: item,
+          value: String(item),
         };
       }
 
       // NOTE component
       if ((typeNode === "object" || typeNode === "function") && !isArray) {
-        return parser.call(this, item, props, parent);
+        return parser.call(this, item as () => any | Record<string, any>, props, parent);
       } else if (isArray) {
-        if (isNodeBoolean(item as object)) {
-          return parser.call(this, item, props, parent);
-        } else {
-          return {
-            type: ChildType.Static,
-            value: JSON.stringify(item),
-          };
+        if (typeof item === "object") {
+          if (isNodeBoolean(item as Record<string, any>)) {
+            return parser.call(this, item as () => any | Record<string, any>, props, parent);
+          } else {
+            return {
+              type: ChildType.Static,
+              value: JSON.stringify(item),
+            };
+          }
         }
       }
 
       if (typeNode === ProxyType.Proxy) {
-        const proxyType = (item as any).proxyType;
+        const proxyType: string = (item as Proxy).proxyType;
 
         if (proxyType === ProxyType.Ref) {
           return {
@@ -114,10 +120,10 @@ function parseChildren(
         }
 
         if (proxyType === ProxyType.RefA) {
-          let list = (item as any).value;
+          let list: any[] = item.value;
 
-          if ((item as any).renderFunction !== null) {
-            list = list.map((item as any).renderFunction);
+          if (item.renderFunction !== null) {
+            list = list.map(item.renderFunction);
           }
 
           return {
@@ -136,7 +142,7 @@ function parseChildren(
         }
 
         if (proxyType === ProxyType.Effect) {
-          const call = checkerEffect(item);
+          const call = checkerEffect(item as Effect);
 
           const [ res ] = parseChildren.call(this, [ call ], props, parent);
           return {

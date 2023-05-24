@@ -1,10 +1,10 @@
-import { ONodeOrve, Props, ONode } from "../types";
 import { typeOf } from "../../usedFunction/typeOf";
-import er, { message as m } from "./error";
+import { message as m } from "./error";
 import { isONode } from "../builder/validator";
+import { Node } from "../../jsx";
 
-function recursiveTag(node: ONodeOrve) {
-  let pr: Props = {};
+function recursiveTag(node: Node) : Node | undefined {
+  let pr: Record<string, any> = {};
 
   if (node.props) {
     pr = node.props;
@@ -13,16 +13,17 @@ function recursiveTag(node: ONodeOrve) {
   if (node.child) {
     pr["children"] = node.child;
   }
-
-  let req: ONode;
+  
+  let req: Node;
   if (Object.keys(pr).length > 0) {
-    req = (node.tag as () => ONode).call(this, pr);
+    req = (node.tag as (args?: Record<string, any>) => any).call(this, pr);
   } else {
-    req = (node.tag as () => ONode).call(this);
+    req = (node.tag as (args?: Record<string, any>) => any).call(this, {});
   }
 
   if (typeOf(req) !== "object") {
-    er(m.CALL_NODE_RETURN_NOT_A_OBJECT);
+    console.warn(`component: ${String(JSON.stringify(node)).substring(0, 50)}... \n${m.CALL_NODE_RETURN_NOT_A_OBJECT}`);
+    return undefined;
   }
 
   isONode(req);

@@ -1,77 +1,111 @@
-import { ONode, ONodeOrve, TypeNode, Props } from "../types";
+import { ONode, TypeNode, Props } from "../types";
 import er, { message as m } from "./error";
 import { typeOf } from "../../usedFunction/typeOf";
 import { isONode } from "../builder/validator";
 import { parseChildren } from "./children";
 import { recursiveTag } from "./recursiveTag";
-import { RefLProxy, ProxyType } from "../../reactive/type";
+import { ProxyType } from "../../reactive/type";
 import { generationID } from "../../usedFunction/keyGeneration";
+import { Node } from "../../jsx";
+
+type ComponentType = Record<string, any> | ((args?: Record<string, any>) => any);
+function prepareComponent(component: ComponentType): (() => any) {
+  let comp: Record<string, any> | ((args?: Record<string, any>) => any) = component;
+  const typeComp = typeof comp;
+  if (typeComp !== "function") {
+    if (typeComp === "object") {
+      comp = () => component;
+    } else {
+      er(m.APP_NOT_A_FUNCTION_OR_OBJECT);
+    }
+  }
+  return comp as (() => any);
+}
+
 
 function parser(
-  app: () => unknown | ONode,
-  props: Props = null,
-  parent: ONodeOrve = null,
+  app: () => any | Record<string, any>,
+  props: Props | null = null,
+  parent: ONode | null = null,
 ) {
   // if app = {} or proxy;
-  let component = app;
-  const tComponent = typeof component;
-  if (tComponent !== "function")
-    if (tComponent === "object") component = () => app;
-    else er(m.APP_NOT_A_FUNCTION_OR_OBJECT);
-  const Node: ONode | unknown = props
+  const component: ((args?: Record<string, any>) => any) = prepareComponent(app) as (() => any);
+  let Node: Node | unknown = null;
+
+  try {
+    Node = props
     ? component.call(this, props)
     : component.call(this);
+  } catch(error) {
+    console.error(`${String(component).substring(0, 50)}... - ${error}`);
+  } 
+
+  if (component === null) {
+    // TODO В зависимости от env отображать или нет это сообщение.
+    Node = {
+      tag: "span",
+      child: [` ERROR WITH COMPONENT - ${String(component).substring(0, 50)}... `]
+    }
+  }
+
   const typeNode = typeOf(Node);
 
   if (typeNode !== "object") {
-    er(`component: ${component} \n${m.CALL_NODE_RETURN_NOT_A_OBJECT}`);
+    console.warn(`component: ${String(component).substring(0, 50)}... \n${m.CALL_NODE_RETURN_NOT_A_OBJECT}`);
+    return undefined;
   }
 
-  let workObj: ONode = Node as ONode;
-  if (workObj.child && typeOf(workObj.child) !== "array") {
-    workObj["child"] = [workObj.child];
+  let node: Node | undefined = Node as Node;
+
+  if (node.child && !Array.isArray(node.child)) {
+    node["child"] = [ node.child ];
   }
 
   // check if node have all need key
-  isONode(workObj);
+  isONode(node);
 
-  if (typeof workObj.tag === "function") {
-    workObj = recursiveTag.call(this, workObj);
+  if (typeof node.tag === "function") {
+    node = recursiveTag.call(this, node);
   }
 
-  const newNode: ONodeOrve = {
-    ...workObj,
+  if (node === undefined) {
+    return undefined;
+  }
+
+  const oNode: ONode = {
+    ...node,
     node: null,
     keyNode: generationID(16),
     type: TypeNode.Component,
     parent: parent ? parent : null, 
   };
 
-  if (newNode.html) {
-    newNode.child = [newNode.html];
+
+  // NOTE возможно будут проблемы с этим куском.
+  if (oNode.html) {
+    oNode.child = [ oNode.html ];
   }
 
   // NOTE work with CHILD
-  if (newNode.child) {
-    // work with child
-    newNode.child = parseChildren.call(this, newNode.child, props, newNode);
+  if (oNode.child) {
+    oNode.child = parseChildren.call(this, oNode.child, props, oNode);
   }
 
-  // hooks created
-  if (newNode.hooks && newNode.hooks.created) {
-    const toHook = Object.assign({}, newNode);
+  // NOTE hook created
+  if (oNode.hooks && oNode.hooks.created) {
+    const toHook = { ...oNode };
     delete toHook.child;
 
-    newNode.hooks.created({
+    oNode.hooks.created({
       context: this,
       oNode: toHook,
     });
   }
 
-  if (newNode.ref !== undefined) {
-    if (typeof newNode.ref === "object") {
-      const type = (newNode.ref as RefLProxy).type;
-      const typeProxy = (newNode.ref as RefLProxy).proxyType;
+  if (oNode.ref !== undefined) {
+    if (typeof oNode.ref === "object") {
+      const type = oNode.ref.type;
+      const typeProxy = oNode.ref.proxyType;
       if (
         type === undefined ||
         type !== ProxyType.Proxy ||
@@ -84,7 +118,7 @@ function parser(
       er(m.REFL_INSERT_NOT_A_PROXY);
     }
   }
-  return newNode;
+  return oNode;
 }
 
 export { parser };

@@ -25,7 +25,7 @@ render = [
 */
 
 import e, { message as m } from "./error";
-import { ProxyType } from "./type";
+import { ProxyType, Proxy } from "./type";
 import { typeOf } from "../usedFunction/typeOf";
 import { PropsTypeRef } from "../reactive/ref";
 
@@ -99,23 +99,35 @@ function updated() {
 }
 
 function checkParent(item = null) {
-  const i = item === null ? this : item;
+  const i: Effect = item === null ? this : item;
 
   if (i.parent.length > 0) {
-    i.parent = i.parent.filter((e) => {
+    i.parent = i.parent.filter((e: any) => {
       if (e.type === PropsTypeRef.EffectChild) {
         if (document.body.contains(e.value.node)) {
           return true;
         }
-      } else if (PropsTypeRef[e.type] !== null) {
+      } else if (PropsTypeRef[(e as Parent).type] !== null) {
         if (document.body.contains(e.ONode.node)) {
           return true;
         }
       }
-
-
     })
   }
+}
+
+export interface Parent {
+  type: PropsTypeRef
+}
+
+export interface Effect extends Proxy {
+  value: any,
+  render: any[],
+  func: () => any,
+  parent: any[],
+  typeOutPut: any,
+  updated: () => undefined | void,
+  checkParent: () => void
 }
 
 function effect(func: () => any, dependencies: Array<any>) {
@@ -123,22 +135,22 @@ function effect(func: () => any, dependencies: Array<any>) {
     e(m.EFFECT_DECENCIES_NOT_A_ARRAY);
   }
 
-  const object = {
+  const object: Effect = {
     value: null,
     render: [],
     func,
     parent: [],
     typeOutPut: null,
     updated,
-    checkParent
+    checkParent,
+    type: ProxyType.Proxy,
+    proxyType: ProxyType.Effect
   };
 
   const proxy = new Proxy(object, {
-    get(target, prop) {
-      if (prop === "type") return ProxyType.Proxy;
-      if (prop === "proxyType") return ProxyType.Effect;
+    get(target: Effect, prop: keyof Effect | string) {
       if (prop in target) {
-        return target[prop];
+        return target[prop as keyof Effect];
       }
       return undefined;
     },

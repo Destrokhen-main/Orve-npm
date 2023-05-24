@@ -1,11 +1,11 @@
 import {describe, expect, test} from '@jest/globals';
 import { createApp } from "../src/index";
 
-const layer = function({children, ...props}) {
+const layer = function({children, ...props}: {children: any}) {
   return {
     tag: "div",
     props: props,
-    child: children
+    child: children as any[]
   }
 }
 
@@ -41,7 +41,7 @@ describe("Layer test - 1", () => {
 });
 
 
-const layer2 = function({children, ...props}) {
+const layer2 = function({children, ...props}: {children: any}) {
   return {
     tag: "div",
     props: props,
@@ -49,7 +49,7 @@ const layer2 = function({children, ...props}) {
   }
 }
 
-const layer1 = function({children, ...props}) {
+const layer1 = function({children, ...props}: { children: any }) {
   return {
     tag: layer2,
     props: props,
@@ -73,7 +73,7 @@ describe("Layer in layer", () => {
   test("created and mounted", () => {
     body.innerHTML = "<div id='app'></div>";
     const app = createApp(mainComponent1)
-    app.mount("#app");
+    app?.mount("#app");
     expect(body.childNodes.length).not.toBe(0);
   })
   test("check component", () => {

@@ -1,39 +1,42 @@
-import {describe, expect, test} from '@jest/globals';
-import { parser } from "../src/package/dom/builder/index";
+import { beforeAll, describe, expect, test} from '@jest/globals';
+import { Node, createApp } from "../src/index";
+import { afterEach, beforeEach } from 'node:test';
 
-const comp = function() {
-  return {
-    tag: "div",
-    child: ["hello"]
+const Components = [
+  () => {
+    return (
+      Node("div", { id: "block" }, "Hello world")
+    )
+  },
+  () => {
+    return (
+      Node("div", { id: "block" }, Node("div", {}, "Hello ", "world"))
+    )
   }
-} as any
+];
 
-const comp1 : any = () => {
-  return {
-    tag: "div",
-    child: "hello"
-  }
-}
+describe("create app with function jsx", () => {
+  test("hello world", () => {
+    document.body.innerHTML = "<div id='app'></div>";
+    createApp(Components[0])?.mount("#app");
 
-function t(object) {
-  expect(object["tag"]).not.toBeUndefined();
-  expect(object["type"]).toBe("Component");
-  expect(Array.isArray(object["child"])).toBe(true);
+    const item = document.getElementById("block");
 
-  if (Array.isArray(object["child"])) {
-    expect(object["child"][0]["type"]).toBe("Static");
-    expect(object["child"][0]["value"]).not.toBeUndefined();
-    expect(object["child"][0]["value"]).toBe("hello");
-  }
-}
+    expect(item).toBeDefined();
+    expect(item?.innerHTML).toBe("Hello world");
+  })
 
-describe('Hello Component without mounted', () => {
-  test('build comp-1', () => {
-    const object = parser(comp);
-    t(object);
-  });
-  test('build comp-2', () => {
-    const object = parser(comp1);
-    t(object);
-  });
-});
+  test("hello world with 2 div element", () => {
+    document.body.innerHTML = "<div id='app'></div>";
+    createApp(Components[1])?.mount("#app");
+
+    const item = document.getElementById("block");
+
+    expect(item).toBeDefined();
+
+    const divInner = item?.firstElementChild;
+
+    expect(divInner).toBeDefined();
+    expect(divInner?.innerHTML).toBe("Hello world")
+  })
+})
