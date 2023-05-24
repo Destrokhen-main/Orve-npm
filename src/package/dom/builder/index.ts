@@ -8,7 +8,6 @@ import { ProxyType } from "../../reactive/type";
 import { generationID } from "../../usedFunction/keyGeneration";
 import { Node } from "../../jsx";
 
-
 type ComponentType = Record<string, any> | ((args?: Record<string, any>) => any);
 function prepareComponent(component: ComponentType): (() => any) {
   let comp: Record<string, any> | ((args?: Record<string, any>) => any) = component;
@@ -31,7 +30,6 @@ function parser(
 ) {
   // if app = {} or proxy;
   const component: ((args?: Record<string, any>) => any) = prepareComponent(app) as (() => any);
-
   let Node: Node | unknown = null;
 
   try {

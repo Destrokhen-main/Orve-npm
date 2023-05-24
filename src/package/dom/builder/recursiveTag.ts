@@ -13,7 +13,7 @@ function recursiveTag(node: Node) : Node | undefined {
   if (node.child) {
     pr["children"] = node.child;
   }
-
+  
   let req: Node;
   if (Object.keys(pr).length > 0) {
     req = (node.tag as (args?: Record<string, any>) => any).call(this, pr);

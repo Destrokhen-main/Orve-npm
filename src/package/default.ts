@@ -1,6 +1,7 @@
 declare global {
   interface Window {
     Orve: Record<string, any>;
+    orve: Record<string, any>
   }
 }
 

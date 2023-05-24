@@ -8,6 +8,7 @@ import { generationID } from "../../usedFunction/keyGeneration";
 import { checkerEffect } from "../mount/props";
 import { Effect } from "../../reactive/effect";
 
+
 enum ChildType {
   HTML = "HTML",
   Static = "Static",

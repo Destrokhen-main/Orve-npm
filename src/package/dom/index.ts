@@ -7,7 +7,7 @@ import { unmounted } from "./unmounted";
 
 // NOTE type
 
-interface createApp {
+export interface createApp {
   mount: (root: string) => void;
 };
 
