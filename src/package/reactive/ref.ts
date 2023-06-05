@@ -76,7 +76,16 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
     parent: [],
     startType: PropsStartType.None,
     type: ProxyType.Proxy,
-    proxyType: ProxyType.Ref
+    proxyType: ProxyType.Ref,
+    render: null,
+    format: function(func) {
+      if (typeof func !== "function") {
+        return this
+      }
+
+      this.render = func;
+      return this;
+    }
   };
 
   return new Proxy<RefProxy>(object, {

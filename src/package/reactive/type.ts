@@ -31,6 +31,8 @@ interface RefProxy extends Proxy {
   parent: Array<any>;
   value: string | number | (() => any);
   startType: PropsStartType;
+  render: (() => string | number) | null,
+  format: (func: () => string | number) => any
 };
 
 interface RefCProxy extends Proxy {
