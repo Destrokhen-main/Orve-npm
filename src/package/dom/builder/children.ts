@@ -7,7 +7,7 @@ import { isNodeBoolean } from "./validator";
 import { generationID } from "../../usedFunction/keyGeneration";
 import { checkerEffect } from "../mount/props";
 import { Effect } from "../../reactive/effect";
-
+import { UtilsRef } from "../../reactive/type";
 
 enum ChildType {
   HTML = "HTML",
@@ -32,6 +32,84 @@ function isHaveAnyArray(ar: Array<() => any>) {
     if (Array.isArray(ar[i])) return true;
   }
   return false;
+}
+
+function isFormatObj(obj: unknown): boolean {
+  if (typeof obj === "object") {
+    const knowObj = obj as Record<string, any>;
+    if (knowObj["type"] !== undefined && Object.values(UtilsRef).includes(knowObj["type"])) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function ProxyBulder(item: any, props: Props | null, parent: ONode | null) {
+  const proxyType: string = (item as Proxy).proxyType;
+
+  if (proxyType === ProxyType.Ref) {
+    return {
+      type: ChildType.ReactiveStatic,
+      value: item,
+      ONode: parent,
+    };
+  }
+
+  if (proxyType === ProxyType.RefC) {
+    const o = item as RefCProxy;
+    const object = parser.call(this, o.value, props, parent);
+    return {
+      type: ChildType.ReactiveComponent,
+      value: object,
+      proxy: item,
+      ONode: parent,
+    };
+  }
+
+  if (proxyType === ProxyType.RefA) {
+    let list: any[] = item.value;
+
+    if (item.renderFunction !== null) {
+      list = list.map(item.renderFunction);
+    }
+
+    return {
+      type: ChildType.ReactiveArray,
+      value: parseChildren.call(
+        this,
+        list,
+        props,
+        parent,
+        true,
+      ),
+      proxy: item,
+      parent,
+      keyNode: generationID(8),
+    };
+  }
+
+  if (proxyType === ProxyType.Effect) {
+    const call = checkerEffect(item as Effect);
+
+    const [ res ] = parseChildren.call(this, [ call ], props, parent);
+    return {
+      type: ChildType.Effect,
+      proxy: item,
+      value: res,
+      parent,
+      keyNode: generationID(8),
+    };
+  }
+
+  if (proxyType === ProxyType.Oif) {
+    (item as any).parentNode = parent;
+    return {
+      type: ChildType.Oif,
+      value: item,
+      parent,
+      keyNode: generationID(8)
+    }
+  }
 }
 
 function parseChildren(
@@ -80,7 +158,14 @@ function parseChildren(
           value: String(item),
         };
       }
-
+      if (typeNode === "object" && isFormatObj(item)) {
+        return {
+          type: ChildType.ReactiveStatic,
+          value: item.proxy,
+          ONode: parent,
+          formate: item.formate
+        }
+      }
       // NOTE component
       if ((typeNode === "object" || typeNode === "function") && !isArray) {
         return parser.call(this, item as () => any | Record<string, any>, props, parent);
@@ -98,71 +183,7 @@ function parseChildren(
       }
 
       if (typeNode === ProxyType.Proxy) {
-        const proxyType: string = (item as Proxy).proxyType;
-
-        if (proxyType === ProxyType.Ref) {
-          return {
-            type: ChildType.ReactiveStatic,
-            value: item,
-            ONode: parent,
-          };
-        }
-
-        if (proxyType === ProxyType.RefC) {
-          const o = item as RefCProxy;
-          const object = parser.call(this, o.value, props, parent);
-          return {
-            type: ChildType.ReactiveComponent,
-            value: object,
-            proxy: item,
-            ONode: parent,
-          };
-        }
-
-        if (proxyType === ProxyType.RefA) {
-          let list: any[] = item.value;
-
-          if (item.renderFunction !== null) {
-            list = list.map(item.renderFunction);
-          }
-
-          return {
-            type: ChildType.ReactiveArray,
-            value: parseChildren.call(
-              this,
-              list,
-              props,
-              parent,
-              true,
-            ),
-            proxy: item,
-            parent,
-            keyNode: generationID(8),
-          };
-        }
-
-        if (proxyType === ProxyType.Effect) {
-          const call = checkerEffect(item as Effect);
-
-          const [ res ] = parseChildren.call(this, [ call ], props, parent);
-          return {
-            type: ChildType.Effect,
-            proxy: item,
-            value: res,
-            parent,
-            keyNode: generationID(8),
-          };
-        }
-
-        if (proxyType === ProxyType.Oif) {
-          (item as any).parentNode = parent;
-          return {
-            type: ChildType.Oif,
-            value: item,
-            parent,
-            keyNode: generationID(8)
-          }
-        }
+        return ProxyBulder(item, props, parent);
       }
     });
   } else {

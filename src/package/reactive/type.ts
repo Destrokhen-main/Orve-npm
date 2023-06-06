@@ -31,8 +31,7 @@ interface RefProxy extends Proxy {
   parent: Array<any>;
   value: string | number | (() => any);
   startType: PropsStartType;
-  render: (() => string | number) | null,
-  format: (func: () => string | number) => any
+  formate: (func: () => string | number) => any
 };
 
 interface RefCProxy extends Proxy {
@@ -60,6 +59,10 @@ interface RefAProxy extends Proxy {
   forList: () => this,
   parentNode: Record<string, any> | null,
   keyNode: string
+}
+
+export enum UtilsRef {
+  Format = "format"
 }
 
 export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy, RefOProxy, Proxy, RefAProxy, ReactiveParams };

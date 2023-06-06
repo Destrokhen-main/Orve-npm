@@ -6,6 +6,18 @@ import { PropsTypeRef, ChildRef } from "../../reactive/ref";
 import { message as m } from "./error";
 import { parseChildren } from "../builder/children";
 
+export function formatedRef(item: any, val:any | null = null): any {
+  let value = val !== null ? val : item.value.value;
+  if (item.formate !== undefined) {
+    try {
+      value = item.formate(value);
+    } catch (e) {
+      console.warn(`ref formate ${value} return error`);
+    }
+  }
+  return value;
+}
+
 export const childF = function (
   tag: HTMLElement | null,
   nodes: Array<ONode | Child>,
@@ -65,17 +77,24 @@ export const childF = function (
     }
 
     if (item.type === ChildType.ReactiveStatic) {
-      const element = document.createTextNode(
-        (item.value as RefProxy).value as string,
-      );
-      item.node = element;
+      const objectRef: Record<string, any> = item;
+      const value = formatedRef(objectRef);
+
+      const element = document.createTextNode(value);
+      objectRef.node = element;
       if (tag !== null) tag.appendChild(element);
-      (item.value as RefProxy).parent.push({
+      const parentObject = {
         type: PropsTypeRef.Child,
         node: element,
-        ONode: item.ONode,
-      } as ChildRef);
-      return item;
+        ONode: objectRef.ONode,
+      } as ChildRef;
+
+      if (objectRef.formate !== undefined) {
+        parentObject["formate"] = objectRef.formate;
+      }
+
+      (objectRef.value as RefProxy).parent.push(parentObject);
+      return objectRef;
     }
 
     if (item.type === ChildType.ReactiveComponent) {

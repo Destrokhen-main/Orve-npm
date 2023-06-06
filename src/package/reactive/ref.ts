@@ -1,4 +1,4 @@
-import { RefProxy, ProxyType, PropsStartType, RefOProxy } from "./type";
+import { RefProxy, ProxyType, PropsStartType, RefOProxy, UtilsRef } from "./type";
 import { ONode } from "../dom/types";
 import { HookObject } from "../dom/types";
 import { HookObjectType } from "../dom/types";
@@ -6,6 +6,7 @@ import { typeOf } from "../usedFunction/typeOf";
 import { refO } from "../reactive/refO";
 import { refA } from "./refA";
 import { Orve } from "../default";
+import { formatedRef } from "../dom/mount/child";
 
 enum PropsTypeRef {
   PropStatic = "PropStatic",
@@ -23,10 +24,11 @@ type PropRef = {
   ONode: ONode;
 };
 
-type ChildRef = {
+interface ChildRef {
   type: PropsTypeRef | ProxyType;
   node: HTMLElement | Text | ChildNode;
   ONode: ONode;
+  formate?: () => any 
 };
 
 // function retTypeRef(value: string | number | (() => any)): PropsStartType  {
@@ -77,14 +79,15 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
     startType: PropsStartType.None,
     type: ProxyType.Proxy,
     proxyType: ProxyType.Ref,
-    render: null,
-    format: function(func) {
+    formate: function(func) {
       if (typeof func !== "function") {
-        return this
+        return this;
       }
-
-      this.render = func;
-      return this;
+      return {
+        type: UtilsRef.Format,
+        proxy: this,
+        formate: func
+      }
     }
   };
 
@@ -140,7 +143,8 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
               if (item.type === PropsTypeRef.Child) {
                 const childRef = item as ChildRef;
                 if (childRef.node.nodeType === 3) {
-                  childRef.node.nodeValue = value;
+                  const text = formatedRef(childRef, value);
+                  childRef.node.nodeValue = text;
                   updatedHook(item, HookObjectType.Child);
                 }
                 return;
