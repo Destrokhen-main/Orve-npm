@@ -11,6 +11,11 @@ export function formatedRef(item: any, val:any | null = null): any {
   if (item.formate !== undefined) {
     try {
       value = item.formate(value);
+
+      if (!["string", "number", "function"].includes(typeof value)) {
+        console.warn("formate can return only string, number, function");
+        value = val !== null ? val : item.value.value;
+      }
     } catch (e) {
       console.warn(`ref formate ${value} return error`);
     }

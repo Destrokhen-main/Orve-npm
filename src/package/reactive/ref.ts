@@ -18,10 +18,11 @@ enum PropsTypeRef {
   EffectChild = "EffectChild"
 }
 
-type PropRef = {
+interface PropRef {
   type: PropsTypeRef | ProxyType;
   key: string;
   ONode: ONode;
+  formate?: () => string | number | (() => string | number)
 };
 
 interface ChildRef {
@@ -110,6 +111,8 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
               if (item.type === PropsTypeRef.PropStatic) {
                 const node = item.ONode.node;
 
+                insertValue = formatedRef(item, value);
+
                 if (typeof insertValue === "function") {
                   insertValue = insertValue();
                 }
@@ -128,15 +131,19 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
               if (item.type === PropsTypeRef.PropEvent) {
                 const node: HTMLElement = item.ONode.node as HTMLElement;
                 const key = (item as PropRef).key;
-                if (typeof value !== "function") {
+                const insertValue = formatedRef(item, value);
+                if (typeof insertValue !== "function") {
                   console.error("insert not a function in eventlister");
                 } else {
-                  node.removeEventListener(
-                    key,
-                    lastValue as () => any,
-                  );
-                  node.addEventListener(key, value);
-                  updatedHook(item, HookObjectType.Props);
+                  if (String((item as any).lastCall) !== String(insertValue)) {
+                    node.removeEventListener(
+                      key,
+                      (item as any).lastCall,
+                    );
+                    node.addEventListener(key, insertValue);
+                    updatedHook(item, HookObjectType.Props);
+                    (item as any).lastCall = insertValue
+                  }
                 }
                 return;
               }
