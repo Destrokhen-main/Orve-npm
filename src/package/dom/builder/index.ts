@@ -31,7 +31,6 @@ function parser(
   // if app = {} or proxy;
   const component: ((args?: Record<string, any>) => any) = prepareComponent.call(this, (app) as (() => any));
   let Node: Node | unknown = null;
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
   try {
     Node = props
     ? component.call(this, props)
