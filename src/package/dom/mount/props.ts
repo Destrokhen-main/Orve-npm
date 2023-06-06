@@ -1,10 +1,11 @@
 import reactToCSS from 'style-object-to-css-string';
-import { ProxyType, Proxy, RefProxy } from "../../reactive/type";
+import { ProxyType, Proxy, RefProxy, UtilsRef } from "../../reactive/type";
 import { PropsTypeRef, PropRef } from "../../reactive/ref";
 import { Effect } from '../../reactive/effect';
 import e from "./error";
 
 import { typeOf } from "../../usedFunction/typeOf";
+import { formatedRef } from './child';
 
 interface IMG {
   default: string;
@@ -84,6 +85,23 @@ export const propsF = function (
       } else {
         name = prop.replace("on", "").toLowerCase().trim();
       }
+
+      if (typeof props[prop] === "object" && (props[prop] as any).type === UtilsRef.Format) {
+        const proxy = (props[prop] as any).proxy;
+
+        const value = formatedRef(props[prop], proxy.value);
+
+        tag.addEventListener(name, value);
+        proxy.parent.push({
+          key: name,
+          type: PropsTypeRef.PropEvent,
+          formate: (props[prop] as any).formate,
+          ONode: this.ONode,
+          lastCall: value
+        })
+        return;
+      }
+
       if (
         typeof props[prop] === "object" &&
         (props[prop] as any).type === ProxyType.Proxy
@@ -214,8 +232,27 @@ export const propsF = function (
       return;
     }
 
-    // not all before
+    if (typeof props[prop] === "object" && (props[prop] as Record<string, any>).type === UtilsRef.Format) {
+      const proxy = (props[prop] as any).proxy;
+      let value = formatedRef(props[prop], proxy.value);
+      if (typeof value === "function") {
+        value = value();
+      }
+      if (prop === "value") {
+        (tag as HTMLInputElement).value = value;
+      } else {
+        tag.setAttribute(prop, value);
+      }
+      proxy.parent.push({
+        key: prop,
+        type: PropsTypeRef.PropStatic,
+        formate: (props[prop] as any).formate,
+        ONode: this.ONode,
+      } as PropRef);
+      return;
+    }
 
+    // not all before
     tag.setAttribute(prop, props[prop] as string);
   });
 };

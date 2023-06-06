@@ -4,5 +4,5 @@ module.exports = {
   testEnvironment: "jest-environment-jsdom",
   clearMocks: true,
   coverageProvider: "v8",
-  coverageDirectory: "coverage"
+  coverageDirectory: "coverage",
 };

@@ -1,4 +1,4 @@
-import { RefProxy, ProxyType, PropsStartType, RefOProxy } from "./type";
+import { RefProxy, ProxyType, PropsStartType, RefOProxy, UtilsRef } from "./type";
 import { ONode } from "../dom/types";
 import { HookObject } from "../dom/types";
 import { HookObjectType } from "../dom/types";
@@ -6,6 +6,7 @@ import { typeOf } from "../usedFunction/typeOf";
 import { refO } from "../reactive/refO";
 import { refA } from "./refA";
 import { Orve } from "../default";
+import { formatedRef } from "../dom/mount/child";
 
 enum PropsTypeRef {
   PropStatic = "PropStatic",
@@ -17,16 +18,18 @@ enum PropsTypeRef {
   EffectChild = "EffectChild"
 }
 
-type PropRef = {
+interface PropRef {
   type: PropsTypeRef | ProxyType;
   key: string;
   ONode: ONode;
+  formate?: () => string | number | (() => string | number)
 };
 
-type ChildRef = {
+interface ChildRef {
   type: PropsTypeRef | ProxyType;
   node: HTMLElement | Text | ChildNode;
   ONode: ONode;
+  formate?: () => any 
 };
 
 // function retTypeRef(value: string | number | (() => any)): PropsStartType  {
@@ -76,7 +79,17 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
     parent: [],
     startType: PropsStartType.None,
     type: ProxyType.Proxy,
-    proxyType: ProxyType.Ref
+    proxyType: ProxyType.Ref,
+    formate: function(func) {
+      if (typeof func !== "function") {
+        return this;
+      }
+      return {
+        type: UtilsRef.Format,
+        proxy: this,
+        formate: func
+      }
+    }
   };
 
   return new Proxy<RefProxy>(object, {
@@ -98,6 +111,8 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
               if (item.type === PropsTypeRef.PropStatic) {
                 const node = item.ONode.node;
 
+                insertValue = formatedRef(item, value);
+
                 if (typeof insertValue === "function") {
                   insertValue = insertValue();
                 }
@@ -116,22 +131,27 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
               if (item.type === PropsTypeRef.PropEvent) {
                 const node: HTMLElement = item.ONode.node as HTMLElement;
                 const key = (item as PropRef).key;
-                if (typeof value !== "function") {
+                const insertValue = formatedRef(item, value);
+                if (typeof insertValue !== "function") {
                   console.error("insert not a function in eventlister");
                 } else {
-                  node.removeEventListener(
-                    key,
-                    lastValue as () => any,
-                  );
-                  node.addEventListener(key, value);
-                  updatedHook(item, HookObjectType.Props);
+                  if (String((item as any).lastCall) !== String(insertValue)) {
+                    node.removeEventListener(
+                      key,
+                      (item as any).lastCall,
+                    );
+                    node.addEventListener(key, insertValue);
+                    updatedHook(item, HookObjectType.Props);
+                    (item as any).lastCall = insertValue
+                  }
                 }
                 return;
               }
               if (item.type === PropsTypeRef.Child) {
                 const childRef = item as ChildRef;
                 if (childRef.node.nodeType === 3) {
-                  childRef.node.nodeValue = value;
+                  const text = formatedRef(childRef, value);
+                  childRef.node.nodeValue = text;
                   updatedHook(item, HookObjectType.Child);
                 }
                 return;

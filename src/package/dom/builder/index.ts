@@ -80,7 +80,6 @@ function parser(
     parent: parent ? parent : null, 
   };
 
-
   // NOTE возможно будут проблемы с этим куском.
   if (oNode.html) {
     oNode.child = [ oNode.html ];
