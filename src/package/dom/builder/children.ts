@@ -183,7 +183,7 @@ function parseChildren(
       }
 
       if (typeNode === ProxyType.Proxy) {
-        return ProxyBulder(item, props, parent);
+        return ProxyBulder.call(this, item, props, parent);
       }
     });
   } else {

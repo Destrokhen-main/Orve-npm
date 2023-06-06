@@ -14,7 +14,7 @@ function prepareComponent(component: ComponentType): (() => any) {
   const typeComp = typeof comp;
   if (typeComp !== "function") {
     if (typeComp === "object") {
-      comp = () => component;
+      comp = (function() { return component }).bind(this);
     } else {
       er(m.APP_NOT_A_FUNCTION_OR_OBJECT);
     }
@@ -29,9 +29,9 @@ function parser(
   parent: ONode | null = null,
 ) {
   // if app = {} or proxy;
-  const component: ((args?: Record<string, any>) => any) = prepareComponent(app) as (() => any);
+  const component: ((args?: Record<string, any>) => any) = prepareComponent.call(this, (app) as (() => any));
   let Node: Node | unknown = null;
-
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
   try {
     Node = props
     ? component.call(this, props)

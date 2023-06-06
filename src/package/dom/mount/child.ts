@@ -11,9 +11,8 @@ export function formatedRef(item: any, val:any | null = null): any {
   if (item.formate !== undefined) {
     try {
       value = item.formate(value);
-
-      if (!["string", "number", "function"].includes(typeof value)) {
-        console.warn("formate can return only string, number, function");
+      if (!["string", "number", "function", "boolean"].includes(typeof value)) {
+        console.warn("formate can return only string, number, function, boolean");
         value = val !== null ? val : item.value.value;
       }
     } catch (e) {
@@ -154,11 +153,13 @@ export const childF = function (
         const pr = parseChildren.call(this, [ (item.value as any).block1 ], null, (item as any).parent);
         const [ block ] = childF.call(this, tag, pr);
         (item.value as any).node = block.node;
+        (item.value as any).compilerNode = pr[0];
       } else {
         if((item.value as any).block2 !== null) {
           const pr = parseChildren.call(this, [ (item.value as any).block2 ], null, (item as any).parent);
           const [ block ] = childF.call(this, tag, pr);
           (item.value as any).node = block.node;
+          (item.value as any).compilerNode = pr[0];
         } else {
           const comment = document.createComment(
             ` if ${(item as any).keyNode} `,
