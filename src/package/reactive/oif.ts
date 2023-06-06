@@ -32,8 +32,9 @@ function updated() {
       } else {
         if (this.compilerNode !== null)
           unmounted(this.compilerNode);
+        
         const comment = document.createComment(
-          ` if `,
+          ` if ${this.keyNode}`,
         );
         this.node.replaceWith(comment);
         this.node = comment;
