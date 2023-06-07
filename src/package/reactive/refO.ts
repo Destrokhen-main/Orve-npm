@@ -29,7 +29,7 @@ function updated(target: Record<string, any>) {
 
 function createReactiveObjectByProp(prop: string, value: any, mainProxy: RefOProxy) {
   const type = typeOf(value);
-  if (type === "string" || type === "number") {
+  if (type === "string" || type === "number" || type === "boolean") {
     const r = ref(value);
     (r as any).parent.push({
       type: ProxyType.RefO,

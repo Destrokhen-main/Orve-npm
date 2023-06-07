@@ -102,12 +102,14 @@ function ProxyBulder(item: any, props: Props | null, parent: ONode | null) {
   }
 
   if (proxyType === ProxyType.Oif) {
+    const keyNode = generationID(8);
     (item as any).parentNode = parent;
+    (item as any).keyNode = keyNode;
     return {
       type: ChildType.Oif,
       value: item,
       parent,
-      keyNode: generationID(8)
+      keyNode
     }
   }
 }
@@ -183,7 +185,7 @@ function parseChildren(
       }
 
       if (typeNode === ProxyType.Proxy) {
-        return ProxyBulder(item, props, parent);
+        return ProxyBulder.call(this, item, props, parent);
       }
     });
   } else {

@@ -87,7 +87,10 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
       return {
         type: UtilsRef.Format,
         proxy: this,
-        formate: func
+        formate: func,
+        value: function() {
+          return this.formate(this.value);
+        }
       }
     }
   };

@@ -2,6 +2,7 @@ import { createApp } from "./index";
 import er, { message } from "./error";
 import { Node, Fragment } from "../jsx";
 import {isONode} from "./builder/validator";
+import { Orve } from "../default";
 
 export function createAppRoot(app: Node | unknown): createApp | undefined {
   // orve Node and Fragment by hight level. (((
@@ -17,7 +18,7 @@ export function createAppRoot(app: Node | unknown): createApp | undefined {
   
   if (item.tag !== undefined && typeof item.tag === "function") {
     const call = item.tag as (() => any);
-    return createApp(() => call());
+    return createApp(() => call.call(Orve.context));
   }
 
   return;
