@@ -10,6 +10,7 @@ import { oif } from "./package/reactive/oif";
 import { Orve, context } from "./package/default";
 import { Node, Fragment } from "./package/jsx";
 import { createAppRoot } from "./package/dom/root";
+import { globalComponent } from "./package/utils/global-component";
 export {
   createApp,
   refL,
@@ -24,7 +25,8 @@ export {
   Fragment,
   oif,
   context,
-  createAppRoot
+  createAppRoot,
+  globalComponent
 };
 
 export default {
@@ -32,5 +34,6 @@ export default {
   ...Orve,
   Node,
   Fragment,
-  createAppRoot
+  createAppRoot,
+  globalComponent
 };
