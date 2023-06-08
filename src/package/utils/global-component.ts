@@ -1,3 +1,5 @@
+import { Orve } from "../default";
+
 function ucFirst(str: string) {
   if (!str) return str;
 
@@ -22,7 +24,7 @@ export function globalComponent(name: string, func: unknown): boolean{
     console.warn(`"${name}" - reserved name`)
     return false;
   } else {
-    w[funcName] = func;
+    w[funcName] = func.bind(Orve.context);
   }
   return true;
 }
