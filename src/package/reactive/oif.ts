@@ -25,7 +25,7 @@ function updated() {
         if (this.compilerNode !== null)
           unmounted(this.compilerNode);
         const bl =  parseChildren.call(Orve.context, [ block ], null, this.parentNode);
-        const [ mount ] = childF(null, bl);
+        const [ mount ] = childF.call(Orve.context, null, bl);
         this.node.replaceWith((mount as any).node);
         this.node = (mount as any).node;
         this.compilerNode = bl[0];
