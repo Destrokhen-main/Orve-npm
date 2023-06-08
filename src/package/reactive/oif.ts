@@ -12,7 +12,7 @@ import { ProxyType } from "./type";
 import { parseChildren } from "../dom/builder/children";
 import { childF } from "../dom/mount/child";
 import { Orve } from "../default";
-
+import { unmounted } from "../dom/unmounted";
 
 function updated() {
   const call = this.rule();
@@ -22,13 +22,19 @@ function updated() {
     if (call !== this.lastCall) {
       const block = call ? this.block1 : this.block2;
       if (block !== null) {
+        if (this.compilerNode !== null)
+          unmounted(this.compilerNode);
         const bl =  parseChildren.call(Orve.context, [ block ], null, this.parentNode);
-        const [ mount ] = childF(null, bl);
+        const [ mount ] = childF.call(Orve.context, null, bl);
         this.node.replaceWith((mount as any).node);
         this.node = (mount as any).node;
+        this.compilerNode = bl[0];
       } else {
+        if (this.compilerNode !== null)
+          unmounted(this.compilerNode);
+        
         const comment = document.createComment(
-          ` if `,
+          ` if ${this.keyNode}`,
         );
         this.node.replaceWith(comment);
         this.node = comment;
@@ -61,6 +67,7 @@ function oif(rule : (() => boolean), dependencies: any[], block1: any, block2: a
     lastCall: null,
     node: null,
     parentNode: null,
+    compilerNode: null,
     block1,
     block2,
     updated

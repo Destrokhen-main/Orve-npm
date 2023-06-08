@@ -17,32 +17,52 @@ enum PropsStartType {
   None = "None",
 }
 
-type RefLProxy = {
+interface Proxy {
+  type: ProxyType;
+  proxyType: ProxyType;
+}
+
+interface RefLProxy extends Proxy {
   parent: Array<any>;
   value: HTMLElement | null;
-  type: ProxyType;
-  proxyType: ProxyType;
 };
 
-type RefProxy = {
+interface RefProxy extends Proxy {
   parent: Array<any>;
   value: string | number | (() => any);
-  type: ProxyType;
-  proxyType: ProxyType;
   startType: PropsStartType;
+  formate: (func: () => string | number) => any
 };
 
-type RefCProxy = {
+interface RefCProxy extends Proxy {
   parent: Array<any>;
   value: () => any;
-  type: ProxyType;
-  proxyType: ProxyType;
 };
 
-type RefOProxy = {
+
+type ReactiveParams = {
+  node: Comment | null,
+  nameValue: string
+};
+
+interface RefOProxy {
   $parent: Array<any>;
-  type: ProxyType;
-  proxyType: ProxyType;
+  $reactiveParams: Array<ReactiveParams>;
 };
 
-export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy, RefOProxy };
+interface RefAProxy extends Proxy {
+  parent: any[],
+  value: any,
+  render: any,
+  empty: boolean,
+  renderFunction: ((item?: any, index?: number) => any) | null,
+  forList: () => this,
+  parentNode: Record<string, any> | null,
+  keyNode: string
+}
+
+export enum UtilsRef {
+  Format = "format"
+}
+
+export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy, RefOProxy, Proxy, RefAProxy, ReactiveParams };

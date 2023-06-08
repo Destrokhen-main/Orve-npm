@@ -1,4 +1,4 @@
-import { ONodeOrve, TypeNode } from "../types";
+import { ONode, TypeNode } from "../types";
 import { Child, ChildType } from "../builder/children";
 import { mountedNode } from "./index";
 import { RefProxy } from "../../reactive/type";
@@ -6,23 +6,41 @@ import { PropsTypeRef, ChildRef } from "../../reactive/ref";
 import { message as m } from "./error";
 import { parseChildren } from "../builder/children";
 
+export function formatedRef(item: any, val:any | null = null): any {
+  let value = val !== null ? val : item.value.value;
+  if (item.formate !== undefined) {
+    try {
+      value = item.formate(value);
+      if (!["string", "number", "function", "boolean"].includes(typeof value)) {
+        console.warn("formate can return only string, number, function, boolean");
+        value = val !== null ? val : item.value.value;
+      }
+    } catch (e) {
+      console.warn(`ref formate ${value} return error`);
+    }
+  }
+  return value;
+}
+
 export const childF = function (
-  tag: HTMLElement,
-  nodes: Array<ONodeOrve | Child>,
-): Array<ONodeOrve | Child | Array<ONodeOrve | Child>> {
-  return nodes.map((item: ONodeOrve | Child) => {
+  tag: HTMLElement | null,
+  nodes: Array<ONode | Child>,
+): any {
+  return nodes.map((item: ONode | Child) => {
     if (item === undefined) {
       console.warn("Mounted: " + m.UNDEFINED_IN_MOUNT);
       return undefined;
     }
 
     if (item.type === ChildType.HTML) {
-      const element = new DOMParser()
-        .parseFromString(item.value as string, "text/html")
-        .getElementsByTagName("body")[0];
-      item.node = element.firstChild;
-      if (tag !== null) tag.appendChild(element.firstChild);
-      return item;
+      if (item.value !== null) {
+        const element = new DOMParser()
+          .parseFromString(item.value as string, "text/html")
+          .getElementsByTagName("body")[0];
+        (item as any).node = element.firstChild;
+        if (tag !== null) tag.appendChild(element.firstChild as HTMLElement);
+        return item;
+      }
     }
 
     if (item.type === ChildType.HTMLPROP) {
@@ -30,10 +48,13 @@ export const childF = function (
         .parseFromString(item.value as string, "text/html")
         .getElementsByTagName("body")[0]
       
-      for (let i = 0; i !== element.childNodes.length; i++) {
-        tag.appendChild(element.childNodes[i].cloneNode(true));
-      }
-      return undefined;
+      if (tag !== null) {
+        for (let i = 0; i !== element.childNodes.length; i++) {
+          tag.appendChild(element.childNodes[i].cloneNode(true));
+        }
+        return undefined;
+      } else 
+        return undefined;
     }
 
     if (item.type === ChildType.Static) {
@@ -55,26 +76,33 @@ export const childF = function (
       return mountedNode.call(
         this,
         tag as HTMLElement,
-        item as ONodeOrve,
-      ) as ONodeOrve;
+        item as ONode,
+      ) as ONode;
     }
 
     if (item.type === ChildType.ReactiveStatic) {
-      const element = document.createTextNode(
-        (item.value as RefProxy).value as string,
-      );
-      item.node = element;
+      const objectRef: Record<string, any> = item;
+      const value = formatedRef(objectRef);
+
+      const element = document.createTextNode(value);
+      objectRef.node = element;
       if (tag !== null) tag.appendChild(element);
-      (item.value as RefProxy).parent.push({
+      const parentObject = {
         type: PropsTypeRef.Child,
         node: element,
-        ONode: item.ONode,
-      } as ChildRef);
-      return item;
+        ONode: objectRef.ONode,
+      } as ChildRef;
+
+      if (objectRef.formate !== undefined) {
+        parentObject["formate"] = objectRef.formate;
+      }
+
+      (objectRef.value as RefProxy).parent.push(parentObject);
+      return objectRef;
     }
 
     if (item.type === ChildType.ReactiveComponent) {
-      const element = mountedNode.call(this, tag, item.value);
+      const element = mountedNode.call(this, tag, (item as any).value);
       (item as any).proxy.parent.push({
         type: ChildType.ReactiveComponent,
         ONode: element,
@@ -84,9 +112,10 @@ export const childF = function (
 
     if (item.type === ChildType.ReactiveArray) {
       if ((item.value as any).length !== 0) {
-        const items = childF.call(this, tag, item.value);
+        const items = childF.call(this, tag, (item as any).value);
         item.value = items;
         (item as any).proxy.render = items;
+        (item as any).proxy.parentNode = (item as any).parent;
         return item;
       } else {
         const comment = document.createComment(
@@ -101,7 +130,7 @@ export const childF = function (
     }
 
     if (item.type === ChildType.Effect) {
-      const [ node ] = childF.call(this, tag, [ item.value ]);
+      const [ node ] = childF.call(this, tag, [ (item as any).value ]);
       
       (item as any).proxy.checkParent();
       (item as any).proxy.parent.push({
@@ -124,11 +153,13 @@ export const childF = function (
         const pr = parseChildren.call(this, [ (item.value as any).block1 ], null, (item as any).parent);
         const [ block ] = childF.call(this, tag, pr);
         (item.value as any).node = block.node;
+        (item.value as any).compilerNode = pr[0];
       } else {
         if((item.value as any).block2 !== null) {
           const pr = parseChildren.call(this, [ (item.value as any).block2 ], null, (item as any).parent);
           const [ block ] = childF.call(this, tag, pr);
           (item.value as any).node = block.node;
+          (item.value as any).compilerNode = pr[0];
         } else {
           const comment = document.createComment(
             ` if ${(item as any).keyNode} `,

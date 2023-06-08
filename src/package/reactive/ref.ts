@@ -1,11 +1,12 @@
-import { RefProxy, ProxyType, PropsStartType, RefOProxy } from "./type";
-import { ONodeOrve } from "../dom/types";
+import { RefProxy, ProxyType, PropsStartType, RefOProxy, UtilsRef } from "./type";
+import { ONode } from "../dom/types";
 import { HookObject } from "../dom/types";
 import { HookObjectType } from "../dom/types";
 import { typeOf } from "../usedFunction/typeOf";
 import { refO } from "../reactive/refO";
 import { refA } from "./refA";
 import { Orve } from "../default";
+import { formatedRef } from "../dom/mount/child";
 
 enum PropsTypeRef {
   PropStatic = "PropStatic",
@@ -17,16 +18,18 @@ enum PropsTypeRef {
   EffectChild = "EffectChild"
 }
 
-type PropRef = {
+interface PropRef {
   type: PropsTypeRef | ProxyType;
   key: string;
-  ONode: ONodeOrve;
+  ONode: ONode;
+  formate?: () => string | number | (() => string | number)
 };
 
-type ChildRef = {
+interface ChildRef {
   type: PropsTypeRef | ProxyType;
   node: HTMLElement | Text | ChildNode;
-  ONode: ONodeOrve;
+  ONode: ONode;
+  formate?: () => any 
 };
 
 // function retTypeRef(value: string | number | (() => any)): PropsStartType  {
@@ -68,21 +71,34 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
   }
 
   if (Array.isArray(value)) {
-    return refA(value as Array<any>);
+    return refA(value as any[]);
   }
 
-  const object = {
+  const object: RefProxy= {
     value,
     parent: [],
     startType: PropsStartType.None,
-  } as RefProxy;
+    type: ProxyType.Proxy,
+    proxyType: ProxyType.Ref,
+    formate: function(func) {
+      if (typeof func !== "function") {
+        return this;
+      }
+      return {
+        type: UtilsRef.Format,
+        proxy: this,
+        formate: func,
+        value: function() {
+          return this.formate(this.value);
+        }
+      }
+    }
+  };
 
   return new Proxy<RefProxy>(object, {
-    get(target, prop) {
-      if (prop === "type") return ProxyType.Proxy;
-      if (prop === "proxyType") return ProxyType.Ref;
+    get(target: RefProxy, prop: keyof RefProxy | string) {
       if (prop in target) {
-        return target[prop];
+        return target[prop as keyof RefProxy];
       }
       return undefined;
     },
@@ -97,6 +113,8 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
             target.parent.forEach((item: PropRef | ChildRef) => {
               if (item.type === PropsTypeRef.PropStatic) {
                 const node = item.ONode.node;
+
+                insertValue = formatedRef(item, value);
 
                 if (typeof insertValue === "function") {
                   insertValue = insertValue();
@@ -114,22 +132,29 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
                 return;
               }
               if (item.type === PropsTypeRef.PropEvent) {
-                const node = item.ONode.node;
-                node.removeEventListener(
-                  (item as PropRef).key,
-                  lastValue as () => any,
-                );
-                if (typeof value !== "function") {
+                const node: HTMLElement = item.ONode.node as HTMLElement;
+                const key = (item as PropRef).key;
+                const insertValue = formatedRef(item, value);
+                if (typeof insertValue !== "function") {
                   console.error("insert not a function in eventlister");
                 } else {
-                  node.addEventListener((item as PropRef).key, value);
+                  if (String((item as any).lastCall) !== String(insertValue)) {
+                    node.removeEventListener(
+                      key,
+                      (item as any).lastCall,
+                    );
+                    node.addEventListener(key, insertValue);
+                    updatedHook(item, HookObjectType.Props);
+                    (item as any).lastCall = insertValue
+                  }
                 }
-                updatedHook(item, HookObjectType.Props);
                 return;
               }
               if (item.type === PropsTypeRef.Child) {
-                if ((item as ChildRef).node.nodeType === 3) {
-                  (item as ChildRef).node.nodeValue = value;
+                const childRef = item as ChildRef;
+                if (childRef.node.nodeType === 3) {
+                  const text = formatedRef(childRef, value);
+                  childRef.node.nodeValue = text;
                   updatedHook(item, HookObjectType.Child);
                 }
                 return;

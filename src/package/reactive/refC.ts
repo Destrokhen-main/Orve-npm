@@ -33,7 +33,7 @@ function checkExistParents(ar: any): any {
   return nArr;
 }
 
-function unmountedDep(tag) {
+function unmountedDep(tag: Record<string, any>) {
   if (tag.hooks && tag.hooks?.unmounted !== undefined) {
     tag.hooks.unmounted({
       context: Orve.context,
@@ -48,7 +48,7 @@ function unmountedDep(tag) {
   }
 }
 
-function refC(app: () => any | object | null = null) {
+function refC(app: (() => any) | null = null) {
   let block = app;
   if (app === null) {
     block = () => ({ tag: "comment", child: "refC" });
@@ -66,7 +66,7 @@ function refC(app: () => any | object | null = null) {
   } as RefCProxy;
 
   return new Proxy<RefCProxy>(object, {
-    get(target, prop) {
+    get(target: Record<string, any> , prop: keyof RefCProxy | string) {
       if (prop === "type") return ProxyType.Proxy;
       if (prop === "proxyType") return ProxyType.RefC;
       if (prop in target) {
@@ -98,7 +98,8 @@ function refC(app: () => any | object | null = null) {
                     null,
                     item.parent,
                   );
-                  const element = mountedNode.call(
+                  if (parsedItem === undefined) return;
+                  const element: any = mountedNode.call(
                     Orve.context,
                     null,
                     parsedItem,

@@ -1,10 +1,11 @@
 import e from "./error";
 
-import { ProxyType } from "./type";
+import { ProxyType, RefAProxy } from "./type";
 import { parseChildren } from "../dom/builder/children";
 import { childF } from "../dom/mount/child";
 import { HookObject } from "../dom/types";
 import { Orve } from "../default";
+import { generationID } from "../usedFunction/keyGeneration";
 // import { mountedNode } from "../dom/mount/index";
 
 function updated(obj: any) {
@@ -16,7 +17,7 @@ function updated(obj: any) {
   }
 }
 
-function parentCall(obj: any) {
+function parentCall(obj: RefAProxy) {
   if (obj.parent.length > 0) {
     obj.parent.forEach((item: any) => {
       if (item.type === ProxyType.Watch) {
@@ -33,205 +34,300 @@ function parentCall(obj: any) {
   }
 }
 
-function newValueInsert(obj: Record<string, any>, value: any) {
-  let val = value;
+function renderHelper(t: RefAProxy, p: number, v: any) {
+  let replaceValue = v;
 
-  if (obj.renderFunction !== null) {
-    const index = obj.value === null || obj.value.length === 0 ? 0: obj.value.length;
-    val = obj.renderFunction(val, index);
+  if (t.renderFunction !== null) {
+    replaceValue = t.renderFunction(v, p);
   }
+  return replaceValue;
+}
 
-  const newItem = parseChildren.call(
-    Orve.context,
-    Array.isArray(val) ? val : [val],
-    null,
-    obj.parentNode,
-    true,
-  );
+function replaceArrayValue(t: RefAProxy, p: number, v: any) {
+  const replaceValue = renderHelper(t, p, v);
+
+  //const renderItem = t.render[p];
+
+  const builderStep = parseChildren.call(Orve.context, [replaceValue], null, t.parentNode as any, true);
   
-  if (newItem[0].tag === "fragment") {
-    //const node = mountedNode(obj.parentNode.node, newItem[0]);
+  if (builderStep[0] === undefined) {
+    console.error("error build");
+    return;
+  }
+
+  const mounterStep = childF(null, builderStep);
+
+  if (mounterStep[0] === undefined) {
+    console.error("error mounted");
+    return;
+  }
+
+  const mounterItem = mounterStep[0];
+
+  if (t.render === null || t.render[p] === undefined) {
+    insertInArrayNewValue(t, p, v);
   } else {
-    const Item = childF.call(Orve.context, null, newItem);
-    if (!Array.isArray(obj.render)) {
-      obj.render.replaceWith(Item[0].node);
-      obj.render = Item;
-      obj.empty = false;
-      updated(obj);
+    t.render[p].node.replaceWith(mounterItem.node);
+    t.render[p] = mounterItem;
+    updated(t);
+  }
+}
+
+function insertInArrayNewValue(t: RefAProxy, p: number, v: any) {
+  const replaceValue = renderHelper(t, p, v);
+
+  const builderStep = parseChildren.call(Orve.context, [replaceValue], null, t.parentNode as any, true);
+  
+  if (builderStep[0] === undefined) {
+    console.error("error build");
+    return;
+  }
+
+  const mounterStep = childF(null, builderStep);
+
+  if (mounterStep[0] === undefined) {
+    console.error("error mounted");
+    return;
+  }
+
+  const mounterItem = mounterStep[0];
+
+  if (!Array.isArray(t.render)) {
+    t.render.replaceWith(mounterItem.node);
+    t.render = [mounterItem];
+    t.empty = false;
+    updated(t);
+  } else {
+    const element = t.render[t.render.length - 1].node;
+    element.after(mounterItem.node);
+    t.render.push(mounterItem);
+    updated(t);
+  }
+}
+
+function deletePartArrayByIndex(object: RefAProxy, index: number): void {
+  if (object.render !== null && object.render.length !== 0 && Array.isArray(object.render)) {
+    if (object.render.length === 1) {
+      const comment = document.createComment(
+        ` array ${object.keyNode} `,
+      );
+      object.render[0].node.replaceWith(comment);
+      object.render = comment;
     } else {
-      const element = obj.render[obj.render.length - 1].node;
-      element.after(Item[0].node);
-      obj.render.push(Item[0]);
-      updated(obj);
+      object.render[index].node.remove();
+      object.render[index] = undefined;
+    }
+
+    if (Array.isArray(object.render)) {
+      object.render = object.render.filter((x: any) => x !== undefined);
     }
   }
 }
 
-function replaceValue(obj: Record<string, any>, prop: string, value: any) {
-  let val = value;
+function createReactiveArray(ar: any[], object: RefAProxy) {
+  return new Proxy(ar, {
+    get(t: any[], p: any) {
+      const val = t[p];
+      if (typeof val === "function") {
+        if (['push', 'unshift'].includes(p)) {
+          return function () {
+            // eslint-disable-next-line prefer-rest-params
+            const args = arguments;
 
-  if (obj.renderFunction !== null) {
-    val = obj.renderFunction(value, parseInt(prop, 10));
-  }
+            if (object.render !== null) {
+              const newArgs = [];
 
-  const newItem = parseChildren.call(
-    Orve.context,
-    Array.isArray(val) ? val : [val],
-    null,
-    obj.parentNode,
-    true,
-  );
-  const Item = childF.call(Orve.context, null, newItem);
-  obj.render[prop].node.replaceWith(Item[0].node);
-  obj.render[prop] = Item[0];
-  updated(obj);
-}
+              for(let i = 0; i !== args.length; i++) {
+                newArgs.push(args[i]);
+              }
 
-function checkOutAndInput(obj) {
-  if (
-    obj.value.length > 0 &&
-    Array.isArray(obj.render) &&
-    obj.value.length !== obj.render.length
-  ) {
-    let val = obj.value;
+              for (let i = 0; i !== newArgs.length; i++) {
+                insertInArrayNewValue(object, t.length + i, newArgs[i]);
+              }
+            }
+            updated(object);
+            return Array.prototype[p].apply(t, args);
+          }
+        }
+        if (['shift'].includes(p)) {
+          return function () {
+            deletePartArrayByIndex(object, 0);
 
-    if (obj.renderFunction !== null) {
-      if (Array.isArray(val)) {
-        val = val.map(obj.renderFunction);
-      } else {
-        console.log("asd");
+            // eslint-disable-next-line prefer-rest-params
+            const el = Array.prototype[p].apply(t, arguments);
+            updated(object);
+            return el;
+          }
+        }
+        if (['pop'].includes(p)) {
+          // последнего
+          return function () {
+            deletePartArrayByIndex(object, object.render.length - 1);
+
+            // eslint-disable-next-line prefer-rest-params
+            const el = Array.prototype[p].apply(t, arguments);
+            updated(object);
+            return el;
+          }
+        }
+        if (['splice'].includes(p)) {
+          return function (...args: number[]) {
+            const deletedIndex = [];
+
+            if (object.render !== null) {
+              for(let i = args[0]; i !== args[0] + args[1]; i++) {
+                deletedIndex.push(i);
+              }
+              if (deletedIndex.length > 0 && object.render !== null && object.render.length !== 0) {
+                deletedIndex.forEach((e) => {
+                  if (object.render[e] !== undefined) {
+                    if (object.render.length === 1) {
+                      const comment = document.createComment(
+                        ` array ${object.keyNode} `,
+                      );
+                      object.render[0].node.replaceWith(comment);
+                      object.render = comment;
+                    } else {
+                      object.render[e].type = "DELETED";
+                    }
+                  }
+                });
+                
+                if (Array.isArray(object.render)) {
+                  let newRender: any = [];
+                  const lastIndex = object.render.length - 1;
+
+                  object.render.forEach((e, i) => {
+                    if (e.type !== "DELETED") {
+                      newRender.push(e);
+                    } else if (i === lastIndex && newRender.length === 0) {
+                      const comment = document.createComment(
+                        ` array ${object.keyNode} `,
+                      );
+                      e.node.replaceWith(comment);
+                      newRender = comment;
+                      object.empty = true;
+                    } else {
+                      e.node.remove();
+                    }
+                  });
+
+                  object.render = newRender;
+                }
+              }
+            }
+
+            const el = Array.prototype[p].apply(t, args);
+            updated(object);
+            return el;
+          }
+        }
+        parentCall(object);
+        return val.bind(t);
       }
+      return Reflect.get(t, p);
+    },
+    set(t: any[], p: string, v: any) {
+      const s = Reflect.set(t, p, v);
+      const num = parseInt(p, 10);
+
+      if (object.render !== null) {
+        if (!Number.isNaN(num) && Array.isArray(object.render) && num < object.render.length) {
+          replaceArrayValue(object, num, v);
+        } else if (!Number.isNaN(num)) {
+          insertInArrayNewValue(object, num, v);
+        }
+      }
+      updated(object);
+      parentCall(object);
+      return s;
     }
-
-    const newItem = parseChildren.call(
-      Orve.context,
-      val,
-      null,
-      obj.parentNode,
-      true,
-    );
-    const newRender = obj.render.map((ren, i) => {
-      if (newItem[i] === undefined) {
-        ren.node.remove();
-        return undefined;
-      }
-      return ren;
-    });
-    obj.render = newRender.filter((i) => i !== undefined);
-    updated(obj);
-  } else if (obj.value.length === 0 && Array.isArray(obj.render)) {
-    const element = document.createComment(` array ${obj.keyNode} `);
-    obj.render[0].node.replaceWith(element);
-    obj.render = element;
-    obj.empty = true;
-    updated(obj);
-  }
+  });
 }
 
 function refA(ar: Array<any>) {
   if (!Array.isArray(ar)) {
     e("refA - need array");
   }
-  const object = {
-    parent: [],
-    value: null,
-    render: null,
-    empty: null,
-    renderFunction: null,
-    forList: function(func = null){
+
+  const object: RefAProxy = {
+    parent: [], 
+    value: null, // proxy для массива
+    render: null, // все ноды которые на экране
+    empty: true, // пустой ли массив
+    renderFunction: null, // forList
+    forList: function(func = null) {
       if (func !== null && typeof func === "function") {
         this.renderFunction = func;
       } else {
         console.warn("* forList need function *");
       }
       return this;
-    } 
+    },
+    type: ProxyType.Proxy,
+    proxyType: ProxyType.RefA,
+    parentNode: null,
+    keyNode: generationID(8)
   };
 
-  let checkAr = null;
-  let mutationArray = false;
-  const array = new Proxy(ar, {
-    get(target, prop, r) {
-      if (prop === "constructor") {
-        mutationArray = true;
-        setTimeout(() => {
-          checkOutAndInput(object);
-          mutationArray = false;
-        }, 5);
-      }
-      const v = Reflect.get(target, prop, r);
-      return v;
-    },
-    set(target, prop, value) {
-      const isNum = parseInt(prop as string, 10);
-      if (
-        !Number.isNaN(isNum) &&
-        isNum < target.length &&
-        object.render !== null
-      ) {
-        replaceValue(object, prop as string, value);
-        if (mutationArray) {
-          if (checkAr !== null) clearTimeout(checkAr);
-          checkAr = setTimeout(() => {
-            checkOutAndInput(object);
-            mutationArray = false;
-          }, 1);
-        }
-      } else if (
-        !Number.isNaN(isNum) &&
-        isNum === target.length &&
-        object.render !== null
-      ) {
-        newValueInsert(object, value);
-      }
+  const array = createReactiveArray(ar, object);
 
-      const s = Reflect.set(target, prop, value);
-      parentCall(object);
-      return s;
-    },
-  });
-
-  object["value"] = array;
-  object["empty"] = array.length === 0;
+  object.value = array;
+  object.empty = array.length === 0;
 
   return new Proxy(object, {
-    get(target, prop) {
-      if (prop === "type") return ProxyType.Proxy;
-      if (prop === "proxyType") return ProxyType.RefA;
-      return Reflect.get(target, prop);
-    },
-    set(target, prop, value) {
-      if (prop === "value") {
-        if (target["value"].length === 0) {
-          value.forEach((e) => {
-            target["value"].push(e);
+    set(t: RefAProxy, p: string, v: any) {
+      if (p === "value") {
+        if (!Array.isArray(v)) {
+          console.error("refA wanted array");
+          return false;
+        }
+        t.value = createReactiveArray(v, t);
+        const render = t.render;
+        if (render !== null && Array.isArray(render) && render.length > 0) {
+          const lastItem = render[render.length - 1];
+          render.forEach((e: any, i) => {
+            if (i !== render.length - 1) {
+              e.node.remove();
+              render[i] = undefined;
+            }
           });
-          return true;
-        } else {
-          if (value.length > target["value"].length) {
-            value.forEach((e, i) => {
-              if (target["value"][i] !== undefined) {
-                target["value"][i] = e;
+          object.render = lastItem.node;
+
+          const val = v.map((e: any, i: number) => {
+            return renderHelper(t, i, e);
+          })
+
+          const builderStep = parseChildren.call(Orve.context, val, null, t.parentNode as any, true);
+
+          if (builderStep.length === 0) {
+            console.error("bad work in value");
+          }
+
+          const mounterStep = childF(null, builderStep);
+
+          if (mounterStep.length > 0) {
+            mounterStep.forEach((e: any) => {
+              if (!Array.isArray(object.render)) {
+                object.render.replaceWith(e.node);
+                object.render = [ e ];
               } else {
-                target["value"].push(e);
+                const lastItem = object.render[object.render.length - 1].node;
+                lastItem.after(e.node);
+                object.render.push(e);
               }
             });
-          } else if (value.length < target["value"].length) {
-            target["value"].splice(0, target["value"].length);
-            value.forEach((e) => {
-              target["value"].push(e);
-            });
           }
-          return true;
         }
+        return true;
       }
-      return Reflect.set(target, prop, value);
+      return Reflect.set(t, p, v);
     },
     deleteProperty() {
       console.error("refA - You try to delete prop in ref");
       return false;
     },
-  });
+  })
 }
 
 export { refA };

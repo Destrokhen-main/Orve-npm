@@ -46,8 +46,10 @@ describe("refC test", () => {
         ]
       }
     }
-    const app = createApp({App: component});
-    app.mount("#app");
+    const app = createApp(component);
+    if (app !== undefined) {
+      app.mount("#app");
+    }
     const div = document.querySelector("div");
     expect(div?.querySelector("#comp")?.innerHTML).toMatch(/comp-1/);
   })
