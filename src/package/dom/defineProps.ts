@@ -46,7 +46,7 @@ export function defineProps(node: any, pt: Record<string, any>) {
 
       if (p.type !== undefined) {
         if (typeof p.type !== "function" && !Array.isArray(p.type)) {
-          console.warn(`Key "${e}" - type must be "String", "Number", "Array", "Object", "Function"`);
+          console.warn(`Key "${e}" - type must be "String", "Number", "Array", "Object", "Function", "Boolean"`);
           return
         } else if (Array.isArray(p.type)) {
           for(let i = 0; i !== p.type.length; i++) {
