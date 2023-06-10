@@ -60,7 +60,7 @@ export function defineProps(node: any, pt: Record<string, any>) {
           if (p.required !== undefined && p.required === false && p.default !== undefined) {
             ptype[e] = p;
           } else {
-            console.warn(`Key "${e}" - if "required" is set to "true" you must specify the default value "default"`)
+            console.warn(`Key "${e}" - if "required" is set to "false" you must specify the default value "default"`)
             return
           }
         } else {
