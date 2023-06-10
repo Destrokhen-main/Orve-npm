@@ -107,10 +107,11 @@ export function defineProps(node: any, pt: Record<string, any>) {
     
               const type = typeof t;
     
-              if (type !== "object") return type
-              else {
+              if (type !== "object") {
+                return type
+              } else {
                 if (Array.isArray(t)) return "array"
-                else "object"
+                else return "object"
               }
             })
     
@@ -119,7 +120,7 @@ export function defineProps(node: any, pt: Record<string, any>) {
                 ? typeof value 
                 : isArray ? "array" : ""
             }"`)
-            obj[e] = prop["default"] ?? prop["type"][0]();
+            obj[e] = prop["default"] ?? typeof prop["default"] === "function" ? prop["default"]() : prop["default"];
           }
         } else {
           const v = prop["type"]();
