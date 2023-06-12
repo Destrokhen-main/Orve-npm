@@ -11,4 +11,4 @@ export default function (message: string): void {
   throw new error(message);
 }
 
-export { message };
+export { message, error };
