@@ -60,7 +60,7 @@ describe("Formate", () => {
     expect(obj.funcOne.mock.calls).toHaveLength(1);
   })
 
-  test.only("Style", () => {
+  test("Style", () => {
     document.body.innerHTML = "<div id='app'></div>";
 
     const obj = Style();
