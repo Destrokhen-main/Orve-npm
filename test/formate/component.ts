@@ -44,4 +44,20 @@ const Event = function() {
   }
 }
 
-export { Child, Props, Event }
+const Style = function() {
+  const r = ref(false as any)
+
+  return {
+    ref: r,
+    template: Node(() => Node("div", {
+      id: "app",
+      style: r.formate((e: boolean) => {
+        if (e) return "color: green";
+
+        return "color: red"
+      })
+    }))
+  }
+}
+
+export { Child, Props, Event, Style }

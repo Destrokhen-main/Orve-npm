@@ -145,6 +145,22 @@ export const propsF = function (
     }
 
     if (prop === "style") {
+      if (typeof props[prop] === "object" && (props[prop] as any).type === UtilsRef.Format) {
+        const proxy = (props[prop] as any).proxy;
+
+        const value = formatedRef(props[prop], proxy.value);
+
+        tag.setAttribute("style", value);
+        proxy.parent.push({
+          key: "style",
+          type: PropsTypeRef.PropStatic,
+          formate: (props[prop] as any).formate,
+          ONode: this.ONode,
+          lastCall: value
+        })
+        return;
+      }
+
       if (
         typeof props[prop] === "object" &&
         (props[prop] as any).type === ProxyType.Proxy

@@ -1,6 +1,6 @@
 import {describe, expect, test} from '@jest/globals';
 
-import { Child, Props, Event } from "./component";
+import { Child, Props, Event, Style } from "./component";
 import { createAppRoot } from '../../src';
 
 document.body.innerHTML = "<div id='app'></div>";
@@ -58,5 +58,22 @@ describe("Formate", () => {
     obj.ref.value += 1;
     (node as any).click();
     expect(obj.funcOne.mock.calls).toHaveLength(1);
+  })
+
+  test("Style", () => {
+    document.body.innerHTML = "<div id='app'></div>";
+
+    const obj = Style();
+    createAppRoot(obj.template)?.mount("#app");
+
+    const node = document.body.querySelector("#app");
+    expect(node).toBeDefined();
+
+    let prop = node?.getAttribute("style");
+    expect(prop).toBe("color: red");
+
+    obj.ref.value = true;
+    prop = node?.getAttribute("style");
+    expect(prop).toBe("color: green");
   })
 });
