@@ -325,7 +325,6 @@ function refA(ar: Array<any>) {
     parent: [], 
     value: null, // proxy для массива
     empty: true, // пустой ли массив
-    renderFunction: null, // forList
     forList: function(func = null) {
       if (func !== null && typeof func === "function") {
         return {
