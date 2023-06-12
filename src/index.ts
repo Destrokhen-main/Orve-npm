@@ -11,6 +11,8 @@ import { Orve, context } from "./package/default";
 import { Node, Fragment } from "./package/jsx";
 import { createAppRoot } from "./package/dom/root";
 import { globalComponent } from "./package/utils/global-component";
+import { defineProps } from "./package/dom/defineProps";
+
 export {
   createApp,
   refL,
@@ -27,6 +29,7 @@ export {
   context,
   createAppRoot,
   globalComponent
+  defineProps
 };
 
 export default {
@@ -36,4 +39,5 @@ export default {
   Fragment,
   createAppRoot,
   globalComponent
+  defineProps
 };
