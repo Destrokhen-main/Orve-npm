@@ -1,4 +1,10 @@
-import { RefProxy, ProxyType, PropsStartType, RefOProxy, UtilsRef } from "./type";
+import {
+  RefProxy,
+  ProxyType,
+  PropsStartType,
+  RefOProxy,
+  UtilsRef,
+} from "./type";
 import { ONode } from "../dom/types";
 import { HookObject } from "../dom/types";
 import { HookObjectType } from "../dom/types";
@@ -15,22 +21,22 @@ enum PropsTypeRef {
   Custom = "Custom",
   EffectStyle = "EffectStyle",
   EffectImg = "EffectImg",
-  EffectChild = "EffectChild"
+  EffectChild = "EffectChild",
 }
 
 interface PropRef {
   type: PropsTypeRef | ProxyType;
   key: string;
   ONode: ONode;
-  formate?: () => string | number | (() => string | number)
-};
+  formate?: () => string | number | (() => string | number);
+}
 
 interface ChildRef {
   type: PropsTypeRef | ProxyType;
   node: HTMLElement | Text | ChildNode;
   ONode: ONode;
-  formate?: () => any 
-};
+  formate?: () => any;
+}
 
 // function retTypeRef(value: string | number | (() => any)): PropsStartType  {
 //   const tValue = typeof value;
@@ -65,7 +71,9 @@ function checkExistParents(ar: Array<PropRef>): Array<PropRef> {
   return nArr;
 }
 
-function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy | any {
+function ref(
+  value: string | number | (() => any) | any[],
+): RefProxy | RefOProxy | any {
   if (typeOf(value) === "object") {
     return refO(value);
   }
@@ -74,13 +82,13 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
     return refA(value as any[]);
   }
 
-  const object: RefProxy= {
+  const object: RefProxy = {
     value,
     parent: [],
     startType: PropsStartType.None,
     type: ProxyType.Proxy,
     proxyType: ProxyType.Ref,
-    formate: function(func) {
+    formate: function (func) {
       if (typeof func !== "function") {
         return this;
       }
@@ -88,11 +96,11 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
         type: UtilsRef.Format,
         proxy: this,
         formate: func,
-        value: function() {
+        value: function () {
           return this.formate(this.value);
-        }
-      }
-    }
+        },
+      };
+    },
   };
 
   return new Proxy<RefProxy>(object, {
@@ -139,13 +147,10 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
                   console.error("insert not a function in eventlister");
                 } else {
                   if (String((item as any).lastCall) !== String(insertValue)) {
-                    node.removeEventListener(
-                      key,
-                      (item as any).lastCall,
-                    );
+                    node.removeEventListener(key, (item as any).lastCall);
                     node.addEventListener(key, insertValue);
                     updatedHook(item, HookObjectType.Props);
-                    (item as any).lastCall = insertValue
+                    (item as any).lastCall = insertValue;
                   }
                 }
                 return;
@@ -167,7 +172,10 @@ function ref(value: string | number | (() => any) | any[]): RefProxy | RefOProxy
                 (item as any).value.updated;
                 return;
               }
-              if (item.type === ProxyType.Effect || item.type === ProxyType.Oif) {
+              if (
+                item.type === ProxyType.Effect ||
+                item.type === ProxyType.Oif
+              ) {
                 (item as any).value.updated();
               }
               if (item.type === "Custom") {

@@ -9,10 +9,10 @@ import { unmounted } from "./unmounted";
 
 export interface createApp {
   mount: (root: string) => void;
-};
+}
 
 interface App {
-  App: () => unknown
+  App: () => unknown;
 }
 
 function createApp(app: App | (() => unknown)): createApp | undefined {
@@ -24,7 +24,7 @@ function createApp(app: App | (() => unknown)): createApp | undefined {
     if (Object.keys(parsedContext).length > 0) {
       Object.keys(parsedContext).forEach((key) => {
         Orve.context[key] = parsedContext[key];
-      })
+      });
     }
 
     // start building app
@@ -34,9 +34,9 @@ function createApp(app: App | (() => unknown)): createApp | undefined {
   }
 
   if (window !== undefined) {
-    window.onbeforeunload = function() {
+    window.onbeforeunload = function () {
       unmounted(Orve.tree);
-    }
+    };
   }
 
   if (type === "function" || type === "object") {

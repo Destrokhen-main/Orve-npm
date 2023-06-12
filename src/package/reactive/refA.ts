@@ -48,8 +48,14 @@ function replaceArrayValue(t: RefAProxy, p: number, v: any) {
 
   //const renderItem = t.render[p];
 
-  const builderStep = parseChildren.call(Orve.context, [replaceValue], null, t.parentNode as any, true);
-  
+  const builderStep = parseChildren.call(
+    Orve.context,
+    [replaceValue],
+    null,
+    t.parentNode as any,
+    true,
+  );
+
   if (builderStep[0] === undefined) {
     console.error("error build");
     return;
@@ -76,8 +82,14 @@ function replaceArrayValue(t: RefAProxy, p: number, v: any) {
 function insertInArrayNewValue(t: RefAProxy, p: number, v: any) {
   const replaceValue = renderHelper(t, p, v);
 
-  const builderStep = parseChildren.call(Orve.context, [replaceValue], null, t.parentNode as any, true);
-  
+  const builderStep = parseChildren.call(
+    Orve.context,
+    [replaceValue],
+    null,
+    t.parentNode as any,
+    true,
+  );
+
   if (builderStep[0] === undefined) {
     console.error("error build");
     return;
@@ -106,11 +118,13 @@ function insertInArrayNewValue(t: RefAProxy, p: number, v: any) {
 }
 
 function deletePartArrayByIndex(object: RefAProxy, index: number): void {
-  if (object.render !== null && object.render.length !== 0 && Array.isArray(object.render)) {
+  if (
+    object.render !== null &&
+    object.render.length !== 0 &&
+    Array.isArray(object.render)
+  ) {
     if (object.render.length === 1) {
-      const comment = document.createComment(
-        ` array ${object.keyNode} `,
-      );
+      const comment = document.createComment(` array ${object.keyNode} `);
       object.render[0].node.replaceWith(comment);
       object.render = comment;
     } else {
@@ -129,7 +143,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
     get(t: any[], p: any) {
       const val = t[p];
       if (typeof val === "function") {
-        if (['push', 'unshift'].includes(p)) {
+        if (["push", "unshift"].includes(p)) {
           return function () {
             // eslint-disable-next-line prefer-rest-params
             const args = arguments;
@@ -137,7 +151,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
             if (object.render !== null) {
               const newArgs = [];
 
-              for(let i = 0; i !== args.length; i++) {
+              for (let i = 0; i !== args.length; i++) {
                 newArgs.push(args[i]);
               }
 
@@ -147,9 +161,9 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
             }
             updated(object);
             return Array.prototype[p].apply(t, args);
-          }
+          };
         }
-        if (['shift'].includes(p)) {
+        if (["shift"].includes(p)) {
           return function () {
             deletePartArrayByIndex(object, 0);
 
@@ -157,9 +171,9 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
             const el = Array.prototype[p].apply(t, arguments);
             updated(object);
             return el;
-          }
+          };
         }
-        if (['pop'].includes(p)) {
+        if (["pop"].includes(p)) {
           // последнего
           return function () {
             deletePartArrayByIndex(object, object.render.length - 1);
@@ -168,17 +182,21 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
             const el = Array.prototype[p].apply(t, arguments);
             updated(object);
             return el;
-          }
+          };
         }
-        if (['splice'].includes(p)) {
+        if (["splice"].includes(p)) {
           return function (...args: number[]) {
             const deletedIndex = [];
 
             if (object.render !== null) {
-              for(let i = args[0]; i !== args[0] + args[1]; i++) {
+              for (let i = args[0]; i !== args[0] + args[1]; i++) {
                 deletedIndex.push(i);
               }
-              if (deletedIndex.length > 0 && object.render !== null && object.render.length !== 0) {
+              if (
+                deletedIndex.length > 0 &&
+                object.render !== null &&
+                object.render.length !== 0
+              ) {
                 deletedIndex.forEach((e) => {
                   if (object.render[e] !== undefined) {
                     if (object.render.length === 1) {
@@ -192,7 +210,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
                     }
                   }
                 });
-                
+
                 if (Array.isArray(object.render)) {
                   let newRender: any = [];
                   const lastIndex = object.render.length - 1;
@@ -220,7 +238,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
             const el = Array.prototype[p].apply(t, args);
             updated(object);
             return el;
-          }
+          };
         }
         parentCall(object);
         return val.bind(t);
@@ -232,7 +250,11 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
       const num = parseInt(p, 10);
 
       if (object.render !== null) {
-        if (!Number.isNaN(num) && Array.isArray(object.render) && num < object.render.length) {
+        if (
+          !Number.isNaN(num) &&
+          Array.isArray(object.render) &&
+          num < object.render.length
+        ) {
           replaceArrayValue(object, num, v);
         } else if (!Number.isNaN(num)) {
           insertInArrayNewValue(object, num, v);
@@ -241,7 +263,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
       updated(object);
       parentCall(object);
       return s;
-    }
+    },
   });
 }
 
@@ -251,12 +273,12 @@ function refA(ar: Array<any>) {
   }
 
   const object: RefAProxy = {
-    parent: [], 
+    parent: [],
     value: null, // proxy для массива
     render: null, // все ноды которые на экране
     empty: true, // пустой ли массив
     renderFunction: null, // forList
-    forList: function(func = null) {
+    forList: function (func = null) {
       if (func !== null && typeof func === "function") {
         this.renderFunction = func;
       } else {
@@ -267,7 +289,7 @@ function refA(ar: Array<any>) {
     type: ProxyType.Proxy,
     proxyType: ProxyType.RefA,
     parentNode: null,
-    keyNode: generationID(8)
+    keyNode: generationID(8),
   };
 
   const array = createReactiveArray(ar, object);
@@ -296,9 +318,15 @@ function refA(ar: Array<any>) {
 
           const val = v.map((e: any, i: number) => {
             return renderHelper(t, i, e);
-          })
+          });
 
-          const builderStep = parseChildren.call(Orve.context, val, null, t.parentNode as any, true);
+          const builderStep = parseChildren.call(
+            Orve.context,
+            val,
+            null,
+            t.parentNode as any,
+            true,
+          );
 
           if (builderStep.length === 0) {
             console.error("bad work in value");
@@ -310,7 +338,7 @@ function refA(ar: Array<any>) {
             mounterStep.forEach((e: any) => {
               if (!Array.isArray(object.render)) {
                 object.render.replaceWith(e.node);
-                object.render = [ e ];
+                object.render = [e];
               } else {
                 const lastItem = object.render[object.render.length - 1].node;
                 lastItem.after(e.node);
@@ -327,7 +355,7 @@ function refA(ar: Array<any>) {
       console.error("refA - You try to delete prop in ref");
       return false;
     },
-  })
+  });
 }
 
 export { refA };

@@ -2,10 +2,10 @@ import { Node } from "./../jsx";
 import { Orve } from "../default";
 
 function unmounted(tree: Node): void {
-  if (tree.hooks !== undefined && tree.hooks.unmounted!== undefined) {
+  if (tree.hooks !== undefined && tree.hooks.unmounted !== undefined) {
     tree.hooks.unmounted({
       context: Orve.Context,
-      oNode: tree
+      oNode: tree,
     });
   }
 
@@ -16,4 +16,4 @@ function unmounted(tree: Node): void {
   }
 }
 
-export { unmounted }
+export { unmounted };

@@ -1,12 +1,12 @@
 import { ProxyType, RefLProxy } from "./type";
 
 function refL(): RefLProxy {
-  const object: RefLProxy  = {
+  const object: RefLProxy = {
     parent: [],
     value: null,
     type: ProxyType.Proxy,
-    proxyType: ProxyType.RefL
-  }
+    proxyType: ProxyType.RefL,
+  };
 
   return new Proxy<RefLProxy>(object, {
     set(target, prop, value) {

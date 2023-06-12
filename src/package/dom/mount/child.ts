@@ -6,13 +6,15 @@ import { PropsTypeRef, ChildRef } from "../../reactive/ref";
 import { message as m } from "./error";
 import { parseChildren } from "../builder/children";
 
-export function formatedRef(item: any, val:any | null = null): any {
+export function formatedRef(item: any, val: any | null = null): any {
   let value = val !== null ? val : item.value.value;
   if (item.formate !== undefined) {
     try {
       value = item.formate(value);
       if (!["string", "number", "function", "boolean"].includes(typeof value)) {
-        console.warn("formate can return only string, number, function, boolean");
+        console.warn(
+          "formate can return only string, number, function, boolean",
+        );
         value = val !== null ? val : item.value.value;
       }
     } catch (e) {
@@ -46,24 +48,25 @@ export const childF = function (
     if (item.type === ChildType.HTMLPROP) {
       const element = new DOMParser()
         .parseFromString(item.value as string, "text/html")
-        .getElementsByTagName("body")[0]
-      
+        .getElementsByTagName("body")[0];
+
       if (tag !== null) {
         for (let i = 0; i !== element.childNodes.length; i++) {
           tag.appendChild(element.childNodes[i].cloneNode(true));
         }
         return undefined;
-      } else 
-        return undefined;
+      } else return undefined;
     }
 
     if (item.type === ChildType.Static) {
       const r = /(&#(\d+);)/g;
       if (r.test((item as Child).value.toString())) {
         // TODO Возможно плохой вариант.
-        (item as Child).value = (item as Child).value.toString().replace(/(&#(\d+);)/g, function(a, b, charCode) {
-          return String.fromCharCode(charCode);
-        });
+        (item as Child).value = (item as Child).value
+          .toString()
+          .replace(/(&#(\d+);)/g, function (a, b, charCode) {
+            return String.fromCharCode(charCode);
+          });
       }
 
       const element = document.createTextNode((item as Child).value.toString());
@@ -73,11 +76,7 @@ export const childF = function (
     }
 
     if (item.type === TypeNode.Component) {
-      return mountedNode.call(
-        this,
-        tag as HTMLElement,
-        item as ONode,
-      ) as ONode;
+      return mountedNode.call(this, tag as HTMLElement, item as ONode) as ONode;
     }
 
     if (item.type === ChildType.ReactiveStatic) {
@@ -106,7 +105,7 @@ export const childF = function (
       (item as any).proxy.parent.push({
         type: ChildType.ReactiveComponent,
         ONode: element,
-        parent: item.ONode
+        parent: item.ONode,
       });
     }
 
@@ -130,15 +129,15 @@ export const childF = function (
     }
 
     if (item.type === ChildType.Effect) {
-      const [ node ] = childF.call(this, tag, [ (item as any).value ]);
-      
+      const [node] = childF.call(this, tag, [(item as any).value]);
+
       (item as any).proxy.checkParent();
       (item as any).proxy.parent.push({
         type: "EffectChild",
         proxy: item,
         value: node,
         typeChanges: (item as any).typeChanges,
-        parent: (item as any).parent
+        parent: (item as any).parent,
       });
       return item;
     }
@@ -150,14 +149,24 @@ export const childF = function (
       }
       (item.value as any).lastCall = call;
       if (call) {
-        const pr = parseChildren.call(this, [ (item.value as any).block1 ], null, (item as any).parent);
-        const [ block ] = childF.call(this, tag, pr);
+        const pr = parseChildren.call(
+          this,
+          [(item.value as any).block1],
+          null,
+          (item as any).parent,
+        );
+        const [block] = childF.call(this, tag, pr);
         (item.value as any).node = block.node;
         (item.value as any).compilerNode = pr[0];
       } else {
-        if((item.value as any).block2 !== null) {
-          const pr = parseChildren.call(this, [ (item.value as any).block2 ], null, (item as any).parent);
-          const [ block ] = childF.call(this, tag, pr);
+        if ((item.value as any).block2 !== null) {
+          const pr = parseChildren.call(
+            this,
+            [(item.value as any).block2],
+            null,
+            (item as any).parent,
+          );
+          const [block] = childF.call(this, tag, pr);
           (item.value as any).node = block.node;
           (item.value as any).compilerNode = pr[0];
         } else {

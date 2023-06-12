@@ -27,7 +27,11 @@ function updated(target: Record<string, any>) {
   }
 }
 
-function createReactiveObjectByProp(prop: string, value: any, mainProxy: RefOProxy) {
+function createReactiveObjectByProp(
+  prop: string,
+  value: any,
+  mainProxy: RefOProxy,
+) {
   const type = typeOf(value);
   if (type === "string" || type === "number" || type === "boolean") {
     const r = ref(value);
@@ -42,10 +46,10 @@ function createReactiveObjectByProp(prop: string, value: any, mainProxy: RefOPro
     const arr = refA(value);
     arr.parent.push({
       type: ProxyType.RefO,
-      value: mainProxy
+      value: mainProxy,
     });
     return arr;
-  } 
+  }
 
   if (type === "object") {
     const rO = refO(value);
@@ -62,9 +66,9 @@ function createReactiveObjectByProp(prop: string, value: any, mainProxy: RefOPro
 }
 
 function refO(object: any) {
-  const obj : RefOProxy = {
+  const obj: RefOProxy = {
     $parent: [],
-    $reactiveParams: []
+    $reactiveParams: [],
   };
 
   const mainProxy: any = new Proxy<RefOProxy>(obj, {
@@ -125,7 +129,9 @@ function refO(object: any) {
         delete target[prop];
         return true;
       } else {
-        console.error("refO - You try to delete [$parent | $type | $proxyType] prop in refO");
+        console.error(
+          "refO - You try to delete [$parent | $type | $proxyType] prop in refO",
+        );
         return false;
       }
     },

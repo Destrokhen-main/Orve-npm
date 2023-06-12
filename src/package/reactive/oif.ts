@@ -1,4 +1,3 @@
-
 /*
 oif(
   () => {
@@ -22,20 +21,21 @@ function updated() {
     if (call !== this.lastCall) {
       const block = call ? this.block1 : this.block2;
       if (block !== null) {
-        if (this.compilerNode !== null)
-          unmounted(this.compilerNode);
-        const bl =  parseChildren.call(Orve.context, [ block ], null, this.parentNode);
-        const [ mount ] = childF.call(Orve.context, null, bl);
+        if (this.compilerNode !== null) unmounted(this.compilerNode);
+        const bl = parseChildren.call(
+          Orve.context,
+          [block],
+          null,
+          this.parentNode,
+        );
+        const [mount] = childF.call(Orve.context, null, bl);
         this.node.replaceWith((mount as any).node);
         this.node = (mount as any).node;
         this.compilerNode = bl[0];
       } else {
-        if (this.compilerNode !== null)
-          unmounted(this.compilerNode);
-        
-        const comment = document.createComment(
-          ` if ${this.keyNode}`,
-        );
+        if (this.compilerNode !== null) unmounted(this.compilerNode);
+
+        const comment = document.createComment(` if ${this.keyNode}`);
         this.node.replaceWith(comment);
         this.node = comment;
       }
@@ -45,7 +45,12 @@ function updated() {
   }
 }
 
-function oif(rule : (() => boolean), dependencies: any[], block1: any, block2: any | null = null) {
+function oif(
+  rule: () => boolean,
+  dependencies: any[],
+  block1: any,
+  block2: any | null = null,
+) {
   //
   if (typeof rule !== "function") {
     console.error("first argument need to be a function");
@@ -58,7 +63,7 @@ function oif(rule : (() => boolean), dependencies: any[], block1: any, block2: a
   }
 
   if (!Array.isArray(dependencies)) {
-    console.error("dependencies not a array")
+    console.error("dependencies not a array");
   }
 
   const object = {
@@ -70,8 +75,8 @@ function oif(rule : (() => boolean), dependencies: any[], block1: any, block2: a
     compilerNode: null,
     block1,
     block2,
-    updated
-  }
+    updated,
+  };
 
   const proxy = new Proxy(object, {
     get(target, prop) {

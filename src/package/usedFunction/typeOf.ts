@@ -5,7 +5,7 @@ const isProxy = function (obj: any) {
 };
 
 export const typeOf = function (obj: any) {
-  const type : string = typeof obj;
+  const type: string = typeof obj;
   if (obj === null) return "null";
   if (obj === undefined) return "undefined";
 

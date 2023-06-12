@@ -7,27 +7,29 @@ function ucFirst(str: string) {
 }
 
 /**
- * 
+ *
  * @param {string} name - name component on camelCase
  * @param {function} func - Component
  * @returns boolean - true if created will be success, false if it don't be
  */
-export function globalComponent(name: string, func: unknown): boolean{
+export function globalComponent(name: string, func: unknown): boolean {
   if (window === undefined) {
     return false;
   }
 
   if (typeof func !== "function" || name.length === 0) {
-    console.warn("The name of the global component must not be an empty string");
+    console.warn(
+      "The name of the global component must not be an empty string",
+    );
     return false;
   }
 
   const funcName = ucFirst(name);
 
-  const w = (window as Record<string, any>);
+  const w = window as Record<string, any>;
 
   if (w[funcName] !== undefined) {
-    console.warn(`"${name}" - reserved name`)
+    console.warn(`"${name}" - reserved name`);
     return false;
   } else {
     w[funcName] = func.bind(Orve.context);

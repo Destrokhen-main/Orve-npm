@@ -17,7 +17,7 @@ enum ChildType {
   ReactiveArray = "ReactiveArray",
   Effect = "Effect",
   Oif = "Oif",
-  HTMLPROP = "HTMLPROP"
+  HTMLPROP = "HTMLPROP",
 }
 
 type Child = {
@@ -37,7 +37,10 @@ function isHaveAnyArray(ar: Array<() => any>) {
 function isFormatObj(obj: unknown): boolean {
   if (typeof obj === "object") {
     const knowObj = obj as Record<string, any>;
-    if (knowObj["type"] !== undefined && Object.values(UtilsRef).includes(knowObj["type"])) {
+    if (
+      knowObj["type"] !== undefined &&
+      Object.values(UtilsRef).includes(knowObj["type"])
+    ) {
       return true;
     }
   }
@@ -75,13 +78,7 @@ function ProxyBulder(item: any, props: Props | null, parent: ONode | null) {
 
     return {
       type: ChildType.ReactiveArray,
-      value: parseChildren.call(
-        this,
-        list,
-        props,
-        parent,
-        true,
-      ),
+      value: parseChildren.call(this, list, props, parent, true),
       proxy: item,
       parent,
       keyNode: generationID(8),
@@ -91,7 +88,7 @@ function ProxyBulder(item: any, props: Props | null, parent: ONode | null) {
   if (proxyType === ProxyType.Effect) {
     const call = checkerEffect(item as Effect);
 
-    const [ res ] = parseChildren.call(this, [ call ], props, parent);
+    const [res] = parseChildren.call(this, [call], props, parent);
     return {
       type: ChildType.Effect,
       proxy: item,
@@ -109,8 +106,8 @@ function ProxyBulder(item: any, props: Props | null, parent: ONode | null) {
       type: ChildType.Oif,
       value: item,
       parent,
-      keyNode
-    }
+      keyNode,
+    };
   }
 }
 
@@ -130,9 +127,9 @@ function parseChildren(
         return {
           type: ChildType.HTMLPROP,
           value: item,
-        }
+        };
       }
-      
+
       // NOTE NEED REGEXP
       if (
         typeof item === "string" &&
@@ -145,12 +142,16 @@ function parseChildren(
           value: item,
         };
       }
-      
-      if (typeNode === "null" || typeNode === "undefined" || typeNode === "boolean") {
+
+      if (
+        typeNode === "null" ||
+        typeNode === "undefined" ||
+        typeNode === "boolean"
+      ) {
         return {
           type: ChildType.Static,
           value: String(item),
-        }
+        };
       }
 
       // NOTE static string or nubmer
@@ -165,16 +166,26 @@ function parseChildren(
           type: ChildType.ReactiveStatic,
           value: item.proxy,
           ONode: parent,
-          formate: item.formate
-        }
+          formate: item.formate,
+        };
       }
       // NOTE component
       if ((typeNode === "object" || typeNode === "function") && !isArray) {
-        return parser.call(this, item as () => any | Record<string, any>, props, parent);
+        return parser.call(
+          this,
+          item as () => any | Record<string, any>,
+          props,
+          parent,
+        );
       } else if (isArray) {
         if (typeof item === "object") {
           if (isNodeBoolean(item as Record<string, any>)) {
-            return parser.call(this, item as () => any | Record<string, any>, props, parent);
+            return parser.call(
+              this,
+              item as () => any | Record<string, any>,
+              props,
+              parent,
+            );
           } else {
             return {
               type: ChildType.Static,

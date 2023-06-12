@@ -21,17 +21,14 @@ const startWatch = (object: Watch, typeProxy: ProxyType, dependencies: any) => {
 };
 
 interface Watch extends Proxy {
-  key: string,
-  parent: any[],
-  watch: boolean,
-  value: (n: any, o: any) => void,
-  updated: (n: any, o: any) => void
+  key: string;
+  parent: any[];
+  watch: boolean;
+  value: (n: any, o: any) => void;
+  updated: (n: any, o: any) => void;
 }
 
-function watch(
-  func: () => void,
-  dependencies: any = null,
-) {
+function watch(func: () => void, dependencies: any = null) {
   const object: Watch = {
     key: generationID(8),
     parent: dependencies,

@@ -6,7 +6,7 @@ import { watch } from "./package/reactive/watch";
 import { refO } from "./package/reactive/refO";
 import { refA } from "./package/reactive/refA";
 import { effect } from "./package/reactive/effect";
-import { oif } from "./package/reactive/oif"; 
+import { oif } from "./package/reactive/oif";
 import { Orve, context } from "./package/default";
 import { Node, Fragment } from "./package/jsx";
 import { createAppRoot } from "./package/dom/root";
@@ -26,7 +26,7 @@ export {
   oif,
   context,
   createAppRoot,
-  globalComponent
+  globalComponent,
 };
 
 export default {
@@ -35,5 +35,5 @@ export default {
   Node,
   Fragment,
   createAppRoot,
-  globalComponent
+  globalComponent,
 };

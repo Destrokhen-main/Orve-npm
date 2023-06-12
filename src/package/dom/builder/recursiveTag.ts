@@ -3,7 +3,7 @@ import { message as m } from "./error";
 import { isONode } from "../builder/validator";
 import { Node } from "../../jsx";
 
-function recursiveTag(node: Node) : Node | undefined {
+function recursiveTag(node: Node): Node | undefined {
   let pr: Record<string, any> = {};
 
   if (node.props) {
@@ -13,7 +13,7 @@ function recursiveTag(node: Node) : Node | undefined {
   if (node.child) {
     pr["children"] = node.child;
   }
-  
+
   let req: Node;
   if (Object.keys(pr).length > 0) {
     req = (node.tag as (args?: Record<string, any>) => any).call(this, pr);
@@ -22,7 +22,11 @@ function recursiveTag(node: Node) : Node | undefined {
   }
 
   if (typeOf(req) !== "object") {
-    console.warn(`component: ${String(JSON.stringify(node)).substring(0, 50)}... \n${m.CALL_NODE_RETURN_NOT_A_OBJECT}`);
+    console.warn(
+      `component: ${String(JSON.stringify(node)).substring(0, 50)}... \n${
+        m.CALL_NODE_RETURN_NOT_A_OBJECT
+      }`,
+    );
     return undefined;
   }
 

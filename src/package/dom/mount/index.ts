@@ -19,12 +19,16 @@ function mount(query: string): void {
   Orve.tree = mountedNode.call(Orve.context, tag, oNode);
 }
 
-function createComment(app: HTMLElement | null, nodes: ONode | any ): ONode {
+function createComment(app: HTMLElement | null, nodes: ONode | any): ONode {
   let text = "";
-  if (nodes.child !== undefined && Array.isArray(nodes.child) && nodes.child.length > 0) {
+  if (
+    nodes.child !== undefined &&
+    Array.isArray(nodes.child) &&
+    nodes.child.length > 0
+  ) {
     text = nodes.child.reduce((a: string, b: any) => {
       if (b.type !== undefined && b.type === ChildType.Static) {
-        return a += String(b.value);
+        return (a += String(b.value));
       }
       return String(a);
     }, "");
@@ -41,7 +45,9 @@ function createComment(app: HTMLElement | null, nodes: ONode | any ): ONode {
 
   if (nodes["$refOParams"] !== undefined) {
     const prop = nodes["$refOParams"].prop;
-    const indexF = nodes["$refOParams"].proxy.$reactiveParams.findIndex((x: Record<string, any>) => x.nameValue === prop);
+    const indexF = nodes["$refOParams"].proxy.$reactiveParams.findIndex(
+      (x: Record<string, any>) => x.nameValue === prop,
+    );
     if (indexF !== -1) {
       nodes["$refOParams"].proxy.$reactiveParams[indexF].node = comment;
     }
@@ -52,7 +58,6 @@ function createComment(app: HTMLElement | null, nodes: ONode | any ): ONode {
   app.appendChild(comment);
   return object;
 }
-
 
 function createFragment(app: HTMLElement | null, nodes: ONode) {
   if (nodes.child !== undefined) {

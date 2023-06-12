@@ -29,7 +29,7 @@ import { ProxyType, Proxy } from "./type";
 import { typeOf } from "../usedFunction/typeOf";
 import { PropsTypeRef } from "../reactive/ref";
 
-import reactToCSS from 'style-object-to-css-string';
+import reactToCSS from "style-object-to-css-string";
 
 import { parseChildren } from "../dom/builder/children";
 import { childF } from "../dom/mount/child";
@@ -84,8 +84,13 @@ function updated() {
 
       if (item.type === PropsTypeRef.EffectChild) {
         if (this.value === null || this.value.toString() !== call.toString()) {
-          const parseCall = parseChildren.call(null,  Array.isArray(call) ? call : [ call ] , null, item.parent)
-          const [ node ] = childF(null, parseCall);
+          const parseCall = parseChildren.call(
+            null,
+            Array.isArray(call) ? call : [call],
+            null,
+            item.parent,
+          );
+          const [node] = childF(null, parseCall);
           item.value.node.replaceWith((node as any).node);
 
           item.value = node;
@@ -112,22 +117,22 @@ function checkParent(item = null) {
           return true;
         }
       }
-    })
+    });
   }
 }
 
 export interface Parent {
-  type: PropsTypeRef
+  type: PropsTypeRef;
 }
 
 export interface Effect extends Proxy {
-  value: any,
-  render: any[],
-  func: () => any,
-  parent: any[],
-  typeOutPut: any,
-  updated: () => undefined | void,
-  checkParent: () => void
+  value: any;
+  render: any[];
+  func: () => any;
+  parent: any[];
+  typeOutPut: any;
+  updated: () => undefined | void;
+  checkParent: () => void;
 }
 
 function effect(func: () => any, dependencies: Array<any>) {
@@ -144,7 +149,7 @@ function effect(func: () => any, dependencies: Array<any>) {
     updated,
     checkParent,
     type: ProxyType.Proxy,
-    proxyType: ProxyType.Effect
+    proxyType: ProxyType.Effect,
   };
 
   const proxy = new Proxy(object, {

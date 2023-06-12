@@ -66,7 +66,7 @@ function refC(app: (() => any) | null = null) {
   } as RefCProxy;
 
   return new Proxy<RefCProxy>(object, {
-    get(target: Record<string, any> , prop: keyof RefCProxy | string) {
+    get(target: Record<string, any>, prop: keyof RefCProxy | string) {
       if (prop === "type") return ProxyType.Proxy;
       if (prop === "proxyType") return ProxyType.RefC;
       if (prop in target) {
@@ -86,7 +86,10 @@ function refC(app: (() => any) | null = null) {
             const typeInsertBlock = typeOf(comp);
             target.parent = target.parent.map((item) => {
               if (item.type === ChildType.ReactiveComponent) {
-                if (typeInsertBlock === "object" || typeInsertBlock === "function") {
+                if (
+                  typeInsertBlock === "object" ||
+                  typeInsertBlock === "function"
+                ) {
                   if (typeInsertBlock === "object") {
                     comp = () => value;
                   }
@@ -110,10 +113,18 @@ function refC(app: (() => any) | null = null) {
                     updatedHook(item.ONode.parent, HookObjectType.Component);
                   }
                   return item;
-                } else if (typeInsertBlock === "string" || typeInsertBlock === "number") {
+                } else if (
+                  typeInsertBlock === "string" ||
+                  typeInsertBlock === "number"
+                ) {
                   unmountedDep(target);
-                  const parsedAr = parseChildren.call(Orve.context, [ value ], null, item.parent);
-                  const [ element ] = childF.call(Orve.context, null, parsedAr);
+                  const parsedAr = parseChildren.call(
+                    Orve.context,
+                    [value],
+                    null,
+                    item.parent,
+                  );
+                  const [element] = childF.call(Orve.context, null, parsedAr);
                   item.ONode.node.replaceWith(element.node);
                   item.ONode = element;
                   updatedHook(item.parent, HookObjectType.Component);
@@ -128,7 +139,10 @@ function refC(app: (() => any) | null = null) {
                 item.value.updated;
                 return item;
               }
-              if (item.type === ProxyType.Effect || item.type === ProxyType.Oif) {
+              if (
+                item.type === ProxyType.Effect ||
+                item.type === ProxyType.Oif
+              ) {
                 (item as any).value.updated();
                 return item;
               }

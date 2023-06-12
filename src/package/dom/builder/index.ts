@@ -8,20 +8,24 @@ import { ProxyType } from "../../reactive/type";
 import { generationID } from "../../usedFunction/keyGeneration";
 import { Node } from "../../jsx";
 
-type ComponentType = Record<string, any> | ((args?: Record<string, any>) => any);
-function prepareComponent(component: ComponentType): (() => any) {
-  let comp: Record<string, any> | ((args?: Record<string, any>) => any) = component;
+type ComponentType =
+  | Record<string, any>
+  | ((args?: Record<string, any>) => any);
+function prepareComponent(component: ComponentType): () => any {
+  let comp: Record<string, any> | ((args?: Record<string, any>) => any) =
+    component;
   const typeComp = typeof comp;
   if (typeComp !== "function") {
     if (typeComp === "object") {
-      comp = (function() { return component }).bind(this);
+      comp = function () {
+        return component;
+      }.bind(this);
     } else {
       er(m.APP_NOT_A_FUNCTION_OR_OBJECT);
     }
   }
-  return comp as (() => any);
+  return comp as () => any;
 }
-
 
 function parser(
   app: () => any | Record<string, any>,
@@ -29,35 +33,42 @@ function parser(
   parent: ONode | null = null,
 ) {
   // if app = {} or proxy;
-  const component: ((args?: Record<string, any>) => any) = prepareComponent.call(this, (app) as (() => any));
+  const component: (args?: Record<string, any>) => any = prepareComponent.call(
+    this,
+    app as () => any,
+  );
   let Node: Node | unknown = null;
   try {
-    Node = props
-    ? component.call(this, props)
-    : component.call(this);
-  } catch(error) {
+    Node = props ? component.call(this, props) : component.call(this);
+  } catch (error) {
     console.error(`${String(component).substring(0, 50)}... - ${error}`);
-  } 
+  }
 
   if (component === null) {
     // TODO В зависимости от env отображать или нет это сообщение.
     Node = {
       tag: "span",
-      child: [` ERROR WITH COMPONENT - ${String(component).substring(0, 50)}... `]
-    }
+      child: [
+        ` ERROR WITH COMPONENT - ${String(component).substring(0, 50)}... `,
+      ],
+    };
   }
 
   const typeNode = typeOf(Node);
 
   if (typeNode !== "object") {
-    console.warn(`component: ${String(component).substring(0, 50)}... \n${m.CALL_NODE_RETURN_NOT_A_OBJECT}`);
+    console.warn(
+      `component: ${String(component).substring(0, 50)}... \n${
+        m.CALL_NODE_RETURN_NOT_A_OBJECT
+      }`,
+    );
     return undefined;
   }
 
   let node: Node | undefined = Node as Node;
 
   if (node.child && !Array.isArray(node.child)) {
-    node["child"] = [ node.child ];
+    node["child"] = [node.child];
   }
 
   // check if node have all need key
@@ -76,12 +87,12 @@ function parser(
     node: null,
     keyNode: generationID(16),
     type: TypeNode.Component,
-    parent: parent ? parent : null, 
+    parent: parent ? parent : null,
   };
 
   // NOTE возможно будут проблемы с этим куском.
   if (oNode.html) {
-    oNode.child = [ oNode.html ];
+    oNode.child = [oNode.html];
   }
 
   // NOTE work with CHILD
