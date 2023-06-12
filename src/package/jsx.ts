@@ -23,7 +23,7 @@ export interface Node {
   html?: string
 }
 
-const O_KEY = ["o-hooks", "o-ref", "o-key", "o-html"];
+const O_KEY = ["o-hooks", "o-ref", "o-key", "o-html", "o-ptype"];
 
 const Node = function(tag: TagType, props: Record<string, any> | null = null, ...child : any): Node {
   const TAG: Node = { tag };

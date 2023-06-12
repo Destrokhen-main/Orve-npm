@@ -1,8 +1,7 @@
 import er, { message as m } from "./error";
 import { typeOf } from "../../usedFunction/typeOf";
 
-const KEYS = ["tag", "props", "child", "hooks", "key", "ref", "html", "$refoparams"];
-
+const KEYS = ["tag", "props", "child", "hooks", "key", "ref", "html", "$refoparams", "ptype"];
 function isONode(node: Record<string, any>) {
   if (!node["tag"]) {
     er(m.MISSING_TAG);
