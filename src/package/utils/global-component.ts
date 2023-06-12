@@ -6,6 +6,12 @@ function ucFirst(str: string) {
   return str[0].toUpperCase() + str.slice(1);
 }
 
+/**
+ * 
+ * @param {string} name - name component on camelCase
+ * @param {function} func - Component
+ * @returns boolean - true if created will be success, false if it don't be
+ */
 export function globalComponent(name: string, func: unknown): boolean{
   if (window === undefined) {
     return false;
