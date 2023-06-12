@@ -7,7 +7,7 @@ import { isNodeBoolean } from "./validator";
 import { generationID } from "../../usedFunction/keyGeneration";
 import { checkerEffect } from "../mount/props";
 import { Effect } from "../../reactive/effect";
-import { UtilsRef } from "../../reactive/type";
+import { UtilsRef, UtilsRefA } from "../../reactive/type";
 
 enum ChildType {
   HTML = "HTML",
@@ -41,6 +41,16 @@ function isFormatObj(obj: unknown): boolean {
       knowObj["type"] !== undefined &&
       Object.values(UtilsRef).includes(knowObj["type"])
     ) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function isArrayFormatObj(obj: unknown): boolean {
+  if (typeof obj === "object") {
+    const knowObj = obj as Record<string, any>;
+    if (knowObj["type"] !== undefined && Object.values(UtilsRefA).includes(knowObj["type"])) {
       return true;
     }
   }
@@ -168,6 +178,27 @@ function parseChildren(
           ONode: parent,
           formate: item.formate,
         };
+      }
+      if (typeNode === "object" && isArrayFormatObj(item)) {
+        let list: any[] = item.proxy.value;
+
+        if (item.formate !== null) {
+          list = list.map(item.formate);
+        }
+        return {
+          type: ChildType.ReactiveArray,
+          value: parseChildren.call(
+            this,
+            list,
+            props,
+            parent,
+            true,
+          ),
+          keyNode: generationID(8),
+          proxy: item.proxy,
+          ONode: parent,
+          formate: item.formate
+        }
       }
       // NOTE component
       if ((typeNode === "object" || typeNode === "function") && !isArray) {

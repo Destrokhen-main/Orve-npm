@@ -110,6 +110,32 @@ export const childF = function (
     }
 
     if (item.type === ChildType.ReactiveArray) {
+      if ((item as any).formate !== undefined) {
+        if ((item.value as any).length !== 0) {
+          const items = childF.call(this, tag, (item as any).value);
+          const formater = item as any;
+          formater.proxy.parent.push({
+            render: items,
+            formate: formater.formate,
+            parentNode: formater.ONode,
+            keyNode: formater.keyNode
+          })
+          return item;
+        } else {
+          const comment = document.createComment(
+            ` array ${(item as any).keyNode} `,
+          );
+          const formater = item as any;
+          formater.proxy.parent.push({
+            render: comment,
+            formate: formater.formate,
+            parentNode: formater.ONode,
+            keyNode: formater.keyNode
+          })
+          if (tag !== null) tag.appendChild(comment);
+          return item;
+        }
+      }
       if ((item.value as any).length !== 0) {
         const items = childF.call(this, tag, (item as any).value);
         item.value = items;

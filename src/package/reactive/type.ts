@@ -50,28 +50,18 @@ interface RefOProxy {
 }
 
 interface RefAProxy extends Proxy {
-  parent: any[];
-  value: any;
-  render: any;
-  empty: boolean;
-  renderFunction: ((item?: any, index?: number) => any) | null;
-  forList: () => this;
-  parentNode: Record<string, any> | null;
-  keyNode: string;
+  parent: any[],
+  value: any,
+  render: any,
+  empty: boolean,
+  renderFunction: ((item?: any, index?: number) => any) | null,
+  forList: () => this,
+  parentNode: Record<string, any> | null,
+  keyNode: string
 }
 
 export enum UtilsRef {
   Format = "format",
 }
 
-export {
-  ProxyType,
-  RefLProxy,
-  RefProxy,
-  PropsStartType,
-  RefCProxy,
-  RefOProxy,
-  Proxy,
-  RefAProxy,
-  ReactiveParams,
-};
+export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy, RefOProxy, Proxy, RefAProxy, ReactiveParams };

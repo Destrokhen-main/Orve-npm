@@ -1,6 +1,7 @@
 import er, { message as m } from "./error";
 import { typeOf } from "../../usedFunction/typeOf";
 
+const KEYS = ["tag", "props", "child", "hooks", "key", "ref", "html", "$refoparams", "ptype"];
 const KEYS = [
   "tag",
   "props",

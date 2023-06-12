@@ -34,17 +34,9 @@ function parentCall(obj: RefAProxy) {
   }
 }
 
-function renderHelper(t: RefAProxy, p: number, v: any) {
-  let replaceValue = v;
 
-  if (t.renderFunction !== null) {
-    replaceValue = t.renderFunction(v, p);
-  }
-  return replaceValue;
-}
-
-function replaceArrayValue(t: RefAProxy, p: number, v: any) {
-  const replaceValue = renderHelper(t, p, v);
+function replaceArrayValueOnExist(e:any ,t: RefAProxy, p: number, v: any) {
+  const replaceValue = e.formate(v, p);
 
   //const renderItem = t.render[p];
 
@@ -70,26 +62,23 @@ function replaceArrayValue(t: RefAProxy, p: number, v: any) {
 
   const mounterItem = mounterStep[0];
 
-  if (t.render === null || t.render[p] === undefined) {
-    insertInArrayNewValue(t, p, v);
+  if (e.render === null || e.render[p] === undefined) {
+    insertInArrayNewValueOnExist(e, t, p, v);
   } else {
-    t.render[p].node.replaceWith(mounterItem.node);
-    t.render[p] = mounterItem;
+    e.render[p].node.replaceWith(mounterItem.node);
+    e.render[p] = mounterItem;
     updated(t);
   }
 }
 
+/**
+ * Добавляет всем parent элемент
+ */
 function insertInArrayNewValue(t: RefAProxy, p: number, v: any) {
   const replaceValue = renderHelper(t, p, v);
 
-  const builderStep = parseChildren.call(
-    Orve.context,
-    [replaceValue],
-    null,
-    t.parentNode as any,
-    true,
-  );
-
+  const builderStep = parseChildren.call(Orve.context, [replaceValue], null, t.parentNode as any, true);
+  
   if (builderStep[0] === undefined) {
     console.error("error build");
     return;
@@ -97,43 +86,36 @@ function insertInArrayNewValue(t: RefAProxy, p: number, v: any) {
 
   const mounterStep = childF(null, builderStep);
 
-  if (mounterStep[0] === undefined) {
-    console.error("error mounted");
-    return;
-  }
-
   const mounterItem = mounterStep[0];
 
-  if (!Array.isArray(t.render)) {
-    t.render.replaceWith(mounterItem.node);
-    t.render = [mounterItem];
+  if (!Array.isArray(e.render)) {
+    e.render.replaceWith(mounterItem.node);
+    e.render = [mounterItem];
     t.empty = false;
     updated(t);
   } else {
-    const element = t.render[t.render.length - 1].node;
+    const element = e.render[e.render.length - 1].node;
     element.after(mounterItem.node);
-    t.render.push(mounterItem);
+    e.render.push(mounterItem);
     updated(t);
   }
 }
 
 function deletePartArrayByIndex(object: RefAProxy, index: number): void {
-  if (
-    object.render !== null &&
-    object.render.length !== 0 &&
-    Array.isArray(object.render)
-  ) {
+  if (object.render !== null && object.render.length !== 0 && Array.isArray(object.render)) {
     if (object.render.length === 1) {
-      const comment = document.createComment(` array ${object.keyNode} `);
+      const comment = document.createComment(
+        ` array ${object.keyNode} `,
+      );
       object.render[0].node.replaceWith(comment);
       object.render = comment;
     } else {
-      object.render[index].node.remove();
-      object.render[index] = undefined;
+      e.render[index].node.remove();
+      e.render[index] = undefined;
     }
 
-    if (Array.isArray(object.render)) {
-      object.render = object.render.filter((x: any) => x !== undefined);
+    if (Array.isArray(e.render)) {
+      e.render = e.render.filter((x: any) => x !== undefined);
     }
   }
 }
@@ -148,16 +130,14 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
             // eslint-disable-next-line prefer-rest-params
             const args = arguments;
 
-            if (object.render !== null) {
-              const newArgs = [];
+            const newArgs = [];
 
-              for (let i = 0; i !== args.length; i++) {
+              for(let i = 0; i !== args.length; i++) {
                 newArgs.push(args[i]);
               }
 
-              for (let i = 0; i !== newArgs.length; i++) {
-                insertInArrayNewValue(object, t.length + i, newArgs[i]);
-              }
+            for (let i = 0; i !== newArgs.length; i++) {
+              insertInArrayNewValue(object, t.length + i, newArgs[i]);
             }
             updated(object);
             return Array.prototype[p].apply(t, args);
@@ -173,10 +153,18 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
             return el;
           };
         }
-        if (["pop"].includes(p)) {
+        if (['pop'].includes(p)) {
           // последнего
           return function () {
-            deletePartArrayByIndex(object, object.render.length - 1);
+
+            const parent = object.parent;
+
+            parent.forEach((e) => {
+              if (e.formate === undefined) return;
+              if (e.render !== null) return;
+
+              deletePartArrayByIndexOnExist(e, object, e.render.length - 1);
+            })
 
             // eslint-disable-next-line prefer-rest-params
             const el = Array.prototype[p].apply(t, arguments);
@@ -186,17 +174,13 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
         }
         if (["splice"].includes(p)) {
           return function (...args: number[]) {
-            const deletedIndex = [];
+            const deletedIndex: any[] = [];
 
             if (object.render !== null) {
-              for (let i = args[0]; i !== args[0] + args[1]; i++) {
+              for(let i = args[0]; i !== args[0] + args[1]; i++) {
                 deletedIndex.push(i);
               }
-              if (
-                deletedIndex.length > 0 &&
-                object.render !== null &&
-                object.render.length !== 0
-              ) {
+              if (deletedIndex.length > 0 && object.render !== null && object.render.length !== 0) {
                 deletedIndex.forEach((e) => {
                   if (object.render[e] !== undefined) {
                     if (object.render.length === 1) {
@@ -210,7 +194,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
                     }
                   }
                 });
-
+                
                 if (Array.isArray(object.render)) {
                   let newRender: any = [];
                   const lastIndex = object.render.length - 1;
@@ -232,7 +216,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
 
                   object.render = newRender;
                 }
-              }
+              })
             }
 
             const el = Array.prototype[p].apply(t, args);
@@ -250,16 +234,13 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
       const num = parseInt(p, 10);
 
       if (object.render !== null) {
-        if (
-          !Number.isNaN(num) &&
-          Array.isArray(object.render) &&
-          num < object.render.length
-        ) {
+        if (!Number.isNaN(num) && Array.isArray(object.render) && num < object.render.length) {
           replaceArrayValue(object, num, v);
         } else if (!Number.isNaN(num)) {
-          insertInArrayNewValue(object, num, v);
+          insertInArrayNewValueOnExist(e, object, num, v);
         }
-      }
+      })
+      
       updated(object);
       parentCall(object);
       return s;
@@ -275,16 +256,19 @@ function refA(ar: Array<any>) {
   const object: RefAProxy = {
     parent: [],
     value: null, // proxy для массива
-    render: null, // все ноды которые на экране
     empty: true, // пустой ли массив
     renderFunction: null, // forList
-    forList: function (func = null) {
+    forList: function(func = null) {
       if (func !== null && typeof func === "function") {
-        this.renderFunction = func;
+        return {
+          type: "for",
+          formate: func,
+          proxy: this
+        };
       } else {
         console.warn("* forList need function *");
       }
-      return this;
+      return this
     },
     type: ProxyType.Proxy,
     proxyType: ProxyType.RefA,
@@ -318,15 +302,9 @@ function refA(ar: Array<any>) {
 
           const val = v.map((e: any, i: number) => {
             return renderHelper(t, i, e);
-          });
+          })
 
-          const builderStep = parseChildren.call(
-            Orve.context,
-            val,
-            null,
-            t.parentNode as any,
-            true,
-          );
+          const builderStep = parseChildren.call(Orve.context, val, null, t.parentNode as any, true);
 
           if (builderStep.length === 0) {
             console.error("bad work in value");
@@ -338,7 +316,7 @@ function refA(ar: Array<any>) {
             mounterStep.forEach((e: any) => {
               if (!Array.isArray(object.render)) {
                 object.render.replaceWith(e.node);
-                object.render = [e];
+                object.render = [ e ];
               } else {
                 const lastItem = object.render[object.render.length - 1].node;
                 lastItem.after(e.node);
