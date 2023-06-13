@@ -363,28 +363,30 @@ function refA(ar: Array<any>) {
           if (par.formate === undefined) return;
 
           const render = par.render;
-          if (render !== null && Array.isArray(render) && render.length > 0) {
-            const lastItem = render[render.length - 1];
-            render.forEach((e: any, i) => {
-              if (i !== render.length - 1) {
-                e.node.remove();
-                render[i] = undefined;
-              }
-            });
-            par.render = lastItem.node;
-  
+          if (render !== null) {
+            if (Array.isArray(render) && render.length > 0) {
+              const lastItem = render[render.length - 1];
+              render.forEach((e: any, i) => {
+                if (i !== render.length - 1) {
+                  e.node.remove();
+                  render[i] = undefined;
+                }
+              });
+              par.render = lastItem.node;
+            }
+            
             const val = v.map((e: any, i: number) => {
               return par.formate(e, i);
             })
-  
+
             const builderStep = parseChildren.call(Orve.context, val, null, t.parentNode as any, true);
-  
+
             if (builderStep.length === 0) {
               console.error("bad work in value");
             }
-  
+
             const mounterStep = childF(null, builderStep);
-  
+
             if (mounterStep.length > 0) {
               mounterStep.forEach((e: any) => {
                 if (!Array.isArray(par.render)) {
