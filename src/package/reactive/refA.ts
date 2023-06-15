@@ -279,14 +279,14 @@ function deletePartArrayByIndex(object: RefAProxy, index: number): void {
         );
 
         if (e.render[0].tag === UtilsRefA.Fragment) {
-          removeFragmentNodeAll(e.render[0]);
+          removeFragmentNodeAll(e.render[0].child);
         } else {
           e.render[0].node.replaceWith(comment);
         }
         e.render = comment;
       } else {
         if (e.render[index].tag === UtilsRefA.Fragment) {
-          removeFragmentNodeAll(e.render[index]);
+          removeFragmentNodeAll(e.render[index].child);
           e.render[index] = undefined;
         } else {
           e.render[index].node.remove();
@@ -309,14 +309,14 @@ function deletePartArrayByIndexOnExist(e: any, object: RefAProxy, index: number)
       );
 
       if (e.render[0].tag === UtilsRefA.Fragment) {
-        removeFragmentNodeAll(e.render[0]);
+        removeFragmentNodeAll(e.render[0].child);
       } else {
         e.render[0].node.replaceWith(comment);
       }
       e.render = comment;
     } else {
       if (e.render[index].tag === UtilsRefA.Fragment) {
-        removeFragmentNodeAll(e.render[index]);
+        removeFragmentNodeAll(e.render[index].child);
         e.render[index] = undefined;
       } else {
         e.render[index].node.remove();
@@ -548,7 +548,7 @@ function refA(ar: Array<any>) {
                 }
               });
               par.render = lastItem.tag === UtilsRefA.Fragment
-                ? getLastFragmentNode(lastItem.child)
+                ? removeFragmentNode(lastItem.child)
                 : lastItem.node;
             }
             
@@ -561,7 +561,6 @@ function refA(ar: Array<any>) {
             if (builderStep.length === 0) {
               console.error("bad work in value");
             }
-
             const mounterStep = childF(null, builderStep);
 
             if (mounterStep.length > 0) {
