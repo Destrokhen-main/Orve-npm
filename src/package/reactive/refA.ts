@@ -7,6 +7,7 @@ import { HookObject } from "../dom/types";
 import { Orve } from "../default";
 import { generationID } from "../usedFunction/keyGeneration";
 // import { mountedNode } from "../dom/mount/index";
+import { UtilsRefA } from "./type";
 
 function updated(obj: any) {
   if (obj.parentNode && obj.parentNode.hooks && obj.parentNode.hooks.updated) {
@@ -34,6 +35,112 @@ function parentCall(obj: RefAProxy) {
   }
 }
 
+function removeFragmentNode(render: any[] ): any {
+  let quee: any = [ ...render];
+
+  while (quee.length > 0) {
+    const item = quee.shift();
+
+    if (item.tag === "fragment" && item.child.length > 0) {
+      quee = [...item.child ,...quee];
+      continue;
+    }
+
+    if (quee.length === 0) {
+      return item.node;
+    } else {
+      item.node.remove();
+    }
+  }
+}
+
+function removeFragmentNodeAll(render: any[] ): any {
+  let quee: any = [ ...render];
+
+  while (quee.length > 0) {
+    const item = quee.shift();
+
+    if (item.tag === "fragment" && item.child.length > 0) {
+      quee = [...item.child ,...quee];
+      continue;
+    }
+
+    item.node.remove();
+  }
+}
+
+function insertFragmentNodeWithFirstReplace(render: any[], first: any) {
+  let quee: any = [ ...render ];
+  let node: any = first;
+  let f = true;
+
+  while(quee.length !== 0) {
+    const item = quee.shift();
+
+    if (item.tag === "fragment" && item.child.length > 0) {
+      quee = [...item.child, ...quee];
+      continue;
+    }
+
+    if (f) {
+      node.replaceWith(item.node);
+      f = false;
+    } else {
+      node.after(item.node);
+    }
+    node = item.node;
+  }
+}
+
+function insertFragmentNode(render: any[], item: any) {
+  let quee: any = [ ...render];
+  let node = item;
+  while(quee.length !== 0) {
+    const item = quee.shift();
+
+    if (item.tag === "fragment" && item.child.length > 0) {
+      quee = [...item.child, ...quee];
+      continue;
+    }
+    if (item.node !== null) {
+      node.after(item.node);
+      node = item.node;
+    }
+  }
+}
+
+function getLastFragmentNode(render: any[]) {
+  let quee: any = [ ...render ];
+  let node;
+  while(quee.length !== 0) {
+    const item: any = quee.shift();
+    if (item.tag === "fragment" && item.child.length > 0) {
+      quee = [...item.child, ...quee];
+      continue;
+    }
+    if (item.node !== null)
+      node = item.node
+  }
+  return node;
+}
+
+function fragmentWorker(m: any, e:any ,t: RefAProxy, p: number) { 
+  let lastItem: any;
+  if (e.render[p].tag === UtilsRefA.Fragment) {
+    lastItem = removeFragmentNode(e.render[p].child);
+  } else {
+    lastItem = e.render[p].node;
+  }
+
+  if (m.tag === UtilsRefA.Fragment) {
+    insertFragmentNodeWithFirstReplace(m.child, lastItem)
+    e.render[p] = m;
+  } else {
+    lastItem.replaceWith(m.node);
+    e.render[p] = m;
+  }
+}
+
 
 function replaceArrayValueOnExist(e:any ,t: RefAProxy, p: number, v: any) {
   const replaceValue = e.formate(v, p);
@@ -56,8 +163,12 @@ function replaceArrayValueOnExist(e:any ,t: RefAProxy, p: number, v: any) {
   if (e.render === null || e.render[p] === undefined) {
     insertInArrayNewValueOnExist(e, t, p, v);
   } else {
-    e.render[p].node.replaceWith(mounterItem.node);
-    e.render[p] = mounterItem;
+    if (mounterItem.tag === UtilsRefA.Fragment) {
+      fragmentWorker(mounterItem, e, t, p);
+    } else {
+      e.render[p].node.replaceWith(mounterItem.node);
+      e.render[p] = mounterItem;
+    }
     updated(t);
   }
 }
@@ -82,18 +193,30 @@ function insertInArrayNewValue(t: RefAProxy, p: number, v: any) {
     }
 
     const mounterStep = childF(null, builderStep);
-
     const mounterItem = mounterStep[0];
 
     if (!Array.isArray(e.render)) {
-      e.render.replaceWith(mounterItem.node);
-      e.render = [mounterItem];
+      if (mounterItem.tag === UtilsRefA.Fragment) {
+        insertFragmentNodeWithFirstReplace(mounterItem.child, e.render);
+
+        e.render = [ mounterItem ];
+      } else {
+        e.render.replaceWith(mounterItem.node);
+        e.render = [mounterItem];
+      }
       t.empty = false;
       updated(t);
     } else {
-      const element = e.render[e.render.length - 1].node;
-      element.after(mounterItem.node);
-      e.render.push(mounterItem);
+      if (mounterItem.tag === UtilsRefA.Fragment) {
+        const node: any = getLastFragmentNode(e.render);
+        
+        insertFragmentNode(mounterItem.child, node);
+        e.render.push(mounterItem);
+      } else {
+        const element = e.render[e.render.length - 1].node;
+        element.after(mounterItem.node);
+        e.render.push(mounterItem);
+      }
       updated(t);
     }
   })
@@ -121,16 +244,26 @@ function insertInArrayNewValueOnExist(e: Record<string, any>, t: RefAProxy, p: n
   const mounterItem = mounterStep[0];
 
   if (!Array.isArray(e.render)) {
-    e.render.replaceWith(mounterItem.node);
-    e.render = [mounterItem];
+    if (mounterItem.tag === UtilsRefA.Fragment) {
+      insertFragmentNodeWithFirstReplace(mounterItem, e.render);
+      e.render = [ mounterItem ];
+    } else {
+      e.render.replaceWith(mounterItem.node);
+      e.render = [mounterItem];
+    }
     t.empty = false;
-    updated(t);
   } else {
-    const element = e.render[e.render.length - 1].node;
-    element.after(mounterItem.node);
-    e.render.push(mounterItem);
-    updated(t);
+    if (mounterItem.tag === UtilsRefA.Fragment) {
+      const node: any = getLastFragmentNode(e.render);
+      insertFragmentNode(mounterItem.child, node);
+      e.render.push(mounterItem);
+    } else {
+      const element = e.render[e.render.length - 1].node;
+      element.after(mounterItem.node);
+      e.render.push(mounterItem);
+    }
   }
+  updated(t);
 }
 
 function deletePartArrayByIndex(object: RefAProxy, index: number): void {
@@ -144,11 +277,21 @@ function deletePartArrayByIndex(object: RefAProxy, index: number): void {
         const comment = document.createComment(
           ` array ${object.keyNode} `,
         );
-        e.render[0].node.replaceWith(comment);
+
+        if (e.render[0].tag === UtilsRefA.Fragment) {
+          removeFragmentNodeAll(e.render[0].child);
+        } else {
+          e.render[0].node.replaceWith(comment);
+        }
         e.render = comment;
       } else {
-        e.render[index].node.remove();
-        e.render[index] = undefined;
+        if (e.render[index].tag === UtilsRefA.Fragment) {
+          removeFragmentNodeAll(e.render[index].child);
+          e.render[index] = undefined;
+        } else {
+          e.render[index].node.remove();
+          e.render[index] = undefined;
+        }
       }
   
       if (Array.isArray(e.render)) {
@@ -164,11 +307,21 @@ function deletePartArrayByIndexOnExist(e: any, object: RefAProxy, index: number)
       const comment = document.createComment(
         ` array ${object.keyNode} `,
       );
-      e.render[0].node.replaceWith(comment);
+
+      if (e.render[0].tag === UtilsRefA.Fragment) {
+        removeFragmentNodeAll(e.render[0].child);
+      } else {
+        e.render[0].node.replaceWith(comment);
+      }
       e.render = comment;
     } else {
-      e.render[index].node.remove();
-      e.render[index] = undefined;
+      if (e.render[index].tag === UtilsRefA.Fragment) {
+        removeFragmentNodeAll(e.render[index].child);
+        e.render[index] = undefined;
+      } else {
+        e.render[index].node.remove();
+        e.render[index] = undefined;
+      }
     }
 
     if (Array.isArray(e.render)) {
@@ -212,12 +365,11 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
         }
         if (['pop'].includes(p)) {
           return function () {
-
             const parent = object.parent;
 
             parent.forEach((e) => {
               if (e.formate === undefined) return;
-              if (e.render !== null) return;
+              if (e.render === null) return;
 
               deletePartArrayByIndexOnExist(e, object, e.render.length - 1);
             })
@@ -249,7 +401,15 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
                         const comment = document.createComment(
                           ` array ${object.keyNode} `,
                         );
-                        par.render[0].node.replaceWith(comment);
+
+                        if (par.render[0].tag === UtilsRefA.Fragment) {
+                          const lastNode = getLastFragmentNode(par.render[0].child);
+
+                          removeFragmentNodeAll(par.render[0].child);
+                          lastNode.replaceWith(comment);      
+                        } else {
+                          par.render[0].node.replaceWith(comment);
+                        }
                         par.render = comment;
                       } else {
                         par.render[e].type = "DELETED";
@@ -268,11 +428,23 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
                         const comment = document.createComment(
                           ` array ${object.keyNode} `,
                         );
-                        e.node.replaceWith(comment);
-                        newRender = comment;
+                        
+                        if (e.tag === UtilsRefA.Fragment) {
+                          const lastNode = getLastFragmentNode(par.render[0].child);
+
+                          removeFragmentNodeAll(par.render[0].child);
+                          lastNode.replaceWith(comment);
+                        } else {
+                          e.node.replaceWith(comment);
+                          newRender = comment;
+                        }
                         object.empty = true;
                       } else {
-                        e.node.remove();
+                        if (e.tag === UtilsRefA.Fragment) {
+                          removeFragmentNodeAll(e.child)
+                        } else {
+                          e.node.remove();
+                        }
                       }
                     });
   
@@ -281,7 +453,6 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
                 }
               })
             }
-
             const el = Array.prototype[p].apply(t, args);
             updated(object);
             return el;
@@ -368,11 +539,17 @@ function refA(ar: Array<any>) {
               const lastItem = render[render.length - 1];
               render.forEach((e: any, i) => {
                 if (i !== render.length - 1) {
-                  e.node.remove();
+                  if (e.tag === UtilsRefA.Fragment) {
+                    removeFragmentNodeAll(e.child)
+                  } else {
+                    e.node.remove();
+                  }
                   render[i] = undefined;
                 }
               });
-              par.render = lastItem.node;
+              par.render = lastItem.tag === UtilsRefA.Fragment
+                ? removeFragmentNode(lastItem.child)
+                : lastItem.node;
             }
             
             const val = v.map((e: any, i: number) => {
@@ -384,18 +561,29 @@ function refA(ar: Array<any>) {
             if (builderStep.length === 0) {
               console.error("bad work in value");
             }
-
             const mounterStep = childF(null, builderStep);
 
             if (mounterStep.length > 0) {
               mounterStep.forEach((e: any) => {
                 if (!Array.isArray(par.render)) {
-                  par.render.replaceWith(e.node);
+                  if (e.tag === UtilsRefA.Fragment) {
+                    insertFragmentNodeWithFirstReplace(e.child, par.render);
+                  } else {
+                    par.render.replaceWith(e.node);
+                  }
                   par.render = [ e ];
                 } else {
-                  const lastItem = par.render[par.render.length - 1].node;
-                  lastItem.after(e.node);
-                  par.render.push(e);
+                  const lastItem = par.render[par.render.length - 1].tag === UtilsRefA.Fragment 
+                    ? getLastFragmentNode(par.render[par.render.length - 1].child)
+                    : par.render[par.render.length - 1].node;
+
+                  if (e.tag === UtilsRefA.Fragment) {
+                    insertFragmentNode(e.child, lastItem);
+                    par.render.push(e);
+                  } else {
+                    lastItem.after(e.node);
+                    par.render.push(e);
+                  }
                 }
               });
             }
