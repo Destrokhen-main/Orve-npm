@@ -7,6 +7,7 @@ import { HookObject } from "../dom/types";
 import { Orve } from "../default";
 import { generationID } from "../usedFunction/keyGeneration";
 // import { mountedNode } from "../dom/mount/index";
+import { UtilsRefA } from "./type";
 
 function updated(obj: any) {
   if (obj.parentNode && obj.parentNode.hooks && obj.parentNode.hooks.updated) {
@@ -36,7 +37,7 @@ function parentCall(obj: RefAProxy) {
 
 function fragmentWorker(m: any, e:any ,t: RefAProxy, p: number, v: any) {
   let lastItem: any;
-  if (e.render[p].tag === "fragment") {
+  if (e.render[p].tag === UtilsRefA.Fragment) {
     lastItem = e.render[p].child[e.render[p].child.length - 1].node;
 
     e.render[p].child.forEach((x: any, i: number) => {
@@ -48,7 +49,7 @@ function fragmentWorker(m: any, e:any ,t: RefAProxy, p: number, v: any) {
     lastItem = e.render[p].node;
   }
 
-  if (m.tag === "fragment") {
+  if (m.tag === UtilsRefA.Fragment) {
     let node: any = null;
 
     m.child.forEach((x: any, i: number) => {
@@ -89,7 +90,7 @@ function replaceArrayValueOnExist(e:any ,t: RefAProxy, p: number, v: any) {
   if (e.render === null || e.render[p] === undefined) {
     insertInArrayNewValueOnExist(e, t, p, v);
   } else {
-    if (mounterItem.tag === "fragment") {
+    if (mounterItem.tag === UtilsRefA.Fragment) {
       fragmentWorker(mounterItem, e, t, p, v);
     } else {
       e.render[p].node.replaceWith(mounterItem.node);
@@ -123,7 +124,7 @@ function insertInArrayNewValue(t: RefAProxy, p: number, v: any) {
     const mounterItem = mounterStep[0];
 
     if (!Array.isArray(e.render)) {
-      if (mounterItem.tag === "fragment") {
+      if (mounterItem.tag === UtilsRefA.Fragment) {
         let node: any;
   
         mounterItem.child.forEach((x: any, i: number) => {
@@ -142,8 +143,8 @@ function insertInArrayNewValue(t: RefAProxy, p: number, v: any) {
       t.empty = false;
       updated(t);
     } else {
-      if (mounterItem.tag === "fragment") {
-        let node: any = e.render[e.render.length - 1].tag === "fragment" 
+      if (mounterItem.tag === UtilsRefA.Fragment) {
+        let node: any = e.render[e.render.length - 1].tag === UtilsRefA.Fragment 
           ? e.render[e.render.length - 1].child[e.render[e.render.length - 1].child.length - 1].node
           : e.render[e.render.length - 1].node;
         mounterItem.child.forEach((x: any) => {
@@ -183,7 +184,7 @@ function insertInArrayNewValueOnExist(e: Record<string, any>, t: RefAProxy, p: n
   const mounterItem = mounterStep[0];
 
   if (!Array.isArray(e.render)) {
-    if (mounterItem.tag === "fragment") {
+    if (mounterItem.tag === UtilsRefA.Fragment) {
       let node: any;
 
       mounterItem.child.forEach((x: any, i: number) => {
@@ -201,8 +202,8 @@ function insertInArrayNewValueOnExist(e: Record<string, any>, t: RefAProxy, p: n
     }
     t.empty = false;
   } else {
-    if (mounterItem.tag === "fragment") {
-      let node: any = e.render[e.render.length - 1].tag === "fragment" 
+    if (mounterItem.tag === UtilsRefA.Fragment) {
+      let node: any = e.render[e.render.length - 1].tag === UtilsRefA.Fragment 
         ? e.render[e.render.length - 1].child[e.render[e.render.length - 1].child.length - 1].node
         : e.render[e.render.length - 1].node;
       mounterItem.child.forEach((x: any) => {
@@ -231,7 +232,7 @@ function deletePartArrayByIndex(object: RefAProxy, index: number): void {
           ` array ${object.keyNode} `,
         );
 
-        if (e.render[0].tag === "fragment") {
+        if (e.render[0].tag === UtilsRefA.Fragment) {
           e.render[0].child.forEach((x: any) => {
             x.node.remove()
           })
@@ -240,7 +241,7 @@ function deletePartArrayByIndex(object: RefAProxy, index: number): void {
         }
         e.render = comment;
       } else {
-        if (e.render[index].tag === "fragment") {
+        if (e.render[index].tag === UtilsRefA.Fragment) {
           e.render[index].child.forEach((x: any) => {
             x.node.remove();
           })
@@ -265,7 +266,7 @@ function deletePartArrayByIndexOnExist(e: any, object: RefAProxy, index: number)
         ` array ${object.keyNode} `,
       );
 
-      if (e.render[0].tag === "fragment") {
+      if (e.render[0].tag === UtilsRefA.Fragment) {
         e.render[0].child.forEach((x: any) => {
           x.node.remove()
         })
@@ -274,7 +275,7 @@ function deletePartArrayByIndexOnExist(e: any, object: RefAProxy, index: number)
       }
       e.render = comment;
     } else {
-      if (e.render[index].tag === "fragment") {
+      if (e.render[index].tag === UtilsRefA.Fragment) {
         e.render[index].child.forEach((x: any) => {
           x.node.remove();
         })
@@ -363,7 +364,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
                           ` array ${object.keyNode} `,
                         );
 
-                        if (par.render[0].tag === "fragment") {
+                        if (par.render[0].tag === UtilsRefA.Fragment) {
                           const lastNode = par.render[0].child[par.render[0].child.length - 1].node;
 
                           par.render[0].child.forEach((x: any, i: number) => {
@@ -394,7 +395,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
                           ` array ${object.keyNode} `,
                         );
                         
-                        if (e.tag === "fragment") {
+                        if (e.tag === UtilsRefA.Fragment) {
                           const lastNode = par.render[0].child[par.render[0].child.length - 1].node;
 
                           par.render[0].child.forEach((x: any, i: number) => {
@@ -409,7 +410,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
                         }
                         object.empty = true;
                       } else {
-                        if (e.tag === "fragment") {
+                        if (e.tag === UtilsRefA.Fragment) {
                           e.child.forEach((x: any) => {
                             x.node.remove();
                           })
@@ -510,7 +511,7 @@ function refA(ar: Array<any>) {
               const lastItem = render[render.length - 1];
               render.forEach((e: any, i) => {
                 if (i !== render.length - 1) {
-                  if (e.tag === "fragment") {
+                  if (e.tag === UtilsRefA.Fragment) {
                     e.child.forEach((x: any) => { x.node.remove() })
                   } else {
                     e.node.remove();
@@ -518,7 +519,7 @@ function refA(ar: Array<any>) {
                   render[i] = undefined;
                 }
               });
-              par.render = lastItem.tag === "fragment"
+              par.render = lastItem.tag === UtilsRefA.Fragment
                 ? lastItem.child[lastItem.child.length - 1].node
                 : lastItem.node;
             }
@@ -538,7 +539,7 @@ function refA(ar: Array<any>) {
             if (mounterStep.length > 0) {
               mounterStep.forEach((e: any) => {
                 if (!Array.isArray(par.render)) {
-                  if (e.tag === "fragment") {
+                  if (e.tag === UtilsRefA.Fragment) {
                     let n: any = par.render;
                     e.child.forEach((x: any, i: number) => {
                       if (i === 0) {
@@ -553,11 +554,11 @@ function refA(ar: Array<any>) {
                   }
                   par.render = [ e ];
                 } else {
-                  const lastItem = par.render[par.render.length - 1].tag === "fragment" 
+                  const lastItem = par.render[par.render.length - 1].tag === UtilsRefA.Fragment 
                     ? par.render[par.render.length - 1].child[par.render[par.render.length - 1].child.length - 1].node
                     : par.render[par.render.length - 1].node;
 
-                  if (e.tag === "fragment") {
+                  if (e.tag === UtilsRefA.Fragment) {
                     let n = lastItem;
                     e.child.forEach((x: any) => {
                       n.after(x.node)

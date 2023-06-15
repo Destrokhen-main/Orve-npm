@@ -64,7 +64,8 @@ export enum UtilsRef {
 }
 
 export enum UtilsRefA {
-  Format = "for"
+  Format = "for",
+  Fragment = "fragment"
 }
 
 export { ProxyType, RefLProxy, RefProxy, PropsStartType, RefCProxy, RefOProxy, Proxy, RefAProxy, ReactiveParams };
