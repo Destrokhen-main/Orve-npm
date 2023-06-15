@@ -34,6 +34,39 @@ function parentCall(obj: RefAProxy) {
   }
 }
 
+function fragmentWorker(m: any, e:any ,t: RefAProxy, p: number, v: any) {
+  let lastItem: any;
+  if (e.render[p].tag === "fragment") {
+    lastItem = e.render[p].child[e.render[p].child.length - 1].node;
+
+    e.render[p].child.forEach((x: any, i: number) => {
+      if (i !== e.render[p].child.length - 1) {
+        x.node.remove();
+      }
+    })
+  } else {
+    lastItem = e.render[p].node;
+  }
+
+  if (m.tag === "fragment") {
+    let node: any = null;
+
+    m.child.forEach((x: any, i: number) => {
+      if (i === 0) {
+        lastItem.replaceWith(x.node);
+      } else {
+        node.after(x.node);
+      }
+      node = x.node;
+    })
+
+    e.render[p] = m;
+  } else {
+    lastItem.replaceWith(m.node);
+    e.render[p] = m;
+  }
+}
+
 
 function replaceArrayValueOnExist(e:any ,t: RefAProxy, p: number, v: any) {
   const replaceValue = e.formate(v, p);
@@ -56,8 +89,12 @@ function replaceArrayValueOnExist(e:any ,t: RefAProxy, p: number, v: any) {
   if (e.render === null || e.render[p] === undefined) {
     insertInArrayNewValueOnExist(e, t, p, v);
   } else {
-    e.render[p].node.replaceWith(mounterItem.node);
-    e.render[p] = mounterItem;
+    if (mounterItem.tag === "fragment") {
+      fragmentWorker(mounterItem, e, t, p, v);
+    } else {
+      e.render[p].node.replaceWith(mounterItem.node);
+      e.render[p] = mounterItem;
+    }
     updated(t);
   }
 }
@@ -86,14 +123,39 @@ function insertInArrayNewValue(t: RefAProxy, p: number, v: any) {
     const mounterItem = mounterStep[0];
 
     if (!Array.isArray(e.render)) {
-      e.render.replaceWith(mounterItem.node);
-      e.render = [mounterItem];
+      if (mounterItem.tag === "fragment") {
+        let node: any;
+  
+        mounterItem.child.forEach((x: any, i: number) => {
+          if (i === 0) {
+            e.render.replaceWith(x.node);
+          } else {
+            node.after(x.node);
+          }
+          node = x.node
+        })
+        e.render = [ mounterItem ];
+      } else {
+        e.render.replaceWith(mounterItem.node);
+        e.render = [mounterItem];
+      }
       t.empty = false;
       updated(t);
     } else {
-      const element = e.render[e.render.length - 1].node;
-      element.after(mounterItem.node);
-      e.render.push(mounterItem);
+      if (mounterItem.tag === "fragment") {
+        let node: any = e.render[e.render.length - 1].tag === "fragment" 
+          ? e.render[e.render.length - 1].child[e.render[e.render.length - 1].child.length - 1].node
+          : e.render[e.render.length - 1].node;
+        mounterItem.child.forEach((x: any) => {
+          node.after(x.node);
+          node = x.node
+        })
+        e.render.push(mounterItem);
+      } else {
+        const element = e.render[e.render.length - 1].node;
+        element.after(mounterItem.node);
+        e.render.push(mounterItem);
+      }
       updated(t);
     }
   })
@@ -121,16 +183,40 @@ function insertInArrayNewValueOnExist(e: Record<string, any>, t: RefAProxy, p: n
   const mounterItem = mounterStep[0];
 
   if (!Array.isArray(e.render)) {
-    e.render.replaceWith(mounterItem.node);
-    e.render = [mounterItem];
+    if (mounterItem.tag === "fragment") {
+      let node: any;
+
+      mounterItem.child.forEach((x: any, i: number) => {
+        if (i === 0) {
+          e.render.replaceWith(x.node);
+        } else {
+          node.after(x.node);
+        }
+        node = x.node
+      })
+      e.render = [ mounterItem ];
+    } else {
+      e.render.replaceWith(mounterItem.node);
+      e.render = [mounterItem];
+    }
     t.empty = false;
-    updated(t);
   } else {
-    const element = e.render[e.render.length - 1].node;
-    element.after(mounterItem.node);
-    e.render.push(mounterItem);
-    updated(t);
+    if (mounterItem.tag === "fragment") {
+      let node: any = e.render[e.render.length - 1].tag === "fragment" 
+        ? e.render[e.render.length - 1].child[e.render[e.render.length - 1].child.length - 1].node
+        : e.render[e.render.length - 1].node;
+      mounterItem.child.forEach((x: any) => {
+        node.after(x.node);
+        node = x.node
+      })
+      e.render.push(mounterItem);
+    } else {
+      const element = e.render[e.render.length - 1].node;
+      element.after(mounterItem.node);
+      e.render.push(mounterItem);
+    }
   }
+  updated(t);
 }
 
 function deletePartArrayByIndex(object: RefAProxy, index: number): void {
@@ -144,11 +230,25 @@ function deletePartArrayByIndex(object: RefAProxy, index: number): void {
         const comment = document.createComment(
           ` array ${object.keyNode} `,
         );
-        e.render[0].node.replaceWith(comment);
+
+        if (e.render[0].tag === "fragment") {
+          e.render[0].child.forEach((x: any) => {
+            x.node.remove()
+          })
+        } else {
+          e.render[0].node.replaceWith(comment);
+        }
         e.render = comment;
       } else {
-        e.render[index].node.remove();
-        e.render[index] = undefined;
+        if (e.render[index].tag === "fragment") {
+          e.render[index].child.forEach((x: any) => {
+            x.node.remove();
+          })
+          e.render[index] = undefined;
+        } else {
+          e.render[index].node.remove();
+          e.render[index] = undefined;
+        }
       }
   
       if (Array.isArray(e.render)) {
@@ -164,11 +264,25 @@ function deletePartArrayByIndexOnExist(e: any, object: RefAProxy, index: number)
       const comment = document.createComment(
         ` array ${object.keyNode} `,
       );
-      e.render[0].node.replaceWith(comment);
+
+      if (e.render[0].tag === "fragment") {
+        e.render[0].child.forEach((x: any) => {
+          x.node.remove()
+        })
+      } else {
+        e.render[0].node.replaceWith(comment);
+      }
       e.render = comment;
     } else {
-      e.render[index].node.remove();
-      e.render[index] = undefined;
+      if (e.render[index].tag === "fragment") {
+        e.render[index].child.forEach((x: any) => {
+          x.node.remove();
+        })
+        e.render[index] = undefined;
+      } else {
+        e.render[index].node.remove();
+        e.render[index] = undefined;
+      }
     }
 
     if (Array.isArray(e.render)) {
@@ -212,12 +326,11 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
         }
         if (['pop'].includes(p)) {
           return function () {
-
             const parent = object.parent;
 
             parent.forEach((e) => {
               if (e.formate === undefined) return;
-              if (e.render !== null) return;
+              if (e.render === null) return;
 
               deletePartArrayByIndexOnExist(e, object, e.render.length - 1);
             })
@@ -249,7 +362,19 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
                         const comment = document.createComment(
                           ` array ${object.keyNode} `,
                         );
-                        par.render[0].node.replaceWith(comment);
+
+                        if (par.render[0].tag === "fragment") {
+                          const lastNode = par.render[0].child[par.render[0].child.length - 1].node;
+
+                          par.render[0].child.forEach((x: any, i: number) => {
+                            if (i !== par.render[0].child.length - 1) {
+                              x.node.remove();
+                            }
+                          })
+                          lastNode.replaceWith(comment);      
+                        } else {
+                          par.render[0].node.replaceWith(comment);
+                        }
                         par.render = comment;
                       } else {
                         par.render[e].type = "DELETED";
@@ -268,11 +393,29 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
                         const comment = document.createComment(
                           ` array ${object.keyNode} `,
                         );
-                        e.node.replaceWith(comment);
-                        newRender = comment;
+                        
+                        if (e.tag === "fragment") {
+                          const lastNode = par.render[0].child[par.render[0].child.length - 1].node;
+
+                          par.render[0].child.forEach((x: any, i: number) => {
+                            if (i !== par.render[0].child.length - 1) {
+                              x.node.remove();
+                            }
+                          })
+                          lastNode.replaceWith(comment);
+                        } else {
+                          e.node.replaceWith(comment);
+                          newRender = comment;
+                        }
                         object.empty = true;
                       } else {
-                        e.node.remove();
+                        if (e.tag === "fragment") {
+                          e.child.forEach((x: any) => {
+                            x.node.remove();
+                          })
+                        } else {
+                          e.node.remove();
+                        }
                       }
                     });
   
@@ -281,7 +424,6 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
                 }
               })
             }
-
             const el = Array.prototype[p].apply(t, args);
             updated(object);
             return el;
@@ -368,11 +510,17 @@ function refA(ar: Array<any>) {
               const lastItem = render[render.length - 1];
               render.forEach((e: any, i) => {
                 if (i !== render.length - 1) {
-                  e.node.remove();
+                  if (e.tag === "fragment") {
+                    e.child.forEach((x: any) => { x.node.remove() })
+                  } else {
+                    e.node.remove();
+                  }
                   render[i] = undefined;
                 }
               });
-              par.render = lastItem.node;
+              par.render = lastItem.tag === "fragment"
+                ? lastItem.child[lastItem.child.length - 1].node
+                : lastItem.node;
             }
             
             const val = v.map((e: any, i: number) => {
@@ -390,12 +538,36 @@ function refA(ar: Array<any>) {
             if (mounterStep.length > 0) {
               mounterStep.forEach((e: any) => {
                 if (!Array.isArray(par.render)) {
-                  par.render.replaceWith(e.node);
+                  if (e.tag === "fragment") {
+                    let n: any = par.render;
+                    e.child.forEach((x: any, i: number) => {
+                      if (i === 0) {
+                        n.replaceWith(x.node)
+                      } else {
+                        n.after(x.node)
+                      }
+                      n = x.node;
+                    })
+                  } else {
+                    par.render.replaceWith(e.node);
+                  }
                   par.render = [ e ];
                 } else {
-                  const lastItem = par.render[par.render.length - 1].node;
-                  lastItem.after(e.node);
-                  par.render.push(e);
+                  const lastItem = par.render[par.render.length - 1].tag === "fragment" 
+                    ? par.render[par.render.length - 1].child[par.render[par.render.length - 1].child.length - 1].node
+                    : par.render[par.render.length - 1].node;
+
+                  if (e.tag === "fragment") {
+                    let n = lastItem;
+                    e.child.forEach((x: any) => {
+                      n.after(x.node)
+                      n = x.node;
+                    })
+                    par.render.push(e);
+                  } else {
+                    lastItem.after(e.node);
+                    par.render.push(e);
+                  }
                 }
               });
             }
