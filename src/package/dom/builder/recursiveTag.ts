@@ -29,7 +29,6 @@ function recursiveTag(node: Node) : Node | undefined {
   isONode(req);
 
   if (typeof req.tag === "function") {
-    console.log("before rec", req);
     return recursiveTag.call(this, req);
   }
 

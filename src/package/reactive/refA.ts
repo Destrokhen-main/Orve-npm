@@ -78,7 +78,6 @@ function insertFragmentNodeWithFirstReplace(render: any[], first: any) {
 }
 
 function insertFragmentNode(render: any[], item: any) {
-  console.log([ ...render]);
   let quee: any = render;
   let node = item;
   while(quee.length !== 0) {
@@ -88,7 +87,6 @@ function insertFragmentNode(render: any[], item: any) {
       quee = [...item.child, ...quee];
       continue;
     }
-    console.log(item.node, item.node !== null);
     if (item.node !== null) {
       node.after(item.node);
       node = item.node;
@@ -108,7 +106,6 @@ function getLastFragmentNode(render: any[]) {
     if (item.node !== null)
       node = item.node
   }
-  console.log(node);
   return node;
 }
 

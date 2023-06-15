@@ -13,7 +13,6 @@ function comp() {
       "@click": () => {r.value[0] = {id:2};}
     },
     child: r.forList((e: any, i: number) => {
-      // console.log(e, i);
       return {
         tag: "div",
         child: e.id
