@@ -9,9 +9,12 @@ npm i orve
 
 <a target="_blank" href="https://github.com/Destrokhen-main/simple-reactive-cli">Webpack project</a>
 
+<a target="_blank" href="https://github.com/Destrokhen-main/vite-orve-template">Vite project</a>
+
 <a target="_blank" href="https://www.npmjs.com/package/orve-cli">CLI - in order to make it easier to install the template</a>
 
-<a target="_blank" href="https://github.com/Destrokhen-main/orve-doc">Documentation</a> OR <a href="https://destrokhen-main.github.io" target="_blank">Site (written with orve)</a>
+
+<a target="_blank" href="https://github.com/Destrokhen-main/orve-doc">Documentation `The documentation is outdated. preparing a new version`</a> OR <a href="https://destrokhen-main.github.io" target="_blank">Site (written with orve) `The documentation is outdated. preparing a new version`</a>
 
 If you contribute something to the project, I will be very grateful to you.))
 
