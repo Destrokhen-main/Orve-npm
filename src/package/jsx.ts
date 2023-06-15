@@ -1,3 +1,5 @@
+import { UtilsRefA } from "./reactive/type"
+
 export type ArgProps = Record<string, any>;
 
 
@@ -58,7 +60,7 @@ const Node = function(tag: TagType, props: Record<string, any> | null = null, ..
 
 const Fragment = function(tag: { children?: any | any[] } ): Node {
   return {
-    tag: "fragment",
+    tag: UtilsRefA.Fragment,
     child: tag !== undefined && tag.children !== undefined ? tag.children : []
   }
 }
