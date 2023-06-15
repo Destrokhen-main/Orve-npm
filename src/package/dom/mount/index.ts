@@ -57,6 +57,7 @@ function createComment(app: HTMLElement | null, nodes: ONode | any ): ONode {
 function createFragment(app: HTMLElement | null, nodes: ONode) {
   if (nodes.child !== undefined) {
     const child = childF(app, nodes.child);
+    console.log(child);
     nodes.child = child;
   }
   return nodes;
@@ -78,7 +79,10 @@ function mountedNode(
   }
 
   if (tag.trim() === "fragment") {
-    return createFragment(app, nodes);
+    const fr = createFragment(app, nodes);
+    console.log("fragment creater", fr);
+    return fr;
+    // return createFragment(app, nodes);
   }
 
   const TAG = document.createElement(tag.trim().toLowerCase());

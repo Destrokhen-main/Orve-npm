@@ -36,7 +36,7 @@ function parentCall(obj: RefAProxy) {
 }
 
 function removeFragmentNode(render: any[] ): any {
-  let quee = render;
+  let quee: any = render;
 
   while (quee.length > 0) {
     const item = quee.shift();
@@ -55,7 +55,7 @@ function removeFragmentNode(render: any[] ): any {
 }
 
 function insertFragmentNodeWithFirstReplace(render: any[], first: any) {
-  const quee = render;
+  let quee: any = render;
   let node = first;
   let f = true;
 
@@ -63,7 +63,7 @@ function insertFragmentNodeWithFirstReplace(render: any[], first: any) {
     const item = quee.shift();
 
     if (item.tag === "fragment" && item.child.length > 0) {
-      quee.unshift(...item.child);
+      quee = [...quee, ...item.child];
       continue;
     }
 
@@ -75,43 +75,44 @@ function insertFragmentNodeWithFirstReplace(render: any[], first: any) {
     }
     node = item.node;
   }
-
-
 }
 
 function insertFragmentNode(render: any[], item: any) {
-  const quee = render;
+  console.log([ ...render]);
+  let quee: any = render;
   let node = item;
   while(quee.length !== 0) {
     const item = quee.shift();
 
     if (item.tag === "fragment" && item.child.length > 0) {
-      quee.unshift(...item.child);
+      quee = [...item.child, ...quee];
       continue;
     }
-
-    node.after(item.node);
-    node = item.node;
+    console.log(item.node, item.node !== null);
+    if (item.node !== null) {
+      node.after(item.node);
+      node = item.node;
+    }
   }
 }
 
 function getLastFragmentNode(render: any[]) {
-  const quee = render;
+  let quee: any = [ ...render ];
   let node;
   while(quee.length !== 0) {
-    const item = quee.shift();
+    const item: any = quee.shift();
     if (item.tag === "fragment" && item.child.length > 0) {
-      quee.unshift(...item.child);
-      console.log(quee);
+      quee = [...item.child, ...quee];
       continue;
     }
-
-    node = item.node
+    if (item.node !== null)
+      node = item.node
   }
+  console.log(node);
   return node;
 }
 
-function fragmentWorker(m: any, e:any ,t: RefAProxy, p: number, v: any) { 
+function fragmentWorker(m: any, e:any ,t: RefAProxy, p: number) { 
   let lastItem: any;
   if (e.render[p].tag === UtilsRefA.Fragment) {
     lastItem = removeFragmentNode(e.render[p].child);
@@ -151,7 +152,7 @@ function replaceArrayValueOnExist(e:any ,t: RefAProxy, p: number, v: any) {
     insertInArrayNewValueOnExist(e, t, p, v);
   } else {
     if (mounterItem.tag === UtilsRefA.Fragment) {
-      fragmentWorker(mounterItem, e, t, p, v);
+      fragmentWorker(mounterItem, e, t, p);
     } else {
       e.render[p].node.replaceWith(mounterItem.node);
       e.render[p] = mounterItem;
@@ -180,7 +181,6 @@ function insertInArrayNewValue(t: RefAProxy, p: number, v: any) {
     }
 
     const mounterStep = childF(null, builderStep);
-
     const mounterItem = mounterStep[0];
 
     if (!Array.isArray(e.render)) {
@@ -196,8 +196,9 @@ function insertInArrayNewValue(t: RefAProxy, p: number, v: any) {
       updated(t);
     } else {
       if (mounterItem.tag === UtilsRefA.Fragment) {
-        const node: any = getLastFragmentNode(e.render);
-        insertFragmentNode(mounterItem.child, node)
+        const node: any = getLastFragmentNode([ ...e.render]);
+
+        insertFragmentNode(mounterItem.child, node);
         e.render.push(mounterItem);
       } else {
         const element = e.render[e.render.length - 1].node;
