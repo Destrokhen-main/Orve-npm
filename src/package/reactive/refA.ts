@@ -36,13 +36,13 @@ function parentCall(obj: RefAProxy) {
 }
 
 function removeFragmentNode(render: any[] ): any {
-  let quee: any = render;
+  let quee: any = [ ...render];
 
   while (quee.length > 0) {
     const item = quee.shift();
 
     if (item.tag === "fragment" && item.child.length > 0) {
-      quee = [...quee, ...item.child];
+      quee = [...item.child ,...quee];
       continue;
     }
 
@@ -54,16 +54,31 @@ function removeFragmentNode(render: any[] ): any {
   }
 }
 
+function removeFragmentNodeAll(render: any[] ): any {
+  let quee: any = [ ...render];
+
+  while (quee.length > 0) {
+    const item = quee.shift();
+
+    if (item.tag === "fragment" && item.child.length > 0) {
+      quee = [...item.child ,...quee];
+      continue;
+    }
+
+    item.node.remove();
+  }
+}
+
 function insertFragmentNodeWithFirstReplace(render: any[], first: any) {
-  let quee: any = render;
-  let node = first;
+  let quee: any = [ ...render ];
+  let node: any = first;
   let f = true;
 
   while(quee.length !== 0) {
     const item = quee.shift();
 
     if (item.tag === "fragment" && item.child.length > 0) {
-      quee = [...quee, ...item.child];
+      quee = [...item.child, ...quee];
       continue;
     }
 
@@ -78,7 +93,7 @@ function insertFragmentNodeWithFirstReplace(render: any[], first: any) {
 }
 
 function insertFragmentNode(render: any[], item: any) {
-  let quee: any = render;
+  let quee: any = [ ...render];
   let node = item;
   while(quee.length !== 0) {
     const item = quee.shift();
@@ -193,8 +208,8 @@ function insertInArrayNewValue(t: RefAProxy, p: number, v: any) {
       updated(t);
     } else {
       if (mounterItem.tag === UtilsRefA.Fragment) {
-        const node: any = getLastFragmentNode([ ...e.render]);
-
+        const node: any = getLastFragmentNode(e.render);
+        
         insertFragmentNode(mounterItem.child, node);
         e.render.push(mounterItem);
       } else {
@@ -264,14 +279,14 @@ function deletePartArrayByIndex(object: RefAProxy, index: number): void {
         );
 
         if (e.render[0].tag === UtilsRefA.Fragment) {
-          removeFragmentNode(e.render[0]);
+          removeFragmentNodeAll(e.render[0]);
         } else {
           e.render[0].node.replaceWith(comment);
         }
         e.render = comment;
       } else {
         if (e.render[index].tag === UtilsRefA.Fragment) {
-          removeFragmentNode(e.render[index]);
+          removeFragmentNodeAll(e.render[index]);
           e.render[index] = undefined;
         } else {
           e.render[index].node.remove();
@@ -294,14 +309,14 @@ function deletePartArrayByIndexOnExist(e: any, object: RefAProxy, index: number)
       );
 
       if (e.render[0].tag === UtilsRefA.Fragment) {
-        removeFragmentNode(e.render[0]);
+        removeFragmentNodeAll(e.render[0]);
       } else {
         e.render[0].node.replaceWith(comment);
       }
       e.render = comment;
     } else {
       if (e.render[index].tag === UtilsRefA.Fragment) {
-        removeFragmentNode(e.render[index]);
+        removeFragmentNodeAll(e.render[index]);
         e.render[index] = undefined;
       } else {
         e.render[index].node.remove();
@@ -390,7 +405,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
                         if (par.render[0].tag === UtilsRefA.Fragment) {
                           const lastNode = getLastFragmentNode(par.render[0].child);
 
-                          removeFragmentNode(par.render[0].child);
+                          removeFragmentNodeAll(par.render[0].child);
                           lastNode.replaceWith(comment);      
                         } else {
                           par.render[0].node.replaceWith(comment);
@@ -417,7 +432,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
                         if (e.tag === UtilsRefA.Fragment) {
                           const lastNode = getLastFragmentNode(par.render[0].child);
 
-                          removeFragmentNode(par.render[0].child);
+                          removeFragmentNodeAll(par.render[0].child);
                           lastNode.replaceWith(comment);
                         } else {
                           e.node.replaceWith(comment);
@@ -426,7 +441,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
                         object.empty = true;
                       } else {
                         if (e.tag === UtilsRefA.Fragment) {
-                          removeFragmentNode(e.child)
+                          removeFragmentNodeAll(e.child)
                         } else {
                           e.node.remove();
                         }
@@ -525,7 +540,7 @@ function refA(ar: Array<any>) {
               render.forEach((e: any, i) => {
                 if (i !== render.length - 1) {
                   if (e.tag === UtilsRefA.Fragment) {
-                    removeFragmentNode(e.child)
+                    removeFragmentNodeAll(e.child)
                   } else {
                     e.node.remove();
                   }
