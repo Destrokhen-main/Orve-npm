@@ -83,7 +83,7 @@ function watch(
       return undefined;
     },
     set(target: Watch | any, prop: keyof Watch | string, value: any) {
-      if (prop in target) {
+      if (["stop", "start"].includes(prop) || prop in target) {
         target[prop as keyof Watch] = value;
         return true;
       } else {
@@ -95,7 +95,6 @@ function watch(
       return false;
     },
   });
-
   n["stop"] = () => {
     if (object.watch) {
       (dependencies as any).parent = (dependencies as any).parent.filter(
