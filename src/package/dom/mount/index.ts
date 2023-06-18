@@ -56,7 +56,7 @@ function createComment(app: HTMLElement | null, nodes: ONode | any ): ONode {
 
 function createFragment(app: HTMLElement | null, nodes: ONode) {
   if (nodes.child !== undefined) {
-    const child = childF(app, nodes.child);
+    const child = childF.call(Orve.context, app, nodes.child);
     nodes.child = child;
   }
   return nodes;
@@ -96,7 +96,7 @@ function mountedNode(
   }
 
   if (child && (child as Array<ONode | Child>).length > 0) {
-    nodes["child"] = childF.call(this, TAG, child);
+    nodes["child"] = childF.call(Orve.context, TAG, child);
   }
 
   if (ref !== undefined) {
