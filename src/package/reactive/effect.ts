@@ -85,7 +85,7 @@ function updated() {
       if (item.type === PropsTypeRef.EffectChild) {
         if (this.value === null || this.value.toString() !== call.toString()) {
           const parseCall = parseChildren.call(null,  Array.isArray(call) ? call : [ call ] , null, item.parent)
-          const [ node ] = childF(null, parseCall);
+          const [ node ] = childF.call(this, null, parseCall);
           item.value.node.replaceWith((node as any).node);
 
           item.value = node;

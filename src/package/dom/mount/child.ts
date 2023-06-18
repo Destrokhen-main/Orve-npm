@@ -5,6 +5,7 @@ import { RefProxy } from "../../reactive/type";
 import { PropsTypeRef, ChildRef } from "../../reactive/ref";
 import { message as m } from "./error";
 import { parseChildren } from "../builder/children";
+import { Orve } from "../../default";
 
 export function formatedRef(item: any, val:any | null = null): any {
   let value = val !== null ? val : item.value.value;
@@ -113,7 +114,7 @@ export const childF = function (
     if (item.type === ChildType.ReactiveArray) {
       if ((item as any).formate !== undefined) {
         if ((item.value as any).length !== 0) {
-          const items = childF.call(this, tag, (item as any).value);
+          const items = childF.call(Orve.context, tag, (item as any).value);
           const formater = item as any;
           formater.proxy.parent.push({
             render: items,
@@ -138,7 +139,7 @@ export const childF = function (
         }
       }
       if ((item.value as any).length !== 0) {
-        const items = childF.call(this, tag, (item as any).value);
+        const items = childF.call(Orve.context, tag, (item as any).value);
         item.value = items;
         (item as any).proxy.render = items;
         (item as any).proxy.parentNode = (item as any).parent;
@@ -156,7 +157,7 @@ export const childF = function (
     }
 
     if (item.type === ChildType.Effect) {
-      const [ node ] = childF.call(this, tag, [ (item as any).value ]);
+      const [ node ] = childF.call(Orve.context, tag, [ (item as any).value ]);
       
       (item as any).proxy.checkParent();
       (item as any).proxy.parent.push({
@@ -176,14 +177,14 @@ export const childF = function (
       }
       (item.value as any).lastCall = call;
       if (call) {
-        const pr = parseChildren.call(this, [ (item.value as any).block1 ], null, (item as any).parent);
-        const [ block ] = childF.call(this, tag, pr);
+        const pr = parseChildren.call(Orve.context, [ (item.value as any).block1 ], null, (item as any).parent);
+        const [ block ] = childF.call(Orve.context, tag, pr);
         (item.value as any).node = block.node;
         (item.value as any).compilerNode = pr[0];
       } else {
         if((item.value as any).block2 !== null) {
-          const pr = parseChildren.call(this, [ (item.value as any).block2 ], null, (item as any).parent);
-          const [ block ] = childF.call(this, tag, pr);
+          const pr = parseChildren.call(Orve.context, [ (item.value as any).block2 ], null, (item as any).parent);
+          const [ block ] = childF.call(Orve.context, tag, pr);
           (item.value as any).node = block.node;
           (item.value as any).compilerNode = pr[0];
         } else {
