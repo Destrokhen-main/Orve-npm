@@ -350,7 +350,9 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
               insertInArrayNewValue(object, t.length + i, newArgs[i]);
             }
             updated(object);
-            return Array.prototype[p].apply(t, args);
+            const cl = Array.prototype[p].apply(t, args);
+            parentCall(object);
+            return cl;
           }
         }
         if (['shift'].includes(p)) {
@@ -360,6 +362,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
             // eslint-disable-next-line prefer-rest-params
             const el = Array.prototype[p].apply(t, arguments);
             updated(object);
+            parentCall(object);
             return el;
           }
         }
@@ -377,6 +380,7 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
             // eslint-disable-next-line prefer-rest-params
             const el = Array.prototype[p].apply(t, arguments);
             updated(object);
+            parentCall(object);
             return el;
           }
         }
@@ -455,10 +459,10 @@ function createReactiveArray(ar: any[], object: RefAProxy) {
             }
             const el = Array.prototype[p].apply(t, args);
             updated(object);
+            parentCall(object);
             return el;
           }
         }
-        parentCall(object);
         return val.bind(t);
       }
       return Reflect.get(t, p);
@@ -589,6 +593,8 @@ function refA(ar: Array<any>) {
             }
           }
         })
+        updated(object);
+        parentCall(object);
         return true;
       }
       return Reflect.set(t, p, v);
