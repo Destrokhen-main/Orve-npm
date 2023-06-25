@@ -1,18 +1,18 @@
-
-/*
-oif(
-  () => {
-    return true
-  },
-  {} | "" ,
-  {} | "" | null
-)
-*/
 import { ProxyType } from "./type";
 import { parseChildren } from "../dom/builder/children";
 import { childF } from "../dom/mount/child";
 import { Orve } from "../default";
 import { unmounted } from "../dom/unmounted";
+
+function findUpperParent() : HTMLElement | null {
+  if (this.node !== null) return this.node;
+
+  if (this.node === null && this.parentNode !== null) {
+    return findUpperParent.call(this.parentNode);
+  }
+
+  return null;
+}
 
 function updated() {
   const call = this.rule();
@@ -26,9 +26,13 @@ function updated() {
           unmounted(this.compilerNode);
         const bl =  parseChildren.call(Orve.context, [ block ], null, this.parentNode);
         const [ mount ] = childF.call(Orve.context, null, bl);
-        this.node.replaceWith((mount as any).node);
-        this.node = (mount as any).node;
-        this.compilerNode = bl[0];
+        const node = findUpperParent.call(this); 
+
+        if (node !== null) {
+          node.replaceWith((mount as any).node);
+          this.node = (mount as any).node;
+          this.compilerNode = bl[0];
+        }
       } else {
         if (this.compilerNode !== null)
           unmounted(this.compilerNode);
