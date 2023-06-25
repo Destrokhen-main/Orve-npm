@@ -172,16 +172,16 @@ export const childF = function (
 
     if (item.type === ChildType.Oif) {
       const call = (item.value as any).rule();
-      if (typeof call !== "boolean") {
+      if (typeof call !== "boolean" && call !== null) {
         return undefined;
       }
       (item.value as any).lastCall = call;
-      if (call) {
+      if (call === true) {
         const pr = parseChildren.call(Orve.context, [ (item.value as any).block1 ], null, (item as any).parent);
         const [ block ] = childF.call(Orve.context, tag, pr);
         (item.value as any).node = block.node;
         (item.value as any).compilerNode = pr[0];
-      } else {
+      } else if (call === false) {
         if((item.value as any).block2 !== null) {
           const pr = parseChildren.call(Orve.context, [ (item.value as any).block2 ], null, (item as any).parent);
           const [ block ] = childF.call(Orve.context, tag, pr);
@@ -195,6 +195,13 @@ export const childF = function (
           if (tag !== null) tag.appendChild(comment);
           return item;
         }
+      } else {
+        const comment = document.createComment(
+          ` if ${(item as any).keyNode} `,
+        );
+        (item.value as any).node = comment;
+        if (tag !== null) tag.appendChild(comment);
+        return item;
       }
 
       // if (call) {

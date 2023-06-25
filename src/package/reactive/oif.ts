@@ -5,6 +5,8 @@ import { Orve } from "../default";
 import { unmounted } from "../dom/unmounted";
 
 function findUpperParent() : HTMLElement | null {
+  if (this.node === undefined) return null;
+
   if (this.node !== null) return this.node;
 
   if (this.node === null && this.parentNode !== null) {
@@ -20,6 +22,20 @@ function updated() {
     console.error("rule return not a boolean");
   } else {
     if (call !== this.lastCall) {
+      if (call === null) {
+        if (this.compilerNode !== null)
+          unmounted(this.compilerNode);
+        
+        const comment = document.createComment(
+          ` if ${this.keyNode}`,
+        );
+        this.node.replaceWith(comment);
+        this.node = comment;
+
+        this.lastCall = call;
+        return;
+      }
+
       const block = call ? this.block1 : this.block2;
       if (block !== null) {
         if (this.compilerNode !== null)
