@@ -59,7 +59,7 @@ function checkExistParents(ar: Array<PropRef>): Array<PropRef> {
       nArr.push(e);
       return;
     }
-    if (document.body.contains(e.ONode.node)) nArr.push(e);
+    if (document.body.contains(e.ONode.node) || document.contains((e as any).node)) nArr.push(e);
   });
 
   return nArr;

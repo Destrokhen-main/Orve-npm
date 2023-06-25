@@ -8,6 +8,7 @@ import { generationID } from "../../usedFunction/keyGeneration";
 import { checkerEffect } from "../mount/props";
 import { Effect } from "../../reactive/effect";
 import { UtilsRef, UtilsRefA } from "../../reactive/type";
+import { refOT } from "../../reactive/refO"
 
 enum ChildType {
   HTML = "HTML",
@@ -15,6 +16,7 @@ enum ChildType {
   ReactiveStatic = "ReactiveStatic",
   ReactiveComponent = "ReactiveComponent",
   ReactiveArray = "ReactiveArray",
+  ReactiveObject = "ReactiveObject",
   Effect = "Effect",
   Oif = "Oif",
   HTMLPROP = "HTMLPROP"
@@ -54,6 +56,16 @@ function isArrayFormatObj(obj: unknown): boolean {
   return false;
 }
 
+function isRefOObject(obj: unknown): boolean {
+  if (typeof obj === "object") {
+    const knowObj = obj as Record<string, any>;
+    if (knowObj["type"] !== undefined && Object.values(refOT).includes(knowObj["type"])) {
+      return true;
+    }
+  }
+  return false;
+}
+ 
 function ProxyBulder(item: any, props: Props | null, parent: ONode | null) {
   const proxyType: string = (item as Proxy).proxyType;
 
@@ -199,6 +211,17 @@ function parseChildren(
           formate: item.formate
         }
       }
+
+      if (typeNode === "object" && isRefOObject(item)) {
+        return {
+          type: ChildType.ReactiveObject,
+          proxy: item.proxy,
+          prop: item.prop,
+          ONode: parent,
+          keyNode: generationID(8)
+        }
+      }
+
       // NOTE component
       if ((typeNode === "object" || typeNode === "function") && !isArray) {
         return parser.call(this, item as () => any | Record<string, any>, props, parent);

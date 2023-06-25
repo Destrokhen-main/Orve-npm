@@ -3,6 +3,15 @@ import { ref } from "./ref";
 import { typeOf } from "../usedFunction/typeOf";
 import { ProxyType } from "../reactive/type";
 import { refA } from "./refA";
+
+import { parseChildren } from "../dom/builder/children";
+import { childF } from "../dom/mount/child";
+import { Node } from "../jsx";
+
+export enum refOT {
+  refO = "refO"
+}
+
 //import { ReactiveParams } from "./type";
 
 function updated(target: Record<string, any>) {
@@ -64,7 +73,8 @@ function createReactiveObjectByProp(prop: string, value: any, mainProxy: RefOPro
 function refO(object: any) {
   const obj : RefOProxy = {
     $parent: [],
-    $reactiveParams: []
+    $reactiveParams: [],
+    $undKey: {}
   };
 
   const mainProxy: any = new Proxy<RefOProxy>(obj, {
@@ -77,20 +87,14 @@ function refO(object: any) {
       if (prop in target) {
         return target[prop];
       }
-      if (!(prop in target)) {
-        return undefined;
-        // target.$reactiveParams.push({
-        //   node: null,
-        //   nameValue: prop
-        // } as ReactiveParams);
-        // return {
-        //   tag: "comment",
-        //   $refOParams: {
-        //     proxy: mainProxy,
-        //     prop
-        //   },
-        //   child: `refO ${prop}`
-        // };
+      if (!(prop in target) && target.$undKey[prop] === undefined) {
+        target.$undKey[prop] = null;
+
+        return {
+          type: refOT.refO,
+          prop,
+          proxy: mainProxy,
+        }
       }
       return undefined;
     },
@@ -98,6 +102,28 @@ function refO(object: any) {
       if (!(prop in target)) {
         // TODO при присвоение, может потерять $parent
         // const indexEmtyObject = target.$reactiveParams.findIndex((e: ReactiveParams) => e.nameValue === prop);
+
+        if (target.$undKey[prop] !== undefined) {
+          const item = target.$undKey[prop];
+          const v = ref(value);
+
+          const i = parseChildren([ Node("div", {}, v) as any ], null, item.ONode, true);
+
+          if (i[0] === undefined) {
+            return false;
+          }
+          
+          const [ mountedItem ] = childF(null, i);
+
+          if (mountedItem === undefined) return false;
+
+          target[prop] = mountedItem.child[0].value;
+        
+          item.node.replaceWith(mountedItem.child[0].node);
+
+          delete target.$undKey[prop];          
+          return true;
+        }
 
         const v = createReactiveObjectByProp(prop, value, mainProxy);
         if (v === "Proxy") {
@@ -113,7 +139,7 @@ function refO(object: any) {
           return true;
         }
       } else {
-        if (!["$parent", "$type", "$proxyType"].includes(prop)) {
+        if (!["$parent", "$type", "$proxyType", "$undKey"].includes(prop)) {
           target[prop].value = value;
           return true;
         }

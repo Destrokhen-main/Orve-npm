@@ -208,6 +208,22 @@ export const childF = function (
       //   }
       // }
     }
+
+    if (item.type === ChildType.ReactiveObject) {
+      const kn = item as any;
+
+      const comment = document.createComment(` ${kn.prop} ${kn.keyNode} `);
+
+      kn.proxy.$undKey[kn.prop] = {
+        ...item,
+        node: comment
+      };
+      
+      if (tag === null) return comment;
+
+      tag.appendChild(comment);
+    }
+
     return item;
   });
 };

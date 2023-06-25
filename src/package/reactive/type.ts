@@ -48,6 +48,7 @@ type ReactiveParams = {
 interface RefOProxy {
   $parent: Array<any>;
   $reactiveParams: Array<ReactiveParams>;
+  $undKey: Record<string, any>
 };
 
 interface RefAProxy extends Proxy {
