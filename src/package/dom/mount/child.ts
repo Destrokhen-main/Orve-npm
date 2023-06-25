@@ -8,7 +8,7 @@ import { parseChildren } from "../builder/children";
 import { Orve } from "../../default";
 
 export function formatedRef(item: any, val:any | null = null): any {
-  let value = val !== null ? val : item.value.value;
+  let value = val !== null ? val : item.value?.value ? item.value.value : null;
   if (item.formate !== undefined) {
     try {
       value = item.formate(value);
